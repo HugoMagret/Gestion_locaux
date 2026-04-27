@@ -14,6 +14,11 @@ export class MapComponent implements OnInit {
   rooms: Room[] = [];
   selectedRoom: Room | null = null;
 
+  // Filters / Layers state
+  showSockets = false;
+  showEquipment = false;
+  showStaff = false;
+
   constructor(private roomService: RoomService) {}
 
   ngOnInit(): void {
@@ -39,8 +44,13 @@ export class MapComponent implements OnInit {
     this.selectedRoom = null;
   }
 
+  toggleLayer(layer: 'sockets' | 'equipment' | 'staff'): void {
+    if (layer === 'sockets') this.showSockets = !this.showSockets;
+    if (layer === 'equipment') this.showEquipment = !this.showEquipment;
+    if (layer === 'staff') this.showStaff = !this.showStaff;
+  }
+
   addReservation(room: Room): void {
     console.log('Adding reservation for room:', room.name);
-    // TODO: Implement reservation logic
   }
 }
