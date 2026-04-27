@@ -17,6 +17,13 @@ Le backend tourne sous Node.js (Express) et est accessible à l'adresse suivante
 Permet de récupérer la liste complète des salles avec leurs équipements, personnel et prises rattachés.
 
 - **GET `/api/rooms`** : Récupère toutes les salles.
+  - **Filtres optionnels** (Query Params) :
+    - `floor=number` : Filtrer par étage.
+    - `min_doors=number` : Minimum de portes.
+    - `min_capacity=number` : Capacité minimum.
+    - `type=uuid` : Filtrer par type de salle.
+    - `min_sockets=number` : Nombre de prises minimum.
+  - *Exemple* : `/api/rooms?floor=1&min_doors=2`
 - **POST `/api/rooms`** : Crée une nouvelle salle.
   - *Body requis* : `{ name: string, max_capacity: number, room_type_id: uuid, doors: number, coordinates: object, floor: number, color: string }`
 - **DELETE `/api/rooms/:id`** : Supprime une salle par son ID.
