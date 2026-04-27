@@ -5,16 +5,16 @@ services:
   db:
     image: postgres:15
     container_name: gestion_locaux_db
-    restart: always
+    restart: alwaysdb:
     environment:
-      POSTGRES_DB: gestion_locaux
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
       - ./dataBase/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - pgdata:/var/lib/postgresql/data # pour enregistrement des données
+      - pgdata:/var/lib/postgresql/data
 
   # Backend Node.js
   backend:
@@ -24,13 +24,18 @@ services:
     depends_on:
       - db
     environment:
-      DATABASE_URL: postgres://user:password@db:5432/gestion_locaux
-
+      DATABASE_URL: postgres://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
   # Frontend Angular
   frontend:
     build: ./front
     ports:
       - "4200:4200"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
 
   # Interface de gestion Base de Données
   pgadmin:
