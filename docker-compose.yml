@@ -25,6 +25,7 @@ services:
       - db
     environment:
       DATABASE_URL: postgres://user:password@db:5432/gestion_locaux
+      MOCK_MODE: "false"
 
   # Frontend Angular
   frontend:

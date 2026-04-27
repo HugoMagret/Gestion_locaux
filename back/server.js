@@ -12,6 +12,16 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL || 'postgres://user:password@db:5432/gestion_locaux',
 });
 
+// Mode Mock (activable via Docker Compose)
+const IS_MOCK_MODE = process.env.MOCK_MODE === 'true';
+
+const MOCK_DATA = {
+  rooms: [
+    { id: "mock-1", name: "Salle Mockée 101", max_capacity: 10, doors: 1, floor: 0, color: "#9b59b6", coordinates: { x: 10, y: 10, width: 50, height: 50 }, staff: [], equipments: [], sockets: [] },
+    { id: "mock-2", name: "Salle Mockée 102", max_capacity: 20, doors: 2, floor: 1, color: "#34495e", coordinates: { x: 70, y: 10, width: 80, height: 60 }, staff: [], equipments: [], sockets: [] }
+  ]
+};
+
 app.use(cors());
 app.use(express.json());
 
@@ -19,6 +29,11 @@ app.use(express.json());
 
 // Récupérer toutes les salles (avec détails)
 app.get('/api/rooms', async (req, res) => {
+  if (IS_MOCK_MODE) {
+    console.log("Mode Mock activé : renvoi de données statiques");
+    return res.json(MOCK_DATA.rooms);
+  }
+
   try {
     const result = await pool.query(`
       SELECT r.*, 
