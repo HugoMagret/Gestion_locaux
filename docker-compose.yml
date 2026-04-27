@@ -4,6 +4,7 @@ services:
   # Base de données
   db:
     image: postgres:15
+    container_name: gestion_locaux_db
     restart: always
     environment:
       POSTGRES_DB: gestion_locaux
@@ -12,11 +13,12 @@ services:
     ports:
       - "5432:5432"
     volumes:
+      - ./dataBase/init.sql:/docker-entrypoint-initdb.d/init.sql
       - pgdata:/var/lib/postgresql/data # pour enregistrement des données
 
   # Backend Node.js
   backend:
-    build: ./backend
+    build: ./back
     ports:
       - "3000:3000"
     depends_on:
@@ -26,9 +28,22 @@ services:
 
   # Frontend Angular
   frontend:
-    build: ./frontend
+    build: ./front
     ports:
       - "4200:4200"
+
+  # Interface de gestion Base de Données
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: gestion_locaux_pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
 
 volumes:
   pgdata:
