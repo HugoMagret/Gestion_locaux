@@ -5,8 +5,10 @@ export class Equipment {
   name: string;
   serial_number?: string;
   equipment_type_id: string;
-  equipment_type?: EquipmentType;
-  room_id: string;
+  room_id?: string;
+  
+  // Joined field
+  equipment_type_label?: string;
 
   constructor(data: any) {
     this.id = data.id;
@@ -14,8 +16,6 @@ export class Equipment {
     this.serial_number = data.serial_number;
     this.equipment_type_id = data.equipment_type_id;
     this.room_id = data.room_id;
-    if (data.equipment_type) {
-      this.equipment_type = new EquipmentType(data.equipment_type);
-    }
+    this.equipment_type_label = data.equipment_type_label;
   }
 }

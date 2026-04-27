@@ -8,59 +8,46 @@ export class Room {
   name: string;
   max_capacity: number;
   room_type_id: string;
-  room_type?: RoomType;
-  equipments: Equipment[];
-  staff: Staff[];
-  sockets: Socket[];
-  building: string;
-  floor: number;
-  
-  // New Coordinate System
-  start_x: number;
-  start_y: number;
-  x: number; // Represents Width
-  y: number; // Represents Height
-
-  // UI related fields
   doors: number;
+  floor: number;
+  coordinates: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  };
   color: string;
+  
+  // Joined fields from API
   room_type_label?: string;
+  staff: Staff[];
+  equipments: Equipment[];
+  sockets: Socket[];
 
   constructor(data: any) {
     this.id = data.id;
     this.name = data.name;
-    this.max_capacity = data.max_capacity || data.capacity;
+    this.max_capacity = data.max_capacity;
     this.room_type_id = data.room_type_id;
-    this.building = data.building || 'A';
-    this.floor = data.floor !== undefined ? data.floor : 0;
-    
-    // Mapping coordinate names
-    if (data.coordinates) {
-      this.start_x = data.coordinates.x || data.coordinates.start_x || 0;
-      this.start_y = data.coordinates.y || data.coordinates.start_y || 0;
-      this.x = data.coordinates.width || data.coordinates.x || 100;
-      this.y = data.coordinates.height || data.coordinates.y || 100;
-    } else {
-      this.start_x = data.start_x || 0;
-      this.start_y = data.start_y || 0;
-      this.x = data.x || 100;
-      this.y = data.y || 100;
-    }
-
-    if (data.room_type) {
-      this.room_type = new RoomType(data.room_type);
-    }
-
-    this.equipments = (data.equipments || []).map((e: any) => new Equipment(e));
-    this.staff = (data.staff || []).map((s: any) => new Staff(s));
-    this.sockets = (data.sockets || []).map((s: any) => new Socket(s));
-    
     this.doors = data.doors || 1;
+    this.floor = data.floor !== undefined ? data.floor : 0;
     this.color = data.color || '#3498db';
     this.room_type_label = data.room_type_label;
-  }
+    
+    // Coordinates mapping
+    if (data.coordinates) {
+      this.coordinates = {
+        x: data.coordinates.x || 0,
+        y: data.coordinates.y || 0,
+        width: data.coordinates.width || 100,
+        height: data.coordinates.height || 100
+      };
+    } else {
+      this.coordinates = { x: 0, y: 0, width: 100, height: 100 };
+    }
 
-  isFireSafetyCompliant(): boolean {
-    return this.max_capacity < 20 || this.doors > 1;
+    this.staff = (data.staff || []).map((s: any) => new Staff(s));
+    this.equipments = (data.equipments || []).map((e: any) => new Equipment(e));
+    this.sockets = (data.sockets || []).map((so: any) => new Socket(so));
   }
 }

@@ -17,7 +17,6 @@ export class MapComponent implements OnInit {
   selectedRoom: Room | null = null;
 
   // Navigation state
-  selectedBuilding = 'A';
   selectedFloor = 0;
 
   // Filters / Layers state
@@ -25,7 +24,6 @@ export class MapComponent implements OnInit {
   showEquipment = false;
   showSockets = false;
 
-  buildings: string[] = ['A', 'B'];
   availableFloors: number[] = [];
 
   constructor(
@@ -49,11 +47,9 @@ export class MapComponent implements OnInit {
 
   loadFloors(): void {
     this.floorService.getFloors().subscribe(floors => {
-      // Get unique levels for the current building
+      // Get unique levels
       this.availableFloors = [...new Set(
-        floors
-          .filter(f => f.building === this.selectedBuilding)
-          .map(f => f.level)
+        floors.map(f => f.level)
       )].sort((a, b) => a - b);
       
       // If selected floor is no longer available, pick first available
@@ -66,13 +62,8 @@ export class MapComponent implements OnInit {
 
   applyFilters(): void {
     this.filteredRooms = this.allRooms.filter(
-      (r) => r.building === this.selectedBuilding && r.floor === this.selectedFloor
+      (r) => r.floor === this.selectedFloor
     );
-  }
-
-  selectBuilding(building: string): void {
-    this.selectedBuilding = building;
-    this.loadFloors(); // Refresh available floors for this building
   }
 
   selectFloor(floor: number): void {

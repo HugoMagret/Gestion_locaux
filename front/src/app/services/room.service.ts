@@ -14,9 +14,16 @@ export class RoomService {
 
   refreshRooms(): void {
     this.http.get<any[]>(`${API_URL}/rooms`).pipe(
-      map(rooms => rooms.map(r => new Room(r)))
-    ).subscribe(rooms => {
-      this.roomsSubject.next(rooms);
+      tap(data => console.log('Raw rooms from API:', data)),
+      map(rooms => rooms.map(r => new Room(r))),
+      tap(rooms => console.log('Mapped Room objects:', rooms))
+    ).subscribe({
+      next: (rooms) => {
+        this.roomsSubject.next(rooms);
+      },
+      error: (err) => {
+        console.error('Erreur lors de la récupération des salles:', err);
+      }
     });
   }
 
@@ -40,10 +47,8 @@ export class RoomService {
     });
   }
 
-  deleteRoomsByFloor(building: string, floor: number): void {
-    // Note: Backend doesn't have a bulk delete by floor.
-    // For now, we filter locally and you might want to implement it in the back.
-    const roomsToDelete = this.roomsSubject.value.filter(r => r.building === building && r.floor === floor);
+  deleteRoomsByFloor(floor: number): void {
+    const roomsToDelete = this.roomsSubject.value.filter(r => r.floor === floor);
     roomsToDelete.forEach(r => this.deleteRoom(r.id));
   }
 }
