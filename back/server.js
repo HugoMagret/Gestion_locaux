@@ -114,8 +114,30 @@ app.get('/api/equipment', async (req, res) => {
 
 app.get('/api/types/room', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM room_type');
+    const result = await pool.query('SELECT * FROM room_type ORDER BY label');
     res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/types/room', async (req, res) => {
+  const { label } = req.body;
+  try {
+    const result = await pool.query(
+      'INSERT INTO room_type (label) VALUES ($1) RETURNING *',
+      [label]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete('/api/types/room/:id', async (req, res) => {
+  try {
+    await pool.query('DELETE FROM room_type WHERE id = $1', [req.params.id]);
+    res.status(204).send();
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -123,8 +145,30 @@ app.get('/api/types/room', async (req, res) => {
 
 app.get('/api/types/equipment', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM equipment_type');
+    const result = await pool.query('SELECT * FROM equipment_type ORDER BY label');
     res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/types/equipment', async (req, res) => {
+  const { label } = req.body;
+  try {
+    const result = await pool.query(
+      'INSERT INTO equipment_type (label) VALUES ($1) RETURNING *',
+      [label]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete('/api/types/equipment/:id', async (req, res) => {
+  try {
+    await pool.query('DELETE FROM equipment_type WHERE id = $1', [req.params.id]);
+    res.status(204).send();
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

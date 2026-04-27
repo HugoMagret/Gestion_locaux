@@ -1,0 +1,53 @@
+<div class="staff-container">
+  <header class="staff-header">
+    <div class="header-left">
+      <h1>Liste du Personnel</h1>
+      <p>Gérez les membres du personnel et leurs affectations</p>
+    </div>
+    <button class="btn-refresh" (click)="loadData()">
+      🔄 Actualiser
+    </button>
+  </header>
+
+  <div class="staff-card card">
+    <div class="table-responsive">
+      <table class="staff-table">
+        <thead>
+          <tr>
+            <th>Nom Complet</th>
+            <th>Bureau / Salle</th>
+            <th>Bâtiment</th>
+            <th>Étage</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let member of staffWithRooms">
+            <td>
+              <div class="staff-info">
+                <span class="avatar">{{ member.first_name[0] }}{{ member.last_name[0] }}</span>
+                <span class="name">{{ member.first_name }} {{ member.last_name }}</span>
+              </div>
+            </td>
+            <td>
+              <span class="room-tag" *ngIf="member.room">
+                {{ member.room.name }}
+              </span>
+              <span class="no-room" *ngIf="!member.room">Non assigné</span>
+            </td>
+            <td>{{ member.room?.building || '-' }}</td>
+            <td>{{ member.room ? (member.room.floor === 0 ? 'RDC' : 'Étage ' + member.room.floor) : '-' }}</td>
+            <td>
+              <button class="btn-icon" (click)="deleteStaff(member.id)" title="Supprimer">
+                🗑️
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="staffWithRooms.length === 0">
+            <td colspan="5" class="empty-state">Aucun membre du personnel trouvé</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

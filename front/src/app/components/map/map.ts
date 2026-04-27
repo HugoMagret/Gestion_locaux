@@ -8,8 +8,8 @@ import { FloorService } from '../../services/floor.service';
   selector: 'app-map',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './map.component.html',
-  styleUrls: ['./map.component.css'],
+  templateUrl: './map.html',
+  styleUrls: ['./map.css'],
 })
 export class MapComponent implements OnInit {
   allRooms: Room[] = [];
