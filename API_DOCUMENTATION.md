@@ -38,7 +38,14 @@ Permet de récupérer la liste complète des salles avec leurs équipements, per
 }
 ```
 
-### 2.2 Le Personnel (Staff)
+### 2.2 Ajouter du contenu à une salle (Setters)
+Ces routes permettent d'ajouter du contenu directement en connaissant l'ID de la salle.
+- **POST `/api/rooms/:id/staff`** : Ajoute un membre du personnel dans cette salle.
+  - *Body requis* : `{ first_name: string, last_name: string }`
+- **POST `/api/rooms/:id/equipment`** : Ajoute un équipement dans cette salle.
+  - *Body requis* : `{ name: string, serial_number: string, equipment_type_id: uuid }`
+
+### 2.3 Le Personnel (Staff)
 - **GET `/api/staff`** : Liste tout le personnel.
 - **POST `/api/staff`** : Ajoute un membre.
   - *Body requis* : `{ first_name: string, last_name: string, room_id: uuid|null }`
