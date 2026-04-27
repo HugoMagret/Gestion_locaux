@@ -66,6 +66,11 @@ if (IS_MOCK_MODE) {
   app.post('/api/rooms/:id/staff', (req, res) => res.status(201).json({id: "s-new", ...req.body}));
   app.post('/api/rooms/:id/equipment', (req, res) => res.status(201).json({id: "e-new", ...req.body}));
 
+  // Routes POST gnriques (ajouts directs)
+  app.post('/api/staff', (req, res) => res.status(201).json({id: "s-gen-new", ...req.body}));
+  app.post('/api/equipment', (req, res) => res.status(201).json({id: "e-gen-new", ...req.body}));
+  app.post('/api/sockets', (req, res) => res.status(201).json({id: "so-gen-new", ...req.body}));
+
 } else {
   // Routes réelles (Base de données) - Modulaire
   console.log("-----------------------------------------");

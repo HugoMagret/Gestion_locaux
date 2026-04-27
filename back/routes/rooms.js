@@ -66,7 +66,8 @@ router.get('/:id', async (req, res) => {
 
 // POST new room
 router.post('/', async (req, res) => {
-  const { name, max_capacity, room_type_id, doors, floor, coordinates, color } = req.body;
+  let { name, max_capacity, room_type_id, doors, floor, coordinates, color } = req.body;
+  if (room_type_id === "") room_type_id = null;
   try {
     const result = await db.query(
       'INSERT INTO room (name, max_capacity, room_type_id, doors, floor, coordinates, color) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
@@ -80,7 +81,8 @@ router.post('/', async (req, res) => {
 
 // PUT update room
 router.put('/:id', async (req, res) => {
-  const { name, max_capacity, room_type_id, doors, floor, coordinates, color } = req.body;
+  let { name, max_capacity, room_type_id, doors, floor, coordinates, color } = req.body;
+  if (room_type_id === "") room_type_id = null;
   try {
     const result = await db.query(
         'UPDATE room SET name = $1, max_capacity = $2, room_type_id = $3, doors = $4, floor = $5, coordinates = $6, color = $7 WHERE id = $8 RETURNING *',

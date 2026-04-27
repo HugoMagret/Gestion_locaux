@@ -19,7 +19,8 @@ router.get('/', async (req, res) => {
 
 // POST new equipment
 router.post('/', async (req, res) => {
-  const { name, serial_number, equipment_type_id, room_id } = req.body;
+  let { name, serial_number, equipment_type_id, room_id } = req.body;
+  if (room_id === "") room_id = null;
   try {
     const result = await db.query(
       'INSERT INTO equipment (name, serial_number, equipment_type_id, room_id) VALUES ($1, $2, $3, $4) RETURNING *',

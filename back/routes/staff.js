@@ -14,7 +14,8 @@ router.get('/', async (req, res) => {
 
 // POST new staff
 router.post('/', async (req, res) => {
-  const { first_name, last_name, room_id } = req.body;
+  let { first_name, last_name, room_id } = req.body;
+  if (room_id === "") room_id = null; // Transformer "" en NULL pour PostgreSQL
   try {
     const result = await db.query(
       'INSERT INTO staff (first_name, last_name, room_id) VALUES ($1, $2, $3) RETURNING *',
