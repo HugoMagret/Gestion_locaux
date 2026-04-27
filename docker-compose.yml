@@ -7,14 +7,14 @@ services:
     container_name: gestion_locaux_db
     restart: always
     environment:
-      POSTGRES_DB: gestion_locaux
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ${DB_NAME:-gestion_locaux}
+      POSTGRES_USER: ${DB_USER:-user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
     ports:
       - "5432:5432"
     volumes:
       - ./dataBase/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - pgdata:/var/lib/postgresql/data # pour enregistrement des données
+      - pgdata:/var/lib/postgresql/data
 
   # Backend Node.js
   backend:
@@ -23,15 +23,23 @@ services:
       - "3000:3000"
     depends_on:
       - db
+    volumes:
+      - ./back:/app
+      - /app/node_modules
     environment:
-      DATABASE_URL: postgres://user:password@db:5432/gestion_locaux
-      MOCK_MODE: "false"
+      DATABASE_URL: postgres://${DB_USER:-user}:${DB_PASSWORD:-password}@db:5432/${DB_NAME:-gestion_locaux}
+      MOCK_MODE: ${MOCK_MODE:-false}
 
   # Frontend Angular
   frontend:
     build: ./front
     ports:
       - "4200:4200"
+    volumes:
+      - ./front:/app
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true # Pour le live-reload sous Windows/Docker
 
   # Interface de gestion Base de Données
   pgadmin:

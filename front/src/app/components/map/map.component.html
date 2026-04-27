@@ -1,36 +1,220 @@
 <div class="map-container">
-  <svg viewBox="0 0 1000 800" (click)="onMapClick($event)">
-    <g
-      *ngFor="let room of rooms"
-      [attr.id]="room.id"
-      (click)="selectRoom(room); $event.stopPropagation()"
-      class="room-group"
-    >
-      <rect
-        [attr.x]="room.coordinates.x"
-        [attr.y]="room.coordinates.y"
-        [attr.width]="room.coordinates.width"
-        [attr.height]="room.coordinates.height"
-        [class.compliant]="room.isFireSafetyCompliant()"
-        class="room-rect"
-      />
-      <text
-        [attr.x]="room.coordinates.x + 5"
-        [attr.y]="room.coordinates.y + 20"
-      >
-        {{ room.name }}
-      </text>
-    </g>
-  </svg>
+  <!-- Left Sidebar (Menu) -->
+  <nav class="left-sidebar">
+    <div class="logo">🏢 LocauxApp</div>
+    
+    <!-- Building Selector -->
+    <div class="menu-section">
+      <div class="section-title">Bâtiment</div>
+      <div class="segmented-control">
+        <button 
+          *ngFor="let b of buildings" 
+          (click)="selectBuilding(b)"
+          [class.active]="selectedBuilding === b"
+        >
+          {{ b }}
+        </button>
+      </div>
+    </div>
 
-  <div *ngIf="selectedRoom" class="side-panel">
-    <h3>{{ selectedRoom.name }}</h3>
-    <p>Capacité: {{ selectedRoom.capacity }}</p>
-    <ul>
-      <li *ngFor="let eq of selectedRoom.equipments">
-        {{ eq.type }} - {{ eq.socketNumber }}
-      </li>
-    </ul>
-    <button (click)="addReservation(selectedRoom)">Ajouter un créneau</button>
+    <!-- Floor Selector -->
+    <div class="menu-section">
+      <div class="section-title">Étage</div>
+      <div class="floor-selector">
+        <button 
+          *ngFor="let f of availableFloors" 
+          (click)="selectFloor(f)"
+          [class.active]="selectedFloor === f"
+        >
+          {{ f === 0 ? 'RDC' : 'Étage ' + f }}
+        </button>
+        <div *ngIf="availableFloors.length === 0" style="font-size: 12px; color: #94a3b8; padding: 10px;">
+          Aucun étage défini
+        </div>
+      </div>
+    </div>
+    
+    <div class="menu-section">
+      <div class="section-title">Affichage</div>
+      <button 
+        class="menu-item" 
+        [class.active]="showResearchers"
+        (click)="toggleLayer('researchers')">
+        <span class="icon">🎓</span> Ens.-Chercheurs
+      </button>
+      <button 
+        class="menu-item" 
+        [class.active]="showEquipment"
+        (click)="toggleLayer('equipment')">
+        <span class="icon">📦</span> Matériel
+      </button>
+      <button 
+        class="menu-item" 
+        [class.active]="showSockets"
+        (click)="toggleLayer('sockets')">
+        <span class="icon">🔌</span> Prises
+      </button>
+    </div>
+
+    <div class="menu-footer">
+      <small>Bâtiment {{ selectedBuilding }} - {{ selectedFloor === 0 ? 'RDC' : 'Étage ' + selectedFloor }}</small>
+    </div>
+  </nav>
+
+  <!-- Central Map Viewport -->
+  <div class="map-viewport">
+    <svg viewBox="0 0 1000 600" (click)="onMapClick($event)">
+      <g
+        *ngFor="let room of filteredRooms"
+        [attr.id]="room.id"
+        (click)="selectRoom(room); $event.stopPropagation()"
+        class="room-group"
+      >
+        <!-- Room Shape -->
+        <rect
+          [attr.x]="room.start_x"
+          [attr.y]="room.start_y"
+          [attr.width]="room.x"
+          [attr.height]="room.y"
+          [class.selected]="selectedRoom?.id === room.id"
+          class="room-rect"
+        />
+
+        <!-- Room Label -->
+        <text
+          [attr.x]="room.start_x + room.x / 2"
+          [attr.y]="room.start_y + room.y / 2"
+          text-anchor="middle"
+          dominant-baseline="central"
+          [class.selected]="selectedRoom?.id === room.id"
+          class="room-label"
+        >
+          {{ room.name }}
+        </text>
+
+        <!-- Overlay: Staff -->
+        <g *ngIf="showResearchers && room.staff.length > 0">
+          <circle 
+            [attr.cx]="room.start_x + 15" 
+            [attr.cy]="room.start_y + 15" 
+            r="12" 
+            fill="#3b82f6" 
+          />
+          <text 
+            [attr.x]="room.start_x + 15" 
+            [attr.y]="room.start_y + 15" 
+            text-anchor="middle" 
+            dominant-baseline="central" 
+            font-size="10" 
+            fill="white"
+            font-weight="bold"
+          >
+            {{ room.staff.length }}
+          </text>
+        </g>
+
+        <!-- Overlay: Equipment Icon -->
+        <text 
+          *ngIf="showEquipment && room.equipments.length > 0"
+          [attr.x]="room.start_x + room.x - 25" 
+          [attr.y]="room.start_y + 20"
+          font-size="16"
+        >
+          📦
+        </text>
+
+        <!-- Overlay: Sockets Icon -->
+        <text 
+          *ngIf="showSockets && room.sockets.length > 0"
+          [attr.x]="room.start_x + room.x - 25" 
+          [attr.y]="room.start_y + room.y - 15"
+          font-size="16"
+        >
+          🔌
+        </text>
+      </g>
+    </svg>
   </div>
+
+  <!-- Right Sidebar (Details) -->
+  <aside class="side-panel" *ngIf="selectedRoom; else noSelection">
+    <header>
+      <span class="badge">{{ selectedRoom.room_type?.label || 'Local' }}</span>
+      <h2>{{ selectedRoom.name }}</h2>
+    </header>
+
+    <section class="info-card">
+      <div class="section-title">Localisation</div>
+      <div class="item-row">
+        <div class="icon-box">📍</div>
+        <div>Bâtiment <strong>{{ selectedBuilding }}</strong>, {{ selectedFloor === 0 ? 'RDC' : 'Étage ' + selectedFloor }}</div>
+      </div>
+    </section>
+
+    <section class="info-card">
+      <div class="section-title">Capacité & Sécurité</div>
+      <div class="item-row">
+        <div class="icon-box">👥</div>
+        <div>
+          <strong>{{ selectedRoom.max_capacity }}</strong> personnes max
+        </div>
+      </div>
+      <div class="item-row">
+        <div class="icon-box">🚪</div>
+        <div>
+          <strong>{{ selectedRoom.doors }}</strong> accès directs
+        </div>
+      </div>
+    </section>
+
+    <section *ngIf="selectedRoom.staff.length > 0">
+      <div class="section-title">Enseignant-Chercheur affecté ({{ selectedRoom.staff.length }})</div>
+      <ul class="item-list">
+        <li *ngFor="let person of selectedRoom.staff" class="item-row">
+          <div class="icon-box">🎓</div>
+          {{ person.fullName }}
+        </li>
+      </ul>
+    </section>
+
+    <section *ngIf="selectedRoom.equipments.length > 0">
+      <div class="section-title">Matériels</div>
+      <ul class="item-list">
+        <li *ngFor="let eq of selectedRoom.equipments" class="item-row">
+          <div class="icon-box">📦</div>
+          <div>
+            <div>{{ eq.name }}</div>
+            <small style="color: #94a3b8" *ngIf="eq.serial_number">S/N: {{ eq.serial_number }}</small>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <section *ngIf="selectedRoom.sockets.length > 0">
+      <div class="section-title">Connectique</div>
+      <ul class="item-list">
+        <li *ngFor="let socket of selectedRoom.sockets" class="item-row">
+          <div class="icon-box">🔌</div>
+          {{ socket.identifier }} ({{ socket.socket_type?.label || 'Prise' }})
+        </li>
+      </ul>
+    </section>
+
+    <button class="btn-primary" (click)="addReservation(selectedRoom)">
+      Gérer les affectations
+    </button>
+  </aside>
+
+  <ng-template #noSelection>
+    <aside class="side-panel">
+      <div class="empty-state">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+          <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
+        <h3>Sélectionnez un local</h3>
+        <p>Utilisez le menu à gauche pour changer de bâtiment ou d'étage.</p>
+      </div>
+    </aside>
+  </ng-template>
 </div>

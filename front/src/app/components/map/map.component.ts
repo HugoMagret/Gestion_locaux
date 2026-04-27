@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Room } from '../../models/room.model';
 import { RoomService } from '../../services/room.service';
+import { FloorService } from '../../services/floor.service';
 
 @Component({
   selector: 'app-map',
@@ -11,24 +12,72 @@ import { RoomService } from '../../services/room.service';
   styleUrls: ['./map.component.css'],
 })
 export class MapComponent implements OnInit {
-  rooms: Room[] = [];
+  allRooms: Room[] = [];
+  filteredRooms: Room[] = [];
   selectedRoom: Room | null = null;
 
-  constructor(private roomService: RoomService) {}
+  // Navigation state
+  selectedBuilding = 'A';
+  selectedFloor = 0;
+
+  // Filters / Layers state
+  showResearchers = false;
+  showEquipment = false;
+  showSockets = false;
+
+  buildings: string[] = ['A', 'B'];
+  availableFloors: number[] = [];
+
+  constructor(
+    private roomService: RoomService,
+    private floorService: FloorService
+  ) {}
 
   ngOnInit(): void {
     this.loadRooms();
+    this.loadFloors();
   }
 
   loadRooms(): void {
     this.roomService.getRooms().subscribe({
       next: (data) => {
-        this.rooms = data;
-      },
-      error: (error) => {
-        console.error('Error loading rooms:', error);
+        this.allRooms = data;
+        this.applyFilters();
       },
     });
+  }
+
+  loadFloors(): void {
+    this.floorService.getFloors().subscribe(floors => {
+      // Get unique levels for the current building
+      this.availableFloors = [...new Set(
+        floors
+          .filter(f => f.building === this.selectedBuilding)
+          .map(f => f.level)
+      )].sort((a, b) => a - b);
+      
+      // If selected floor is no longer available, pick first available
+      if (!this.availableFloors.includes(this.selectedFloor) && this.availableFloors.length > 0) {
+        this.selectedFloor = this.availableFloors[0];
+      }
+      this.applyFilters();
+    });
+  }
+
+  applyFilters(): void {
+    this.filteredRooms = this.allRooms.filter(
+      (r) => r.building === this.selectedBuilding && r.floor === this.selectedFloor
+    );
+  }
+
+  selectBuilding(building: string): void {
+    this.selectedBuilding = building;
+    this.loadFloors(); // Refresh available floors for this building
+  }
+
+  selectFloor(floor: number): void {
+    this.selectedFloor = floor;
+    this.applyFilters();
   }
 
   selectRoom(room: Room): void {
@@ -39,8 +88,13 @@ export class MapComponent implements OnInit {
     this.selectedRoom = null;
   }
 
+  toggleLayer(layer: 'researchers' | 'equipment' | 'sockets'): void {
+    if (layer === 'researchers') this.showResearchers = !this.showResearchers;
+    if (layer === 'equipment') this.showEquipment = !this.showEquipment;
+    if (layer === 'sockets') this.showSockets = !this.showSockets;
+  }
+
   addReservation(room: Room): void {
-    console.log('Adding reservation for room:', room.name);
-    // TODO: Implement reservation logic
+    console.log('Managing room:', room.name);
   }
 }

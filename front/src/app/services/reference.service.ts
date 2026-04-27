@@ -1,0 +1,34 @@
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, map, of } from 'rxjs';
+import { RoomType } from '../models/room-type.model';
+import { EquipmentType } from '../models/equipment-type.model';
+import { SocketType } from '../models/socket-type.model';
+import { API_URL } from '../api.config';
+
+@Injectable({ providedIn: 'root' })
+export class ReferenceService {
+  constructor(private http: HttpClient) {}
+
+  getRoomTypes(): Observable<RoomType[]> {
+    return this.http.get<any[]>(`${API_URL}/types/room`).pipe(
+      map(types => types.map(t => new RoomType(t)))
+    );
+  }
+
+  getEquipmentTypes(): Observable<EquipmentType[]> {
+    return this.http.get<any[]>(`${API_URL}/types/equipment`).pipe(
+      map(types => types.map(t => new EquipmentType(t)))
+    );
+  }
+
+  getSocketTypes(): Observable<SocketType[]> {
+    // Note: The current backend doesn't have a /api/types/socket endpoint.
+    // Returning a default mock for now or you can add it to the backend.
+    return of([
+      new SocketType({ id: 'st1', label: 'Réseau (RJ45)' }),
+      new SocketType({ id: 'st2', label: 'Prise Électrique' }),
+    ]);
+  }
+}
+
