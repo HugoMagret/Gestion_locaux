@@ -25,10 +25,10 @@
 
   <div *ngIf="selectedRoom" class="side-panel">
     <h3>{{ selectedRoom.name }}</h3>
-    <p>Capacité: {{ selectedRoom.capacity }}</p>
+    <p>Capacité: {{ selectedRoom.max_capacity }}</p>
     <ul>
       <li *ngFor="let eq of selectedRoom.equipments">
-        {{ eq.type }} - {{ eq.socketNumber }}
+        {{ eq.name }} <span *ngIf="eq.serial_number">({{ eq.serial_number }})</span>
       </li>
     </ul>
     <button (click)="addReservation(selectedRoom)">Ajouter un créneau</button>
