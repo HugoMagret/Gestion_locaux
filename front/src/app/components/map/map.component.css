@@ -1,0 +1,93 @@
+.map-container {
+  display: flex;
+  gap: 20px;
+  height: 100vh;
+  background-color: #f5f5f5;
+}
+
+svg {
+  flex: 1;
+  background-color: white;
+  border: 1px solid #ddd;
+  cursor: pointer;
+}
+
+.room-group {
+  cursor: pointer;
+}
+
+.room-rect {
+  fill: #e8f4f8;
+  stroke: #333;
+  stroke-width: 2;
+  transition: fill 0.2s ease;
+}
+
+.room-rect:hover {
+  fill: #b3d9ff;
+}
+
+.room-rect.compliant {
+  fill: #d4f1d4;
+}
+
+.room-group text {
+  font-family: Arial, sans-serif;
+  font-size: 12px;
+  pointer-events: none;
+}
+
+.side-panel {
+  width: 300px;
+  background-color: white;
+  border-left: 1px solid #ddd;
+  padding: 20px;
+  overflow-y: auto;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.side-panel h3 {
+  margin-top: 0;
+  color: #333;
+  border-bottom: 2px solid #007bff;
+  padding-bottom: 10px;
+}
+
+.side-panel p {
+  margin: 10px 0;
+  color: #666;
+}
+
+.side-panel ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 15px 0;
+}
+
+.side-panel li {
+  padding: 8px;
+  background-color: #f9f9f9;
+  margin: 5px 0;
+  border-radius: 4px;
+  border-left: 3px solid #007bff;
+}
+
+.side-panel button {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.side-panel button:hover {
+  background-color: #0056b3;
+}
+
+.side-panel button:active {
+  background-color: #004085;
+}

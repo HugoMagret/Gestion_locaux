@@ -1,0 +1,36 @@
+<div class="map-container">
+  <svg viewBox="0 0 1000 800" (click)="onMapClick($event)">
+    <g
+      *ngFor="let room of rooms"
+      [attr.id]="room.id"
+      (click)="selectRoom(room); $event.stopPropagation()"
+      class="room-group"
+    >
+      <rect
+        [attr.x]="room.coordinates.x"
+        [attr.y]="room.coordinates.y"
+        [attr.width]="room.coordinates.width"
+        [attr.height]="room.coordinates.height"
+        [class.compliant]="room.isFireSafetyCompliant()"
+        class="room-rect"
+      />
+      <text
+        [attr.x]="room.coordinates.x + 5"
+        [attr.y]="room.coordinates.y + 20"
+      >
+        {{ room.name }}
+      </text>
+    </g>
+  </svg>
+
+  <div *ngIf="selectedRoom" class="side-panel">
+    <h3>{{ selectedRoom.name }}</h3>
+    <p>Capacité: {{ selectedRoom.capacity }}</p>
+    <ul>
+      <li *ngFor="let eq of selectedRoom.equipments">
+        {{ eq.type }} - {{ eq.socketNumber }}
+      </li>
+    </ul>
+    <button (click)="addReservation(selectedRoom)">Ajouter un créneau</button>
+  </div>
+</div>
