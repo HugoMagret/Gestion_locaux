@@ -2,6 +2,7 @@
   <div class="nav-brand">LocauxAdmin</div>
   <div class="nav-links">
     <button [class.active]="view === 'map'" (click)="view = 'map'">Plan 2D</button>
+    <button [class.active]="view === 'rooms'" (click)="view = 'rooms'">Liste Salles</button>
     <button [class.active]="view === 'floors'" (click)="view = 'floors'">Gestion Étages</button>
     <button [class.active]="view === 'staff'" (click)="view = 'staff'">Personnel</button>
     <button [class.active]="view === 'types'" (click)="view = 'types'">Types de Salles</button>
@@ -11,6 +12,7 @@
 
 <main>
   <app-map *ngIf="view === 'map'"></app-map>
+  <app-room-list *ngIf="view === 'rooms'"></app-room-list>
   <app-floor-manager *ngIf="view === 'floors'"></app-floor-manager>
   <app-staff-list *ngIf="view === 'staff'"></app-staff-list>
   <app-room-type-manager *ngIf="view === 'types'"></app-room-type-manager>
