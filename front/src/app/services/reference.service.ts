@@ -16,10 +16,30 @@ export class ReferenceService {
     );
   }
 
+  addRoomType(label: string): Observable<RoomType> {
+    return this.http.post<any>(`${API_URL}/types/room`, { label }).pipe(
+      map(t => new RoomType(t))
+    );
+  }
+
+  deleteRoomType(id: string): Observable<void> {
+    return this.http.delete<void>(`${API_URL}/types/room/${id}`);
+  }
+
   getEquipmentTypes(): Observable<EquipmentType[]> {
     return this.http.get<any[]>(`${API_URL}/types/equipment`).pipe(
       map(types => types.map(t => new EquipmentType(t)))
     );
+  }
+
+  addEquipmentType(label: string): Observable<EquipmentType> {
+    return this.http.post<any>(`${API_URL}/types/equipment`, { label }).pipe(
+      map(t => new EquipmentType(t))
+    );
+  }
+
+  deleteEquipmentType(id: string): Observable<void> {
+    return this.http.delete<void>(`${API_URL}/types/equipment/${id}`);
   }
 
   getSocketTypes(): Observable<SocketType[]> {

@@ -1,0 +1,42 @@
+<div class="manager-container">
+  <header class="manager-header">
+    <h1>Importation d'Étages</h1>
+    <p>Déposez un fichier JSON pour importer un nouvel étage et ses salles</p>
+  </header>
+
+  <div 
+    class="upload-zone card" 
+    [class.dragging]="isDragging"
+    (dragover)="onDragOver($event)"
+    (dragleave)="onDragLeave()"
+    (drop)="onDrop($event)"
+  >
+    <div class="upload-content">
+      <span class="upload-icon">📁</span>
+      <h3>Glissez-déposez votre fichier ici</h3>
+      <p>ou</p>
+      <input type="file" #fileInput (change)="onFileSelected($event)" accept=".json" hidden>
+      <button class="btn-primary" (click)="fileInput.click()">Parcourir les fichiers</button>
+    </div>
+  </div>
+
+  <div class="format-help card">
+    <h4>Format attendu (.json)</h4>
+    <pre>{{ jsonExample }}</pre>
+  </div>
+
+  <div class="floor-list-section">
+    <div class="section-title">Étages importés</div>
+    <div class="floor-grid">
+      <div *ngFor="let floor of floors" class="floor-card card">
+        <div class="floor-info">
+          <span class="building-badge">Bâtiment {{ floor.building }}</span>
+          <span class="level-text">{{ floor.level === 0 ? 'RDC' : 'Étage ' + floor.level }}</span>
+        </div>
+        <button class="btn-delete" (click)="deleteFloor(floor.id)">
+          Supprimer l'étage
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -28,7 +28,7 @@ services:
       - /app/node_modules
     environment:
       DATABASE_URL: postgres://${DB_USER:-user}:${DB_PASSWORD:-password}@db:5432/${DB_NAME:-gestion_locaux}
-      MOCK_MODE: ${MOCK_MODE:-false}
+      MOCK_MODE: ${MOCK_MODE:-true}
 
   # Frontend Angular
   frontend:

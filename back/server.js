@@ -41,7 +41,7 @@ if (IS_MOCK_MODE) {
   app.get('/api/types/equipment', (req, res) => res.json([{id: "et-1", label: "Matériel Mock"}]));
   app.get('/api/types/socket', (req, res) => res.json([{id: "st-1", label: "Prise Mock"}]));
 
-  // Routes Mockées (POST/PUT/DELETE) pour ne pas bloquer le Front
+  // Routes Mockées (POST/PUT/DELETE)
   app.post('/api/rooms', (req, res) => res.status(201).json({id: "new-mock-id", ...req.body}));
   app.put('/api/rooms/:id', (req, res) => res.json({id: req.params.id, ...req.body}));
   app.delete('/api/rooms/:id', (req, res) => res.status(204).send());
@@ -50,7 +50,7 @@ if (IS_MOCK_MODE) {
   app.post('/api/rooms/:id/equipment', (req, res) => res.status(201).json({id: "e-new", ...req.body}));
 
 } else {
-  // Routes réelles (Base de données)
+  // Routes réelles (Base de données) - Modulaire
   console.log("-----------------------------------------");
   console.log("🗄️  BACKEND : MODE BASE DE DONNÉES (DB)");
   console.log("-----------------------------------------");
@@ -68,6 +68,7 @@ if (IS_MOCK_MODE) {
   app.use('/api/types', typeRoutes);
 }
 
+// Route de base
 app.get('/', (req, res) => {
   res.json({ message: "API Gestion Locaux opérationnelle", mock_mode: IS_MOCK_MODE });
 });

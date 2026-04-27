@@ -1,0 +1,47 @@
+<div class="manager-container">
+  <header class="manager-header">
+    <h1>Types de Matériels</h1>
+    <p>Gérez les différentes catégories d'équipements et fournitures</p>
+  </header>
+
+  <div class="add-section card">
+    <h3>Ajouter un nouveau type</h3>
+    <div class="form-group">
+      <input 
+        type="text" 
+        [(ngModel)]="newTypeLabel" 
+        placeholder="Ex: Écran, Imprimante, Bureau..."
+        (keyup.enter)="addType()"
+      >
+      <button class="btn-primary" (click)="addType()" [disabled]="!newTypeLabel.trim()">
+        Ajouter
+      </button>
+    </div>
+  </div>
+
+  <div class="list-section card">
+    <div class="table-responsive">
+      <table class="type-table">
+        <thead>
+          <tr>
+            <th>Libellé</th>
+            <th class="actions">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let type of equipmentTypes">
+            <td>{{ type.label }}</td>
+            <td class="actions">
+              <button class="btn-icon" (click)="deleteType(type.id)" title="Supprimer">
+                🗑️
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="equipmentTypes.length === 0">
+            <td colspan="2" class="empty-state">Aucun type de matériel défini</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

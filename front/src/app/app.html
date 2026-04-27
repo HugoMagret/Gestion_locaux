@@ -1,1 +1,18 @@
-<app-map></app-map>
+<nav class="top-nav">
+  <div class="nav-brand">LocauxAdmin</div>
+  <div class="nav-links">
+    <button [class.active]="view === 'map'" (click)="view = 'map'">Plan 2D</button>
+    <button [class.active]="view === 'floors'" (click)="view = 'floors'">Gestion Étages</button>
+    <button [class.active]="view === 'staff'" (click)="view = 'staff'">Personnel</button>
+    <button [class.active]="view === 'types'" (click)="view = 'types'">Types de Salles</button>
+    <button [class.active]="view === 'equipment-types'" (click)="view = 'equipment-types'">Types de Matériels</button>
+  </div>
+</nav>
+
+<main>
+  <app-map *ngIf="view === 'map'"></app-map>
+  <app-floor-manager *ngIf="view === 'floors'"></app-floor-manager>
+  <app-staff-list *ngIf="view === 'staff'"></app-staff-list>
+  <app-room-type-manager *ngIf="view === 'types'"></app-room-type-manager>
+  <app-equipment-type-manager *ngIf="view === 'equipment-types'"></app-equipment-type-manager>
+</main>
