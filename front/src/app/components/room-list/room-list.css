@@ -1,0 +1,53 @@
+.room-container { padding: 40px; max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px; }
+.room-header h1 { font-size: 32px; font-weight: 800; margin-bottom: 8px; color: #0f172a; }
+.room-header p { color: #64748b; }
+
+.card { background: white; border-radius: 16px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); overflow: hidden; }
+
+/* Filter Bar */
+.filter-card { padding: 24px; }
+.filter-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; }
+.filter-group { display: flex; flex-direction: column; gap: 8px; }
+.filter-group label { font-size: 13px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
+.filter-group input, .filter-group select { 
+  padding: 10px 14px; 
+  border-radius: 10px; 
+  border: 1px solid #e2e8f0; 
+  font-size: 14px; 
+  background: #f8fafc;
+  transition: all 0.2s;
+}
+.filter-group input:focus, .filter-group select:focus { outline: none; border-color: #3b82f6; background: white; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+.filter-actions { margin-top: 16px; display: flex; justify-content: flex-end; }
+.btn-text { background: none; border: none; color: #3b82f6; font-weight: 600; cursor: pointer; font-size: 14px; }
+.btn-text:hover { text-decoration: underline; }
+
+/* Room Grid */
+.room-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
+.room-card { display: flex; flex-direction: column; transition: transform 0.2s; }
+.room-card:hover { transform: translateY(-4px); }
+
+.room-card-header { padding: 20px; border-left: 6px solid #3b82f6; display: flex; justify-content: space-between; align-items: flex-start; }
+.room-main-info h3 { margin: 0; font-size: 18px; font-weight: 700; color: #1e293b; }
+.room-type { font-size: 13px; color: #64748b; }
+.capacity-badge { background: #f1f5f9; padding: 4px 10px; border-radius: 20px; font-size: 13px; font-weight: 600; color: #475569; display: flex; align-items: center; gap: 4px; }
+
+.room-card-body { padding: 0 20px 20px 20px; flex: 1; }
+.location-info { display: flex; gap: 8px; margin-bottom: 20px; }
+.tag { background: #eff6ff; color: #3b82f6; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; }
+
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 16px; background: #f8fafc; border-radius: 12px; }
+.stat-item { display: flex; flex-direction: column; align-items: center; }
+.stat-item .label { font-size: 10px; color: #94a3b8; text-transform: uppercase; font-weight: 700; }
+.stat-item .value { font-size: 16px; font-weight: 700; color: #1e293b; }
+
+.room-card-footer { padding: 16px 20px; border-top: 1px solid #f1f5f9; display: flex; justify-content: flex-end; }
+.btn-outline { background: white; border: 1px solid #e2e8f0; color: #64748b; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+.btn-outline:hover { background: #fee2e2; color: #ef4444; border-color: #fecaca; }
+
+/* Empty State */
+.empty-state { text-align: center; padding: 64px; }
+.empty-icon { font-size: 48px; margin-bottom: 16px; display: block; }
+.empty-state h3 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+.empty-state p { color: #64748b; margin-bottom: 24px; }
+.btn-primary { background: #0f172a; color: white; border: none; padding: 12px 24px; border-radius: 10px; font-weight: 600; cursor: pointer; }

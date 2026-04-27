@@ -6,7 +6,7 @@ const db = require('../config/db');
 router.get('/', async (req, res) => {
   try {
     const result = await db.query(`
-      SELECT s.*, st.label as socket_type_label, r.name as room_name 
+      SELECT s.id, s.identifier, s.socket_type_id, s.room_id, st.label as socket_type_label, r.name as room_name 
       FROM socket s 
       LEFT JOIN socket_type st ON s.socket_type_id = st.id
       LEFT JOIN room r ON s.room_id = r.id

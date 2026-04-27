@@ -5,7 +5,7 @@ const db = require('../config/db');
 // GET all staff
 router.get('/', async (req, res) => {
   try {
-    const result = await db.query('SELECT s.*, r.name as room_name FROM staff s LEFT JOIN room r ON s.room_id = r.id');
+    const result = await db.query('SELECT s.id, s.last_name, s.first_name, s.room_id, r.name as room_name FROM staff s LEFT JOIN room r ON s.room_id = r.id');
     res.json(result.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
