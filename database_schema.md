@@ -11,6 +11,7 @@ erDiagram
     room ||--o{ equipment : "contains"
     room ||--o{ socket : "possesses"
     equipment_type ||--o{ equipment : "defines"
+    socket_type ||--o{ socket : "classifies"
 
     room {
         uuid id PK
@@ -47,8 +48,13 @@ erDiagram
     socket {
         uuid id PK
         string identifier
-        enum type "Network, Phone"
+        uuid socket_type_id FK
         uuid room_id FK
+    }
+
+    socket_type {
+        uuid id PK
+        string label
     }
 ```
 
@@ -89,8 +95,13 @@ Dictionary of equipment types.
 Records fixed connections.
 - **id**: Unique identifier (UUID).
 - **identifier**: Socket name or number (e.g., "ETH-01").
-- **type**: Type of socket (Network or Phone).
+- **socket_type_id**: Foreign key to `socket_type` (UUID).
 - **room_id**: Room where the socket is located (UUID).
+
+### 7. `socket_type`
+Dictionary of socket types.
+- **id**: Unique identifier (UUID).
+- **label**: (e.g., Network, Phone).
 
 ## System Capabilities
 - **Changing room type**: Simply update `room_type_id` in the `room` table.
