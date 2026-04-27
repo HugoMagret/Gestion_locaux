@@ -37,9 +37,26 @@ if (IS_MOCK_MODE) {
   app.get('/api/rooms', (req, res) => res.json(mockRooms));
   app.get('/api/staff', (req, res) => res.json(mockRooms[0].staff));
   app.get('/api/equipment', (req, res) => res.json(mockRooms[0].equipments));
-  app.get('/api/types/room', (req, res) => res.json([{id: "rt-1", label: "Bureau Mock"}]));
-  app.get('/api/types/equipment', (req, res) => res.json([{id: "et-1", label: "Matériel Mock"}]));
-  app.get('/api/types/socket', (req, res) => res.json([{id: "st-1", label: "Prise Mock"}]));
+  app.get('/api/types/room', (req, res) => res.json([
+    {id: "rt-1", label: "Bureau"},
+    {id: "rt-2", label: "Salle de cours"},
+    {id: "rt-3", label: "Amphithéâtre"},
+    {id: "rt-4", label: "Laboratoire"},
+    {id: "rt-5", label: "Réunion"}
+  ]));
+  app.get('/api/types/equipment', (req, res) => res.json([
+    {id: "et-1", label: "Vidéoprojecteur"},
+    {id: "et-2", label: "Ordinateur Fixe"},
+    {id: "et-3", label: "Imprimante 3D"},
+    {id: "et-4", label: "Scanner"},
+    {id: "et-5", label: "Tableau blanc"}
+  ]));
+  app.get('/api/types/socket', (req, res) => res.json([
+    {id: "st-1", label: "Prise Électrique"},
+    {id: "st-2", label: "Réseau (RJ45)"},
+    {id: "st-3", label: "HDMI"},
+    {id: "st-4", label: "Fibre Optique"}
+  ]));
 
   // Routes Mockées (POST/PUT/DELETE)
   app.post('/api/rooms', (req, res) => res.status(201).json({id: "new-mock-id", ...req.body}));

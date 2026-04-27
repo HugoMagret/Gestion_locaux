@@ -57,10 +57,11 @@ Ces routes permettent d'ajouter du contenu directement en connaissant l'ID de la
 - **POST `/api/staff`** : Ajoute un membre.
   - *Body requis* : `{ first_name: string, last_name: string, room_id: uuid|null }`
 
-### 2.3 Types (Dictionnaires)
-Utile pour remplir les menus déroulants (Select) dans les formulaires.
-- **GET `/api/types/room`** : Liste les types de salles (Bureau, Salle de cours...).
-- **GET `/api/types/equipment`** : Liste les types d'équipements (Vidéoprojecteur...).
+### 2.4 Types (Dictionnaires)
+Toutes ces routes supportent **GET** (liste), **POST** (ajout), **PUT** (modif) et **DELETE** (suppr).
+- **`/api/types/room`** : Gestion des types de salles.
+- **`/api/types/equipment`** : Gestion des types d'équipements.
+- **`/api/types/socket`** : Gestion des types de prises.
 
 ---
 
