@@ -1,55 +1,50 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, BehaviorSubject } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Observable, BehaviorSubject, map, tap } from 'rxjs';
 import { Room } from '../models/room.model';
+import { API_URL } from '../api.config';
 
 @Injectable({ providedIn: 'root' })
 export class RoomService {
-  private roomsSubject = new BehaviorSubject<Room[]>([
-    // Bâtiment A - RDC
-    new Room({
-      id: 'A001', name: 'Conférence A', building: 'A', floor: 0, max_capacity: 25, doors: 2,
-      start_x: 50, start_y: 50, x: 250, y: 150,
-      room_type: { label: 'Salle de réunion' },
-      staff: [{ first_name: 'Jean', last_name: 'Dupont' }],
-      equipments: [{ name: 'Projecteur 4K' }],
-      sockets: [{ identifier: 'ETH-01' }]
-    }),
-    new Room({
-      id: 'A002', name: 'Bureau 101', building: 'A', floor: 0, max_capacity: 4, doors: 1,
-      start_x: 320, start_y: 50, x: 120, y: 100,
-      room_type: { label: 'Bureau' },
-      staff: [{ first_name: 'Albert', last_name: 'Einstein' }],
-      equipments: [], sockets: [{ identifier: 'TEL-01' }]
-    }),
-    // Bâtiment A - Etage 1
-    new Room({
-      id: 'A101', name: 'Labo R&D', building: 'A', floor: 1, max_capacity: 15, doors: 1,
-      start_x: 50, start_y: 50, x: 300, y: 200,
-      room_type: { label: 'Laboratoire' },
-      staff: [{ first_name: 'Ada', last_name: 'Lovelace' }],
-      equipments: [{ name: 'Imprimante 3D' }],
-      sockets: []
-    }),
-    new Room({
-      id: 'A102', name: 'Cafétéria', building: 'A', floor: 1, max_capacity: 50, doors: 2,
-      start_x: 370, start_y: 50, x: 200, y: 200,
-      room_type: { label: 'Salle de pause' },
-      staff: [], equipments: [{ name: 'Machine à café' }], sockets: []
-    })
-  ]);
+  private roomsSubject = new BehaviorSubject<Room[]>([]);
+
+  constructor(private http: HttpClient) {
+    this.refreshRooms();
+  }
+
+  refreshRooms(): void {
+    this.http.get<any[]>(`${API_URL}/rooms`).pipe(
+      map(rooms => rooms.map(r => new Room(r)))
+    ).subscribe(rooms => {
+      this.roomsSubject.next(rooms);
+    });
+  }
 
   getRooms(): Observable<Room[]> {
     return this.roomsSubject.asObservable();
   }
 
   addRoom(roomData: any): void {
-    const current = this.roomsSubject.value;
-    const newRoom = new Room(roomData);
-    this.roomsSubject.next([...current, newRoom]);
+    this.http.post<any>(`${API_URL}/rooms`, roomData).pipe(
+      map(r => new Room(r))
+    ).subscribe(newRoom => {
+      const current = this.roomsSubject.value;
+      this.roomsSubject.next([...current, newRoom]);
+    });
+  }
+
+  deleteRoom(id: string): void {
+    this.http.delete(`${API_URL}/rooms/${id}`).subscribe(() => {
+      const current = this.roomsSubject.value;
+      this.roomsSubject.next(current.filter(r => r.id !== id));
+    });
   }
 
   deleteRoomsByFloor(building: string, floor: number): void {
-    const current = this.roomsSubject.value;
-    this.roomsSubject.next(current.filter(r => !(r.building === building && r.floor === floor)));
+    // Note: Backend doesn't have a bulk delete by floor.
+    // For now, we filter locally and you might want to implement it in the back.
+    const roomsToDelete = this.roomsSubject.value.filter(r => r.building === building && r.floor === floor);
+    roomsToDelete.forEach(r => this.deleteRoom(r.id));
   }
 }
+

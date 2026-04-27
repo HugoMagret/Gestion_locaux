@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject, map } from 'rxjs';
 import { RoomService } from './room.service';
 
 export interface Floor {
@@ -10,13 +10,32 @@ export interface Floor {
 
 @Injectable({ providedIn: 'root' })
 export class FloorService {
-  private floorsSubject = new BehaviorSubject<Floor[]>([
-    { id: '1', building: 'A', level: 0 },
-    { id: '2', building: 'A', level: 1 },
-    { id: '3', building: 'B', level: 0 },
-  ]);
+  private floorsSubject = new BehaviorSubject<Floor[]>([]);
 
-  constructor(private roomService: RoomService) {}
+  constructor(private roomService: RoomService) {
+    this.roomService.getRooms().subscribe(rooms => {
+      const uniqueFloors = new Map<string, Floor>();
+      
+      // Always include some defaults if we want, or just derive
+      rooms.forEach(room => {
+        const key = `${room.building}-${room.floor}`;
+        if (!uniqueFloors.has(key)) {
+          uniqueFloors.set(key, {
+            id: key,
+            building: room.building || 'A',
+            level: room.floor
+          });
+        }
+      });
+
+      // If no rooms, we might want to keep the "initial" ones for the UI to work if it's a new DB
+      if (uniqueFloors.size === 0) {
+        uniqueFloors.set('A-0', { id: 'A-0', building: 'A', level: 0 });
+      }
+
+      this.floorsSubject.next(Array.from(uniqueFloors.values()));
+    });
+  }
 
   getFloors(): Observable<Floor[]> {
     return this.floorsSubject.asObservable();
@@ -24,16 +43,18 @@ export class FloorService {
 
   addFloor(floor: Omit<Floor, 'id'>): void {
     const current = this.floorsSubject.value;
-    const newFloor = { ...floor, id: Math.random().toString(36).substr(2, 9) };
-    this.floorsSubject.next([...current, newFloor]);
+    const id = `${floor.building}-${floor.level}`;
+    if (!current.find(f => f.id === id)) {
+      this.floorsSubject.next([...current, { ...floor, id }]);
+    }
   }
 
   deleteFloor(id: string): void {
-    const current = this.floorsSubject.value;
-    const floorToDelete = current.find(f => f.id === id);
+    const floorToDelete = this.floorsSubject.value.find(f => f.id === id);
     if (floorToDelete) {
       this.roomService.deleteRoomsByFloor(floorToDelete.building, floorToDelete.level);
-      this.floorsSubject.next(current.filter(f => f.id !== id));
+      // The floorsSubject will be updated automatically by the roomService subscription
     }
   }
 }
+
