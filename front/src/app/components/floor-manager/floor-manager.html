@@ -30,7 +30,6 @@
     <div class="floor-grid">
       <div *ngFor="let floor of floors" class="floor-card card">
         <div class="floor-info">
-          <span class="building-badge">Bâtiment {{ floor.building }}</span>
           <span class="level-text">{{ floor.level === 0 ? 'RDC' : 'Étage ' + floor.level }}</span>
         </div>
         <button class="btn-delete" (click)="deleteFloor(floor.id)">

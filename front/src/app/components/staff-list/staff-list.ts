@@ -5,7 +5,7 @@ import { StaffService } from '../../services/staff.service';
 import { RoomService } from '../../services/room.service';
 import { Room } from '../../models/room.model';
 import { Staff } from '../../models/staff.model';
-import { combineLatest } from 'rxjs';
+import { Observable, combineLatest, map, BehaviorSubject, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-staff-list',
@@ -15,8 +15,10 @@ import { combineLatest } from 'rxjs';
   styleUrls: ['./staff-list.css']
 })
 export class StaffListComponent implements OnInit {
-  staffWithRooms: any[] = [];
-  rooms: Room[] = [];
+  private refreshStaff$ = new BehaviorSubject<void>(undefined);
+  staffWithRooms$!: Observable<any[]>;
+  rooms$!: Observable<Room[]>;
+  
   newStaff = {
     first_name: '',
     last_name: '',
@@ -30,20 +32,23 @@ export class StaffListComponent implements OnInit {
 
   ngOnInit(): void {
     this.roomService.refreshRooms();
-    this.loadData();
+    this.rooms$ = this.roomService.getRooms();
+    
+    this.staffWithRooms$ = this.refreshStaff$.pipe(
+      switchMap(() => combineLatest({
+        staff: this.staffService.getStaff(),
+        rooms: this.rooms$
+      })),
+      map(({ staff, rooms }) => staff.map(s => ({
+        ...s,
+        room: rooms.find(r => r.id === s.room_id)
+      })))
+    );
   }
 
   loadData(): void {
-    combineLatest({
-      staff: this.staffService.getStaff(),
-      rooms: this.roomService.getRooms()
-    }).subscribe(({ staff, rooms }) => {
-      this.rooms = rooms;
-      this.staffWithRooms = staff.map(s => ({
-        ...s,
-        room: rooms.find(r => r.id === s.room_id)
-      }));
-    });
+    this.roomService.refreshRooms();
+    this.refreshStaff$.next();
   }
 
   addStaff(): void {

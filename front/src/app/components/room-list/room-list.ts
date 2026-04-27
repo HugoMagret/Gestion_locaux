@@ -26,7 +26,6 @@ export class RoomListComponent implements OnInit {
   // Current filters
   filters = {
     name: '',
-    building: '',
     floor: '' as number | string,
     type: ''
   };
@@ -45,7 +44,6 @@ export class RoomListComponent implements OnInit {
     // Subscribe to rooms for real-time updates
     this.roomService.getRooms().subscribe(rooms => {
       this.allRooms = rooms;
-      this.buildings = [...new Set(rooms.map(r => r.building))].sort();
       this.floors = [...new Set(rooms.map(r => r.floor))].sort((a, b) => a - b);
       this.applyFilters();
     });
@@ -54,22 +52,20 @@ export class RoomListComponent implements OnInit {
   applyFilters(): void {
     this.filteredRooms = this.allRooms.filter(room => {
       const matchName = !this.filters.name || room.name.toLowerCase().includes(this.filters.name.toLowerCase());
-      const matchBuilding = !this.filters.building || room.building === this.filters.building;
       const matchFloor = this.filters.floor === '' || room.floor === Number(this.filters.floor);
       const matchType = !this.filters.type || room.room_type_id === this.filters.type;
       
-      return matchName && matchBuilding && matchFloor && matchType;
+      return matchName && matchFloor && matchType;
     });
   }
 
   hasActiveFilters(): boolean {
-    return !!(this.filters.name || this.filters.building || this.filters.floor !== '' || this.filters.type);
+    return !!(this.filters.name || this.filters.floor !== '' || this.filters.type);
   }
 
   resetFilters(): void {
     this.filters = {
       name: '',
-      building: '',
       floor: '',
       type: ''
     };

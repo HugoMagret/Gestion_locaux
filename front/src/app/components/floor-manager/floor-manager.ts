@@ -14,11 +14,10 @@ export class FloorManagerComponent implements OnInit {
   floors: Floor[] = [];
   isDragging = false;
   jsonExample = `{
-  "building": "A",
   "level": 2,
   "rooms": [
-    { "name": "Salle 201", "max_capacity": 20, "start_x": 100, "start_y": 100, "x": 150, "y": 120 },
-    { "name": "Bureau 202", "max_capacity": 4, "start_x": 300, "start_y": 100, "x": 100, "y": 100 }
+    { "name": "Salle 201", "max_capacity": 20, "coordinates": { "x": 100, "y": 100, "width": 150, "height": 120 } },
+    { "name": "Bureau 202", "max_capacity": 4, "coordinates": { "x": 300, "y": 100, "width": 100, "height": 100 } }
   ]
 }`;
 
@@ -29,7 +28,7 @@ export class FloorManagerComponent implements OnInit {
 
   ngOnInit(): void {
     this.floorService.getFloors().subscribe(data => {
-      this.floors = data.sort((a, b) => a.building.localeCompare(b.building) || a.level - b.level);
+      this.floors = data.sort((a, b) => a.level - b.level);
     });
   }
 
@@ -72,37 +71,32 @@ export class FloorManagerComponent implements OnInit {
   }
 
   private importFloor(data: any): void {
-    if (!data.building || data.level === undefined) {
-      alert("Format invalide : 'building' et 'level' sont requis.");
+    if (data.level === undefined) {
+      alert("Format invalide : 'level' est requis.");
       return;
     }
 
-    // Add floor
-    this.floorService.addFloor({
-      building: data.building,
-      level: data.level
-    });
+    // Add floor locally
+    this.floorService.addFloor(data.level);
 
     // Add rooms if present
     if (data.rooms && Array.isArray(data.rooms)) {
       data.rooms.forEach((r: any) => {
         this.roomService.addRoom({
           ...r,
-          building: data.building,
           floor: data.level,
-          id: Math.random().toString(36).substr(2, 9),
-          staff: [],
-          equipments: [],
-          sockets: [],
-          doors: 1
+          doors: r.doors || 1,
+          color: r.color || '#3498db'
         });
       });
     }
 
-    alert(`Étage ${data.level} du bâtiment ${data.building} importé avec succès !`);
+    alert(`Étage ${data.level} importé avec succès !`);
   }
 
   deleteFloor(id: string): void {
-    this.floorService.deleteFloor(id);
+    if (confirm("Supprimer cet étage supprimera toutes ses salles. Continuer ?")) {
+      this.floorService.deleteFloor(id);
+    }
   }
 }

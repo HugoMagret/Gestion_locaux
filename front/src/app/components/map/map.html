@@ -3,19 +3,6 @@
   <nav class="left-sidebar">
     <div class="logo">🏢 LocauxApp</div>
     
-    <!-- Building Selector -->
-    <div class="menu-section">
-      <div class="section-title">Bâtiment</div>
-      <div class="segmented-control">
-        <button 
-          *ngFor="let b of buildings" 
-          (click)="selectBuilding(b)"
-          [class.active]="selectedBuilding === b"
-        >
-          {{ b }}
-        </button>
-      </div>
-    </div>
 
     <!-- Floor Selector -->
     <div class="menu-section">
@@ -57,7 +44,7 @@
     </div>
 
     <div class="menu-footer">
-      <small>Bâtiment {{ selectedBuilding }} - {{ selectedFloor === 0 ? 'RDC' : 'Étage ' + selectedFloor }}</small>
+      <small>{{ selectedFloor === 0 ? 'RDC' : 'Étage ' + selectedFloor }}</small>
     </div>
   </nav>
 
@@ -72,18 +59,18 @@
       >
         <!-- Room Shape -->
         <rect
-          [attr.x]="room.start_x"
-          [attr.y]="room.start_y"
-          [attr.width]="room.x"
-          [attr.height]="room.y"
+          [attr.x]="room.coordinates.x"
+          [attr.y]="room.coordinates.y"
+          [attr.width]="room.coordinates.width"
+          [attr.height]="room.coordinates.height"
           [class.selected]="selectedRoom?.id === room.id"
           class="room-rect"
         />
 
         <!-- Room Label -->
         <text
-          [attr.x]="room.start_x + room.x / 2"
-          [attr.y]="room.start_y + room.y / 2"
+          [attr.x]="room.coordinates.x + room.coordinates.width / 2"
+          [attr.y]="room.coordinates.y + room.coordinates.height / 2"
           text-anchor="middle"
           dominant-baseline="central"
           [class.selected]="selectedRoom?.id === room.id"
@@ -95,14 +82,14 @@
         <!-- Overlay: Staff -->
         <g *ngIf="showResearchers && room.staff.length > 0">
           <circle 
-            [attr.cx]="room.start_x + 15" 
-            [attr.cy]="room.start_y + 15" 
+            [attr.cx]="room.coordinates.x + 15" 
+            [attr.cy]="room.coordinates.y + 15" 
             r="12" 
             fill="#3b82f6" 
           />
           <text 
-            [attr.x]="room.start_x + 15" 
-            [attr.y]="room.start_y + 15" 
+            [attr.x]="room.coordinates.x + 15" 
+            [attr.y]="room.coordinates.y + 15" 
             text-anchor="middle" 
             dominant-baseline="central" 
             font-size="10" 
@@ -116,8 +103,8 @@
         <!-- Overlay: Equipment Icon -->
         <text 
           *ngIf="showEquipment && room.equipments.length > 0"
-          [attr.x]="room.start_x + room.x - 25" 
-          [attr.y]="room.start_y + 20"
+          [attr.x]="room.coordinates.x + room.coordinates.width - 25" 
+          [attr.y]="room.coordinates.y + 20"
           font-size="16"
         >
           📦
@@ -126,8 +113,8 @@
         <!-- Overlay: Sockets Icon -->
         <text 
           *ngIf="showSockets && room.sockets.length > 0"
-          [attr.x]="room.start_x + room.x - 25" 
-          [attr.y]="room.start_y + room.y - 15"
+          [attr.x]="room.coordinates.x + room.coordinates.width - 25" 
+          [attr.y]="room.coordinates.y + room.coordinates.height - 15"
           font-size="16"
         >
           🔌
@@ -139,7 +126,7 @@
   <!-- Right Sidebar (Details) -->
   <aside class="side-panel" *ngIf="selectedRoom; else noSelection">
     <header>
-      <span class="badge">{{ selectedRoom.room_type?.label || 'Local' }}</span>
+      <span class="badge">{{ selectedRoom.room_type_label || 'Local' }}</span>
       <h2>{{ selectedRoom.name }}</h2>
     </header>
 
@@ -147,7 +134,7 @@
       <div class="section-title">Localisation</div>
       <div class="item-row">
         <div class="icon-box">📍</div>
-        <div>Bâtiment <strong>{{ selectedBuilding }}</strong>, {{ selectedFloor === 0 ? 'RDC' : 'Étage ' + selectedFloor }}</div>
+        <div>{{ selectedFloor === 0 ? 'RDC' : 'Étage ' + selectedFloor }}</div>
       </div>
     </section>
 
@@ -195,7 +182,7 @@
       <ul class="item-list">
         <li *ngFor="let socket of selectedRoom.sockets" class="item-row">
           <div class="icon-box">🔌</div>
-          {{ socket.identifier }} ({{ socket.socket_type?.label || 'Prise' }})
+          {{ socket.identifier }} ({{ socket.socket_type_label || 'Prise' }})
         </li>
       </ul>
     </section>

@@ -16,7 +16,7 @@
       <input type="text" [(ngModel)]="newStaff.last_name" placeholder="Nom">
       <select [(ngModel)]="newStaff.room_id">
         <option value="">Sélectionner une salle</option>
-        <option *ngFor="let room of rooms" [value]="room.id">{{ room.name }} ({{ room.building }})</option>
+        <option *ngFor="let room of (rooms$ | async)" [value]="room.id">{{ room.name }}</option>
       </select>
       <button class="btn-primary" (click)="addStaff()" [disabled]="!newStaff.first_name || !newStaff.last_name">
         Ajouter
@@ -31,13 +31,12 @@
           <tr>
             <th>Nom Complet</th>
             <th>Bureau / Salle</th>
-            <th>Bâtiment</th>
             <th>Étage</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let member of staffWithRooms">
+          <tr *ngFor="let member of (staffWithRooms$ | async)">
             <td>
               <div class="staff-info">
                 <span class="avatar">{{ member.first_name[0] }}{{ member.last_name[0] }}</span>
@@ -50,7 +49,6 @@
               </span>
               <span class="no-room" *ngIf="!member.room">Non assigné</span>
             </td>
-            <td>{{ member.room?.building || '-' }}</td>
             <td>{{ member.room ? (member.room.floor === 0 ? 'RDC' : 'Étage ' + member.room.floor) : '-' }}</td>
             <td>
               <button class="btn-icon" (click)="deleteStaff(member.id)" title="Supprimer">
@@ -58,7 +56,7 @@
               </button>
             </td>
           </tr>
-          <tr *ngIf="staffWithRooms.length === 0">
+          <tr *ngIf="((staffWithRooms$ | async) || []).length === 0">
             <td colspan="5" class="empty-state">Aucun membre du personnel trouvé</td>
           </tr>
         </tbody>

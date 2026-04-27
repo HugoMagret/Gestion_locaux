@@ -12,14 +12,6 @@
         <label>Rechercher</label>
         <input type="text" [(ngModel)]="filters.name" (input)="applyFilters()" placeholder="Nom de la salle...">
       </div>
-      
-      <div class="filter-group">
-        <label>Bâtiment</label>
-        <select [(ngModel)]="filters.building" (change)="applyFilters()">
-          <option value="">Tous</option>
-          <option *ngFor="let b of buildings" [value]="b">{{ b }}</option>
-        </select>
-      </div>
 
       <div class="filter-group">
         <label>Étage</label>
@@ -56,7 +48,6 @@
       
       <div class="room-card-body">
         <div class="location-info">
-          <span class="tag">Bâtiment {{ room.building }}</span>
           <span class="tag">{{ room.floor === 0 ? 'RDC' : 'Étage ' + room.floor }}</span>
         </div>
         
