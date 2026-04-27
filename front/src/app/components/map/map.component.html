@@ -67,20 +67,20 @@
         (click)="selectRoom(room); $event.stopPropagation()"
         class="room-group"
       >
-        <!-- Room Shape -->
+        <!-- Room Shape using NEW coordinate names -->
         <rect
-          [attr.x]="room.coordinates.x"
-          [attr.y]="room.coordinates.y"
-          [attr.width]="room.coordinates.width"
-          [attr.height]="room.coordinates.height"
+          [attr.x]="room.start_x"
+          [attr.y]="room.start_y"
+          [attr.width]="room.x"
+          [attr.height]="room.y"
           [class.selected]="selectedRoom?.id === room.id"
           class="room-rect"
         />
 
         <!-- Room Label -->
         <text
-          [attr.x]="room.coordinates.x + room.coordinates.width / 2"
-          [attr.y]="room.coordinates.y + room.coordinates.height / 2"
+          [attr.x]="room.start_x + room.x / 2"
+          [attr.y]="room.start_y + room.y / 2"
           text-anchor="middle"
           dominant-baseline="central"
           [class.selected]="selectedRoom?.id === room.id"
@@ -92,14 +92,14 @@
         <!-- Overlay: Staff -->
         <g *ngIf="showStaff && room.staff.length > 0">
           <circle 
-            [attr.cx]="room.coordinates.x + 15" 
-            [attr.cy]="room.coordinates.y + 15" 
+            [attr.cx]="room.start_x + 15" 
+            [attr.cy]="room.start_y + 15" 
             r="12" 
             fill="#3b82f6" 
           />
           <text 
-            [attr.x]="room.coordinates.x + 15" 
-            [attr.y]="room.coordinates.y + 15" 
+            [attr.x]="room.start_x + 15" 
+            [attr.y]="room.start_y + 15" 
             text-anchor="middle" 
             dominant-baseline="central" 
             font-size="10" 
@@ -113,8 +113,8 @@
         <!-- Overlay: Equipment Icon -->
         <text 
           *ngIf="showEquipment && room.equipments.length > 0"
-          [attr.x]="room.coordinates.x + room.coordinates.width - 25" 
-          [attr.y]="room.coordinates.y + 20"
+          [attr.x]="room.start_x + room.x - 25" 
+          [attr.y]="room.start_y + 20"
           font-size="16"
         >
           📦
@@ -123,8 +123,8 @@
         <!-- Overlay: Sockets Icon -->
         <text 
           *ngIf="showSockets && room.sockets.length > 0"
-          [attr.x]="room.coordinates.x + room.coordinates.width - 25" 
-          [attr.y]="room.coordinates.y + room.coordinates.height - 15"
+          [attr.x]="room.start_x + room.x - 25" 
+          [attr.y]="room.start_y + room.y - 15"
           font-size="16"
         >
           🔌

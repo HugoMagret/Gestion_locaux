@@ -15,9 +15,14 @@ export class Room {
   building: string;
   floor: number;
   
+  // New Coordinate System
+  start_x: number;
+  start_y: number;
+  x: number; // Represents Width
+  y: number; // Represents Height
+
   // UI related fields
   doors: number;
-  coordinates: { x: number; y: number; width: number; height: number };
 
   constructor(data: any) {
     this.id = data.id;
@@ -27,6 +32,19 @@ export class Room {
     this.building = data.building || 'A';
     this.floor = data.floor !== undefined ? data.floor : 0;
     
+    // Mapping coordinate names
+    if (data.coordinates) {
+      this.start_x = data.coordinates.x || data.coordinates.start_x || 0;
+      this.start_y = data.coordinates.y || data.coordinates.start_y || 0;
+      this.x = data.coordinates.width || data.coordinates.x || 100;
+      this.y = data.coordinates.height || data.coordinates.y || 100;
+    } else {
+      this.start_x = data.start_x || 0;
+      this.start_y = data.start_y || 0;
+      this.x = data.x || 100;
+      this.y = data.y || 100;
+    }
+
     if (data.room_type) {
       this.room_type = new RoomType(data.room_type);
     }
@@ -36,7 +54,6 @@ export class Room {
     this.sockets = (data.sockets || []).map((s: any) => new Socket(s));
     
     this.doors = data.doors || 1;
-    this.coordinates = data.coordinates;
   }
 
   isFireSafetyCompliant(): boolean {
