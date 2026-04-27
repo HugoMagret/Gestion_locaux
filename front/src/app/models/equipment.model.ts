@@ -1,11 +1,21 @@
-export class Equipment {
-  type: 'VIDEO_PROJ' | 'TABLEAU' | 'PRISE_RESEAU';
-  label: string;
-  socketNumber?: string;
+import { EquipmentType } from './equipment-type.model';
 
-  constructor(type: 'VIDEO_PROJ' | 'TABLEAU' | 'PRISE_RESEAU', label: string, socket?: string) {
-    this.type = type;
-    this.label = label;
-    this.socketNumber = socket;
+export class Equipment {
+  id: string;
+  name: string;
+  serial_number?: string;
+  equipment_type_id: string;
+  equipment_type?: EquipmentType;
+  room_id: string;
+
+  constructor(data: any) {
+    this.id = data.id;
+    this.name = data.name;
+    this.serial_number = data.serial_number;
+    this.equipment_type_id = data.equipment_type_id;
+    this.room_id = data.room_id;
+    if (data.equipment_type) {
+      this.equipment_type = new EquipmentType(data.equipment_type);
+    }
   }
 }
