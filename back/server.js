@@ -75,11 +75,24 @@ app.delete('/api/rooms/:id', async (req, res) => {
   }
 });
 
+app.put('/api/rooms/:id', async (req, res) => {
+  const { name, max_capacity, room_type_id, doors, coordinates, floor, color } = req.body;
+  try {
+    const result = await pool.query(
+      'UPDATE room SET name = $1, max_capacity = $2, room_type_id = $3, doors = $4, coordinates = $5, floor = $6, color = $7 WHERE id = $8 RETURNING *',
+      [name, max_capacity, room_type_id, doors, coordinates, floor || 0, color || '#3498db', req.params.id]
+    );
+    res.json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // --- ROUTES POUR LE PERSONNEL (STAFF) ---
 
 app.get('/api/staff', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM staff');
+    const result = await pool.query('SELECT * FROM staff ORDER BY last_name, first_name');
     res.json(result.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -99,12 +112,69 @@ app.post('/api/staff', async (req, res) => {
   }
 });
 
+app.put('/api/staff/:id', async (req, res) => {
+  const { first_name, last_name, room_id } = req.body;
+  try {
+    const result = await pool.query(
+      'UPDATE staff SET first_name = $1, last_name = $2, room_id = $3 WHERE id = $4 RETURNING *',
+      [first_name, last_name, room_id, req.params.id]
+    );
+    res.json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete('/api/staff/:id', async (req, res) => {
+  try {
+    await pool.query('DELETE FROM staff WHERE id = $1', [req.params.id]);
+    res.status(204).send();
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // --- ROUTES POUR L'ÉQUIPEMENT ---
 
 app.get('/api/equipment', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM equipment');
+    const result = await pool.query('SELECT * FROM equipment ORDER BY name');
     res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/equipment', async (req, res) => {
+  const { name, serial_number, equipment_type_id, room_id } = req.body;
+  try {
+    const result = await pool.query(
+      'INSERT INTO equipment (name, serial_number, equipment_type_id, room_id) VALUES ($1, $2, $3, $4) RETURNING *',
+      [name, serial_number, equipment_type_id, room_id]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.put('/api/equipment/:id', async (req, res) => {
+  const { name, serial_number, equipment_type_id, room_id } = req.body;
+  try {
+    const result = await pool.query(
+      'UPDATE equipment SET name = $1, serial_number = $2, equipment_type_id = $3, room_id = $4 WHERE id = $5 RETURNING *',
+      [name, serial_number, equipment_type_id, room_id, req.params.id]
+    );
+    res.json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete('/api/equipment/:id', async (req, res) => {
+  try {
+    await pool.query('DELETE FROM equipment WHERE id = $1', [req.params.id]);
+    res.status(204).send();
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
