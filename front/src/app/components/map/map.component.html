@@ -22,12 +22,15 @@
       <div class="section-title">Étage</div>
       <div class="floor-selector">
         <button 
-          *ngFor="let f of floors" 
+          *ngFor="let f of availableFloors" 
           (click)="selectFloor(f)"
           [class.active]="selectedFloor === f"
         >
           {{ f === 0 ? 'RDC' : 'Étage ' + f }}
         </button>
+        <div *ngIf="availableFloors.length === 0" style="font-size: 12px; color: #94a3b8; padding: 10px;">
+          Aucun étage défini
+        </div>
       </div>
     </div>
     
@@ -35,9 +38,9 @@
       <div class="section-title">Affichage</div>
       <button 
         class="menu-item" 
-        [class.active]="showStaff"
-        (click)="toggleLayer('staff')">
-        <span class="icon">👤</span> Personnel
+        [class.active]="showResearchers"
+        (click)="toggleLayer('researchers')">
+        <span class="icon">🎓</span> Ens.-Chercheurs
       </button>
       <button 
         class="menu-item" 
@@ -67,7 +70,7 @@
         (click)="selectRoom(room); $event.stopPropagation()"
         class="room-group"
       >
-        <!-- Room Shape using NEW coordinate names -->
+        <!-- Room Shape -->
         <rect
           [attr.x]="room.start_x"
           [attr.y]="room.start_y"
@@ -90,7 +93,7 @@
         </text>
 
         <!-- Overlay: Staff -->
-        <g *ngIf="showStaff && room.staff.length > 0">
+        <g *ngIf="showResearchers && room.staff.length > 0">
           <circle 
             [attr.cx]="room.start_x + 15" 
             [attr.cy]="room.start_y + 15" 
@@ -144,7 +147,7 @@
       <div class="section-title">Localisation</div>
       <div class="item-row">
         <div class="icon-box">📍</div>
-        <div>Bâtiment <strong>{{ selectedRoom.building }}</strong>, {{ selectedRoom.floor === 0 ? 'RDC' : 'Étage ' + selectedRoom.floor }}</div>
+        <div>Bâtiment <strong>{{ selectedBuilding }}</strong>, {{ selectedFloor === 0 ? 'RDC' : 'Étage ' + selectedFloor }}</div>
       </div>
     </section>
 
@@ -165,10 +168,10 @@
     </section>
 
     <section *ngIf="selectedRoom.staff.length > 0">
-      <div class="section-title">Personnel présent ({{ selectedRoom.staff.length }})</div>
+      <div class="section-title">Enseignant-Chercheur affecté ({{ selectedRoom.staff.length }})</div>
       <ul class="item-list">
         <li *ngFor="let person of selectedRoom.staff" class="item-row">
-          <div class="icon-box">👤</div>
+          <div class="icon-box">🎓</div>
           {{ person.fullName }}
         </li>
       </ul>

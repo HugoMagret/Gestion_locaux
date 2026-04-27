@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Room } from '../../models/room.model';
 import { RoomService } from '../../services/room.service';
+import { FloorService } from '../../services/floor.service';
 
 @Component({
   selector: 'app-map',
@@ -20,17 +21,21 @@ export class MapComponent implements OnInit {
   selectedFloor = 0;
 
   // Filters / Layers state
-  showSockets = false;
+  showResearchers = false;
   showEquipment = false;
-  showStaff = false;
+  showSockets = false;
 
-  buildings = ['A', 'B'];
-  floors = [0, 1];
+  buildings: string[] = ['A', 'B'];
+  availableFloors: number[] = [];
 
-  constructor(private roomService: RoomService) {}
+  constructor(
+    private roomService: RoomService,
+    private floorService: FloorService
+  ) {}
 
   ngOnInit(): void {
     this.loadRooms();
+    this.loadFloors();
   }
 
   loadRooms(): void {
@@ -39,9 +44,23 @@ export class MapComponent implements OnInit {
         this.allRooms = data;
         this.applyFilters();
       },
-      error: (error) => {
-        console.error('Error loading rooms:', error);
-      },
+    });
+  }
+
+  loadFloors(): void {
+    this.floorService.getFloors().subscribe(floors => {
+      // Get unique levels for the current building
+      this.availableFloors = [...new Set(
+        floors
+          .filter(f => f.building === this.selectedBuilding)
+          .map(f => f.level)
+      )].sort((a, b) => a - b);
+      
+      // If selected floor is no longer available, pick first available
+      if (!this.availableFloors.includes(this.selectedFloor) && this.availableFloors.length > 0) {
+        this.selectedFloor = this.availableFloors[0];
+      }
+      this.applyFilters();
     });
   }
 
@@ -49,15 +68,11 @@ export class MapComponent implements OnInit {
     this.filteredRooms = this.allRooms.filter(
       (r) => r.building === this.selectedBuilding && r.floor === this.selectedFloor
     );
-    // Reset selected room if it's not in the new view
-    if (this.selectedRoom && (this.selectedRoom.building !== this.selectedBuilding || this.selectedRoom.floor !== this.selectedFloor)) {
-      this.selectedRoom = null;
-    }
   }
 
   selectBuilding(building: string): void {
     this.selectedBuilding = building;
-    this.applyFilters();
+    this.loadFloors(); // Refresh available floors for this building
   }
 
   selectFloor(floor: number): void {
@@ -73,10 +88,10 @@ export class MapComponent implements OnInit {
     this.selectedRoom = null;
   }
 
-  toggleLayer(layer: 'sockets' | 'equipment' | 'staff'): void {
-    if (layer === 'sockets') this.showSockets = !this.showSockets;
+  toggleLayer(layer: 'researchers' | 'equipment' | 'sockets'): void {
+    if (layer === 'researchers') this.showResearchers = !this.showResearchers;
     if (layer === 'equipment') this.showEquipment = !this.showEquipment;
-    if (layer === 'staff') this.showStaff = !this.showStaff;
+    if (layer === 'sockets') this.showSockets = !this.showSockets;
   }
 
   addReservation(room: Room): void {

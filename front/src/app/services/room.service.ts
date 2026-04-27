@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable, of, BehaviorSubject } from 'rxjs';
 import { Room } from '../models/room.model';
 
 @Injectable({ providedIn: 'root' })
 export class RoomService {
-  private mockRooms: Room[] = [
+  private roomsSubject = new BehaviorSubject<Room[]>([
     // Bâtiment A - RDC
     new Room({
       id: 'A001', name: 'Conférence A', building: 'A', floor: 0, max_capacity: 25, doors: 2,
@@ -35,25 +35,21 @@ export class RoomService {
       start_x: 370, start_y: 50, x: 200, y: 200,
       room_type: { label: 'Salle de pause' },
       staff: [], equipments: [{ name: 'Machine à café' }], sockets: []
-    }),
-    // Bâtiment B - RDC
-    new Room({
-      id: 'B001', name: 'Amphi B', building: 'B', floor: 0, max_capacity: 100, doors: 3,
-      start_x: 50, start_y: 50, x: 400, y: 300,
-      room_type: { label: 'Salle de classe' },
-      staff: [{ first_name: 'Isaac', last_name: 'Newton' }],
-      equipments: [{ name: 'Projecteur Géant' }],
-      sockets: [{ identifier: 'ETH-B-01' }]
-    }),
-    new Room({
-      id: 'B002', name: 'Stockage', building: 'B', floor: 0, max_capacity: 2, doors: 1,
-      start_x: 470, start_y: 50, x: 100, y: 100,
-      room_type: { label: 'Bureau' },
-      staff: [], equipments: [{ name: 'Rayonnages' }], sockets: []
     })
-  ];
+  ]);
 
   getRooms(): Observable<Room[]> {
-    return of(this.mockRooms);
+    return this.roomsSubject.asObservable();
+  }
+
+  addRoom(roomData: any): void {
+    const current = this.roomsSubject.value;
+    const newRoom = new Room(roomData);
+    this.roomsSubject.next([...current, newRoom]);
+  }
+
+  deleteRoomsByFloor(building: string, floor: number): void {
+    const current = this.roomsSubject.value;
+    this.roomsSubject.next(current.filter(r => !(r.building === building && r.floor === floor)));
   }
 }
