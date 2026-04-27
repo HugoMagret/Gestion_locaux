@@ -94,12 +94,26 @@ Si vous souhaitez connecter une application ou un outil (comme DBeaver) :
 | :--- | :--- |
 | **Hôte** | `localhost` |
 | **Port** | `5432` |
-| **Utilisateur** | `admin` |
-| **Mot de passe** | `password123` |
+| **Utilisateur** | `user` |
+| **Mot de passe** | `password` |
 | **Base de données**| `gestion_locaux` |
 
 ## 5. Persistence des Données
 Les données sont stockées dans un **volume Docker** nommé `pgdata`. Cela signifie que même si vous supprimez le conteneur, vos salles et votre personnel ne seront pas supprimés. Ils sont sauvegardés dans un dossier sécurisé géré par Docker sur votre disque dur.
 
-## 6. Initialisation
-Le script [init.sql](./init.sql) est exécuté **uniquement lors de la toute première création** de la base de données. Il contient la structure des tables et quelques données de base pour démarrer le projet.
+## 7. Visualisation Graphique (pgAdmin)
+
+Vous pouvez visualiser et modifier les données graphiquement via **pgAdmin**.
+- **URL** : `http://localhost:5050`
+- **Login** : `admin@admin.com`
+- **Password** : `admin`
+
+### Configuration du serveur dans pgAdmin :
+Une fois connecté, pour voir la base de données du projet :
+1. "Add New Server"
+2. Nom : `Gestion Locaux`
+3. Onglet "Connection" :
+   - Host : `db` (le nom du service dans Docker)
+   - Port : `5432`
+   - Username : `user`
+   - Password : `password`
