@@ -9,6 +9,21 @@
     </button>
   </header>
 
+  <div class="add-staff-section card">
+    <h3>➕ Ajouter un membre</h3>
+    <div class="staff-form">
+      <input type="text" [(ngModel)]="newStaff.first_name" placeholder="Prénom">
+      <input type="text" [(ngModel)]="newStaff.last_name" placeholder="Nom">
+      <select [(ngModel)]="newStaff.room_id">
+        <option value="">Sélectionner une salle</option>
+        <option *ngFor="let room of rooms" [value]="room.id">{{ room.name }} ({{ room.building }})</option>
+      </select>
+      <button class="btn-primary" (click)="addStaff()" [disabled]="!newStaff.first_name || !newStaff.last_name">
+        Ajouter
+      </button>
+    </div>
+  </div>
+
   <div class="staff-card card">
     <div class="table-responsive">
       <table class="staff-table">

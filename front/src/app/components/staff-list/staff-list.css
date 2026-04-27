@@ -15,6 +15,28 @@
 }
 .btn-refresh:hover { background: #e2e8f0; color: #0f172a; }
 
+.add-staff-section { padding: 24px !important; }
+.add-staff-section h3 { font-size: 18px; font-weight: 700; margin-bottom: 16px; color: #1e293b; }
+.staff-form { display: flex; gap: 12px; flex-wrap: wrap; }
+.staff-form input, .staff-form select { 
+  flex: 1; 
+  min-width: 150px; 
+  padding: 12px; 
+  border: 1px solid #e2e8f0; 
+  border-radius: 10px; 
+  font-size: 14px; 
+}
+.btn-primary { 
+  background: #3b82f6; 
+  color: white; 
+  border: none; 
+  padding: 12px 24px; 
+  border-radius: 10px; 
+  font-weight: 600; 
+  cursor: pointer; 
+}
+.btn-primary:disabled { background: #94a3b8; cursor: not-allowed; }
+
 .card { background: white; border-radius: 16px; padding: 0; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); overflow: hidden; }
 
 .table-responsive { width: 100%; overflow-x: auto; }
