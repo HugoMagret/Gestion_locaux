@@ -23,6 +23,8 @@ export class Room {
 
   // UI related fields
   doors: number;
+  color: string;
+  room_type_label?: string;
 
   constructor(data: any) {
     this.id = data.id;
@@ -54,6 +56,8 @@ export class Room {
     this.sockets = (data.sockets || []).map((s: any) => new Socket(s));
     
     this.doors = data.doors || 1;
+    this.color = data.color || '#3498db';
+    this.room_type_label = data.room_type_label;
   }
 
   isFireSafetyCompliant(): boolean {

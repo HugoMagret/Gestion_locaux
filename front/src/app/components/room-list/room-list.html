@@ -1,0 +1,91 @@
+<div class="room-container">
+  <header class="room-header">
+    <div class="header-left">
+      <h1>Liste des Salles</h1>
+      <p>Consultez et filtrez l'ensemble des locaux</p>
+    </div>
+  </header>
+
+  <div class="filter-card card">
+    <div class="filter-grid">
+      <div class="filter-group">
+        <label>Rechercher</label>
+        <input type="text" [(ngModel)]="filters.name" (input)="applyFilters()" placeholder="Nom de la salle...">
+      </div>
+      
+      <div class="filter-group">
+        <label>Bâtiment</label>
+        <select [(ngModel)]="filters.building" (change)="applyFilters()">
+          <option value="">Tous</option>
+          <option *ngFor="let b of buildings" [value]="b">{{ b }}</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Étage</label>
+        <select [(ngModel)]="filters.floor" (change)="applyFilters()">
+          <option value="">Tous</option>
+          <option *ngFor="let f of floors" [value]="f">{{ f === 0 ? 'RDC' : 'Étage ' + f }}</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Type de salle</label>
+        <select [(ngModel)]="filters.type" (change)="applyFilters()">
+          <option value="">Tous</option>
+          <option *ngFor="let t of roomTypes" [value]="t.id">{{ t.label }}</option>
+        </select>
+      </div>
+    </div>
+    <div class="filter-actions" *ngIf="hasActiveFilters()">
+      <button class="btn-text" (click)="resetFilters()">Réinitialiser les filtres</button>
+    </div>
+  </div>
+
+  <div class="room-grid">
+    <div *ngFor="let room of filteredRooms" class="room-card card">
+      <div class="room-card-header" [style.border-left-color]="room.color">
+        <div class="room-main-info">
+          <h3>{{ room.name }}</h3>
+          <span class="room-type">{{ room.room_type_label || 'Non défini' }}</span>
+        </div>
+        <span class="capacity-badge">
+          <span class="icon">👥</span> {{ room.max_capacity }}
+        </span>
+      </div>
+      
+      <div class="room-card-body">
+        <div class="location-info">
+          <span class="tag">Bâtiment {{ room.building }}</span>
+          <span class="tag">{{ room.floor === 0 ? 'RDC' : 'Étage ' + room.floor }}</span>
+        </div>
+        
+        <div class="stats">
+          <div class="stat-item">
+            <span class="label">Personnel</span>
+            <span class="value">{{ room.staff.length || 0 }}</span>
+          </div>
+          <div class="stat-item">
+            <span class="label">Équipements</span>
+            <span class="value">{{ room.equipments.length || 0 }}</span>
+          </div>
+          <div class="stat-item">
+            <span class="label">Prises</span>
+            <span class="value">{{ room.sockets.length || 0 }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="room-card-footer">
+        <button class="btn-outline" (click)="deleteRoom(room.id)">Supprimer</button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="filteredRooms.length === 0" class="empty-state card">
+    <span class="empty-icon">🔍</span>
+    <h3>Aucune salle ne correspond à vos critères</h3>
+    <p>Essayez de modifier vos filtres ou effectuez une nouvelle recherche</p>
+    <button class="btn-primary" (click)="resetFilters()">Voir toutes les salles</button>
+  </div>
+</div>
