@@ -1,3 +1,21 @@
 version: '3.8'
 
-## NYI
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: gestion_locaux_db
+    restart: always
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=password123
+      - POSTGRES_DB=gestion_locaux
+    ports:
+      - "5432:5432"
+    volumes:
+      # Montage du script d'initialisation (s'exécute uniquement si la DB est vide)
+      - ./dataBase/init.sql:/docker-entrypoint-initdb.d/init.sql
+      # Volume pour persister les données (même après un docker compose down)
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
