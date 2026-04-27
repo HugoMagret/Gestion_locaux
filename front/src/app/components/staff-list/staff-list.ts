@@ -54,9 +54,18 @@ export class StaffListComponent implements OnInit {
   addStaff(): void {
     if (!this.newStaff.first_name || !this.newStaff.last_name) return;
 
-    this.staffService.addStaff(new Staff(this.newStaff)).subscribe(() => {
-      this.newStaff = { first_name: '', last_name: '', room_id: '' };
-      this.loadData();
+    const staffData = { ...this.newStaff };
+    if (!staffData.room_id) (staffData as any).room_id = null;
+
+    this.staffService.addStaff(new Staff(staffData)).subscribe({
+      next: () => {
+        this.newStaff = { first_name: '', last_name: '', room_id: '' };
+        this.loadData();
+      },
+      error: (err) => {
+        console.error('Erreur lors de l\'ajout du personnel:', err);
+        alert('Erreur lors de l\'ajout : ' + (err.error?.error || err.message));
+      }
     });
   }
 

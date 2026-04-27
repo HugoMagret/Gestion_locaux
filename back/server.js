@@ -66,6 +66,14 @@ if (IS_MOCK_MODE) {
   app.post('/api/rooms/:id/staff', (req, res) => res.status(201).json({id: "s-new", ...req.body}));
   app.post('/api/rooms/:id/equipment', (req, res) => res.status(201).json({id: "e-new", ...req.body}));
 
+  // Missing generic POST/DELETE for staff and equipment in mock mode
+  app.post('/api/staff', (req, res) => res.status(201).json({id: "s-" + Math.random().toString(36).substr(2, 5), ...req.body}));
+  app.delete('/api/staff/:id', (req, res) => res.status(204).send());
+  app.post('/api/equipment', (req, res) => res.status(201).json({id: "e-" + Math.random().toString(36).substr(2, 5), ...req.body}));
+  app.delete('/api/equipment/:id', (req, res) => res.status(204).send());
+  app.post('/api/types/:category', (req, res) => res.status(201).json({id: "t-" + Math.random().toString(36).substr(2, 5), ...req.body}));
+  app.delete('/api/types/:category/:id', (req, res) => res.status(204).send());
+
 } else {
   // Routes réelles (Base de données) - Modulaire
   console.log("-----------------------------------------");
