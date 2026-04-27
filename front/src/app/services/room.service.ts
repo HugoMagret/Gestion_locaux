@@ -4,77 +4,53 @@ import { Room } from '../models/room.model';
 
 @Injectable({ providedIn: 'root' })
 export class RoomService {
-  // Simulation de données enrichies pour la démo premium
   private mockRooms: Room[] = [
+    // Bâtiment A - RDC
     new Room({
-      id: '1',
-      name: 'Conférence A',
-      max_capacity: 25,
-      doors: 2,
-      coordinates: { x: 50, y: 50, width: 250, height: 180 },
+      id: 'A001', name: 'Conférence A', building: 'A', floor: 0, max_capacity: 25, doors: 2,
+      coordinates: { x: 50, y: 50, width: 250, height: 150 },
       room_type: { label: 'Salle de réunion' },
-      staff: [
-        { first_name: 'Jean', last_name: 'Dupont' },
-        { first_name: 'Marie', last_name: 'Curie' }
-      ],
-      equipments: [
-        { name: 'Projecteur 4K Laser', serial_number: 'LX-4000' },
-        { name: 'Système Audio Polycom', serial_number: 'PY-90' }
-      ],
-      sockets: [
-        { identifier: 'ETH-01', socket_type: { label: 'Réseau' } },
-        { identifier: 'ETH-02', socket_type: { label: 'Réseau' } }
-      ]
+      staff: [{ first_name: 'Jean', last_name: 'Dupont' }],
+      equipments: [{ name: 'Projecteur 4K' }],
+      sockets: [{ identifier: 'ETH-01' }]
     }),
     new Room({
-      id: '2',
-      name: 'Bureau 101',
-      max_capacity: 4,
-      doors: 1,
-      coordinates: { x: 320, y: 50, width: 120, height: 120 },
+      id: 'A002', name: 'Bureau 101', building: 'A', floor: 0, max_capacity: 4, doors: 1,
+      coordinates: { x: 320, y: 50, width: 120, height: 100 },
       room_type: { label: 'Bureau' },
-      staff: [
-        { first_name: 'Albert', last_name: 'Einstein' }
-      ],
-      equipments: [
-        { name: 'Station de travail Dell', serial_number: 'DELL-XP' }
-      ],
-      sockets: [
-        { identifier: 'TEL-01', socket_type: { label: 'Téléphone' } }
-      ]
+      staff: [{ first_name: 'Albert', last_name: 'Einstein' }],
+      equipments: [], sockets: [{ identifier: 'TEL-01' }]
     }),
+    // Bâtiment A - Etage 1
     new Room({
-      id: '3',
-      name: 'Labo R&D',
-      max_capacity: 15,
-      doors: 1,
-      coordinates: { x: 50, y: 250, width: 300, height: 200 },
-      room_type: { label: 'Salle de formation' },
-      staff: [
-        { first_name: 'Ada', last_name: 'Lovelace' },
-        { first_name: 'Alan', last_name: 'Turing' }
-      ],
-      equipments: [
-        { name: 'Imprimante 3D', serial_number: 'PRUSA-MK3' },
-        { name: 'Oscilloscope Digital', serial_number: 'TEK-500' }
-      ],
-      sockets: [
-        { identifier: 'ETH-LAB-01', socket_type: { label: 'Réseau' } }
-      ]
-    }),
-    new Room({
-      id: '4',
-      name: 'Espace Détente',
-      max_capacity: 40,
-      doors: 2,
-      coordinates: { x: 370, y: 190, width: 200, height: 260 },
-      room_type: { label: 'Salle de pause' },
-      staff: [],
-      equipments: [
-        { name: 'Machine à café Jura', serial_number: 'COFFEE-1' }
-      ],
+      id: 'A101', name: 'Labo R&D', building: 'A', floor: 1, max_capacity: 15, doors: 1,
+      coordinates: { x: 50, y: 50, width: 300, height: 200 },
+      room_type: { label: 'Laboratoire' },
+      staff: [{ first_name: 'Ada', last_name: 'Lovelace' }],
+      equipments: [{ name: 'Imprimante 3D' }],
       sockets: []
     }),
+    new Room({
+      id: 'A102', name: 'Cafétéria', building: 'A', floor: 1, max_capacity: 50, doors: 2,
+      coordinates: { x: 370, y: 50, width: 200, height: 200 },
+      room_type: { label: 'Salle de pause' },
+      staff: [], equipments: [{ name: 'Machine à café' }], sockets: []
+    }),
+    // Bâtiment B - RDC
+    new Room({
+      id: 'B001', name: 'Amphi B', building: 'B', floor: 0, max_capacity: 100, doors: 3,
+      coordinates: { x: 50, y: 50, width: 400, height: 300 },
+      room_type: { label: 'Salle de classe' },
+      staff: [{ first_name: 'Isaac', last_name: 'Newton' }],
+      equipments: [{ name: 'Projecteur Géant' }],
+      sockets: [{ identifier: 'ETH-B-01' }]
+    }),
+    new Room({
+      id: 'B002', name: 'Stockage', building: 'B', floor: 0, max_capacity: 2, doors: 1,
+      coordinates: { x: 470, y: 50, width: 100, height: 100 },
+      room_type: { label: 'Bureau' },
+      staff: [], equipments: [{ name: 'Rayonnages' }], sockets: []
+    })
   ];
 
   getRooms(): Observable<Room[]> {

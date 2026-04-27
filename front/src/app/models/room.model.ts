@@ -12,16 +12,20 @@ export class Room {
   equipments: Equipment[];
   staff: Staff[];
   sockets: Socket[];
+  building: string;
+  floor: number;
   
-  // UI related fields (keep existing ones)
+  // UI related fields
   doors: number;
   coordinates: { x: number; y: number; width: number; height: number };
 
   constructor(data: any) {
     this.id = data.id;
     this.name = data.name;
-    this.max_capacity = data.max_capacity || data.capacity; // Support both names during transition
+    this.max_capacity = data.max_capacity || data.capacity;
     this.room_type_id = data.room_type_id;
+    this.building = data.building || 'A';
+    this.floor = data.floor !== undefined ? data.floor : 0;
     
     if (data.room_type) {
       this.room_type = new RoomType(data.room_type);
