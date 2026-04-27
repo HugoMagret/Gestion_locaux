@@ -5,7 +5,7 @@ import { StaffService } from '../../services/staff.service';
 import { RoomService } from '../../services/room.service';
 import { Room } from '../../models/room.model';
 import { Staff } from '../../models/staff.model';
-import { forkJoin } from 'rxjs';
+import { combineLatest } from 'rxjs';
 
 @Component({
   selector: 'app-staff-list',
@@ -29,11 +29,12 @@ export class StaffListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.roomService.refreshRooms();
     this.loadData();
   }
 
   loadData(): void {
-    forkJoin({
+    combineLatest({
       staff: this.staffService.getStaff(),
       rooms: this.roomService.getRooms()
     }).subscribe(({ staff, rooms }) => {

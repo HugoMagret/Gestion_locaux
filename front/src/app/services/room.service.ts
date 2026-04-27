@@ -15,8 +15,13 @@ export class RoomService {
   refreshRooms(): void {
     this.http.get<any[]>(`${API_URL}/rooms`).pipe(
       map(rooms => rooms.map(r => new Room(r)))
-    ).subscribe(rooms => {
-      this.roomsSubject.next(rooms);
+    ).subscribe({
+      next: (rooms) => {
+        this.roomsSubject.next(rooms);
+      },
+      error: (err) => {
+        console.error('Erreur lors de la récupération des salles:', err);
+      }
     });
   }
 
