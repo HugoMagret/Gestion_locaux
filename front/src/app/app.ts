@@ -38,6 +38,11 @@ export class App implements OnInit {
   isAuthenticated$ = this.authService.isAuthenticated$;
 
   ngOnInit() {
+    this.isAuthenticated$.subscribe(status => {
+      if (status) {
+        this.view = 'map';
+      }
+    });
   }
 
   get isAdmin(): boolean {
@@ -45,6 +50,7 @@ export class App implements OnInit {
   }
 
   logout() {
+    this.view = 'map';
     this.authService.logout();
   }
 }

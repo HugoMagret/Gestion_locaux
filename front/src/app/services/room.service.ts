@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject, map, tap } from 'rxjs';
+import { Observable, BehaviorSubject, map } from 'rxjs';
 import { Room } from '../models/room.model';
 import { API_URL } from '../api.config';
 
@@ -14,16 +14,9 @@ export class RoomService {
 
   refreshRooms(): void {
     this.http.get<any[]>(`${API_URL}/rooms`).pipe(
-      tap(data => console.log('Raw rooms from API:', data)),
-      map(rooms => rooms.map(r => new Room(r))),
-      tap(rooms => console.log('Mapped Room objects:', rooms))
+      map(rooms => rooms.map(r => new Room(r)))
     ).subscribe({
-      next: (rooms) => {
-        this.roomsSubject.next(rooms);
-      },
-      error: (err) => {
-        console.error('Erreur lors de la récupération des salles:', err);
-      }
+      next: (rooms) => this.roomsSubject.next(rooms)
     });
   }
 

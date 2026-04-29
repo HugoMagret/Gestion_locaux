@@ -3,7 +3,17 @@ const router = express.Router();
 const db = require('../config/db');
 const { hashPassword } = require('../config/auth');
 
-// Middleware de vérification Admin (simplifié pour l'exercice)
+// Traduction des erreurs PostgreSQL en messages lisibles
+const pgErrorMessage = (err) => {
+  switch (err.code) {
+    case '23505': return 'Un utilisateur avec ce login existe déjà.';
+    case '23502': return 'Un champ obligatoire est manquant.';
+    case '23503': return 'Référence invalide vers une ressource inexistante.';
+    default: return err.message;
+  }
+};
+
+// Middleware de vérification Admin
 const adminOnly = (req, res, next) => {
   const isAdmin = req.headers['x-is-admin'] === 'true';
   if (!isAdmin) {
@@ -18,7 +28,7 @@ router.get('/', async (req, res) => {
     const result = await db.query('SELECT id, login, is_admin, last_connection FROM "user" ORDER BY login');
     res.json(result.rows);
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({ success: false, message: pgErrorMessage(err) });
   }
 });
 
@@ -33,7 +43,7 @@ router.post('/', adminOnly, async (req, res) => {
     );
     res.status(201).json(result.rows[0]);
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(409).json({ success: false, message: pgErrorMessage(err) });
   }
 });
 
@@ -48,7 +58,7 @@ router.put('/:id', adminOnly, async (req, res) => {
     );
     res.json(result.rows[0]);
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(409).json({ success: false, message: pgErrorMessage(err) });
   }
 });
 
@@ -58,7 +68,7 @@ router.delete('/:id', adminOnly, async (req, res) => {
     await db.query('DELETE FROM "user" WHERE id = $1', [req.params.id]);
     res.status(204).send();
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({ success: false, message: pgErrorMessage(err) });
   }
 });
 

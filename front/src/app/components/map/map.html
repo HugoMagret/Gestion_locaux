@@ -1,7 +1,7 @@
 <div class="map-container">
   <!-- Left Sidebar (Menu) -->
   <nav class="left-sidebar">
-    <div class="logo">🏢 LocauxApp</div>
+    <div class="logo"><i class="fa-solid fa-building"></i> LocauxApp</div>
     
 
     <!-- Floor Selector -->
@@ -27,19 +27,19 @@
         class="menu-item" 
         [class.active]="showResearchers"
         (click)="toggleLayer('researchers')">
-        <span class="icon">🎓</span> Ens.-Chercheurs
+        <i class="fa-solid fa-user-graduate icon"></i> Ens.-Chercheurs
       </button>
       <button 
         class="menu-item" 
         [class.active]="showEquipment"
         (click)="toggleLayer('equipment')">
-        <span class="icon">📦</span> Matériel
+        <i class="fa-solid fa-box-open icon"></i> Matériel
       </button>
       <button 
         class="menu-item" 
         [class.active]="showSockets"
         (click)="toggleLayer('sockets')">
-        <span class="icon">🔌</span> Prises
+        <i class="fa-solid fa-plug icon"></i> Prises
       </button>
     </div>
 
@@ -100,25 +100,27 @@
           </text>
         </g>
 
-        <!-- Overlay: Equipment Icon -->
+        <!-- Overlay: Equipment Icon (SVG-compatible text) -->
         <text 
           *ngIf="showEquipment && room.equipments.length > 0"
           [attr.x]="room.coordinates.x + room.coordinates.width - 25" 
           [attr.y]="room.coordinates.y + 20"
-          font-size="16"
-        >
-          📦
-        </text>
+          font-size="14"
+          fill="#64748b"
+          font-family="'Font Awesome 6 Free'"
+          font-weight="900"
+        >&#xf466;</text>
 
-        <!-- Overlay: Sockets Icon -->
+        <!-- Overlay: Sockets Icon (SVG-compatible text) -->
         <text 
           *ngIf="showSockets && room.sockets.length > 0"
           [attr.x]="room.coordinates.x + room.coordinates.width - 25" 
           [attr.y]="room.coordinates.y + room.coordinates.height - 15"
-          font-size="16"
-        >
-          🔌
-        </text>
+          font-size="14"
+          fill="#64748b"
+          font-family="'Font Awesome 6 Free'"
+          font-weight="900"
+        >&#xf1e6;</text>
       </g>
     </svg>
   </div>
@@ -133,21 +135,21 @@
     <section class="info-card">
       <div class="section-title">Localisation</div>
       <div class="item-row">
-        <div class="icon-box">📍</div>
+        <div class="icon-box"><i class="fa-solid fa-location-dot"></i></div>
         <div>{{ selectedFloor === 0 ? 'RDC' : 'Étage ' + selectedFloor }}</div>
       </div>
     </section>
 
     <section class="info-card">
-      <div class="section-title">Capacité & Sécurité</div>
+      <div class="section-title">Capacité &amp; Sécurité</div>
       <div class="item-row">
-        <div class="icon-box">👥</div>
+        <div class="icon-box"><i class="fa-solid fa-people-group"></i></div>
         <div>
           <strong>{{ selectedRoom.max_capacity }}</strong> personnes max
         </div>
       </div>
       <div class="item-row">
-        <div class="icon-box">🚪</div>
+        <div class="icon-box"><i class="fa-solid fa-door-closed"></i></div>
         <div>
           <strong>{{ selectedRoom.doors }}</strong> accès directs
         </div>
@@ -158,7 +160,7 @@
       <div class="section-title">Enseignant-Chercheur affecté ({{ selectedRoom.staff.length }})</div>
       <ul class="item-list">
         <li *ngFor="let person of selectedRoom.staff" class="item-row">
-          <div class="icon-box">🎓</div>
+          <div class="icon-box"><i class="fa-solid fa-user-graduate"></i></div>
           {{ person.fullName }}
         </li>
       </ul>
@@ -168,7 +170,7 @@
       <div class="section-title">Matériels</div>
       <ul class="item-list">
         <li *ngFor="let eq of selectedRoom.equipments" class="item-row">
-          <div class="icon-box">📦</div>
+          <div class="icon-box"><i class="fa-solid fa-box-open"></i></div>
           <div>
             <div>{{ eq.name }}</div>
             <small style="color: #94a3b8" *ngIf="eq.serial_number">S/N: {{ eq.serial_number }}</small>
@@ -181,24 +183,21 @@
       <div class="section-title">Connectique</div>
       <ul class="item-list">
         <li *ngFor="let socket of selectedRoom.sockets" class="item-row">
-          <div class="icon-box">🔌</div>
+          <div class="icon-box"><i class="fa-solid fa-plug"></i></div>
           {{ socket.identifier }} ({{ socket.socket_type_label || 'Prise' }})
         </li>
       </ul>
     </section>
 
     <button class="btn-primary" (click)="addReservation(selectedRoom)">
-      Gérer les affectations
+      <i class="fa-solid fa-pen-to-square"></i> Gérer les affectations
     </button>
   </aside>
 
   <ng-template #noSelection>
     <aside class="side-panel">
       <div class="empty-state">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-          <polyline points="9 22 9 12 15 12 15 22"></polyline>
-        </svg>
+        <i class="fa-solid fa-map-location-dot empty-icon"></i>
         <h3>Sélectionnez un local</h3>
         <p>Utilisez le menu à gauche pour changer de bâtiment ou d'étage.</p>
       </div>

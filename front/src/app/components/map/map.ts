@@ -68,6 +68,7 @@ export class MapComponent implements OnInit {
 
   selectFloor(floor: number): void {
     this.selectedFloor = floor;
+    this.selectedRoom = null;
     this.applyFilters();
   }
 
@@ -86,6 +87,5 @@ export class MapComponent implements OnInit {
   }
 
   addReservation(room: Room): void {
-    console.log('Managing room:', room.name);
   }
 }

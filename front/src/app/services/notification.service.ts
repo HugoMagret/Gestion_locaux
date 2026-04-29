@@ -1,5 +1,5 @@
-import { Injectable, NgZone } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 
 export interface Notification {
   message: string;
@@ -10,34 +10,24 @@ export interface Notification {
   providedIn: 'root'
 })
 export class NotificationService {
-  private notificationSubject = new Subject<Notification | null>();
+  private notificationSubject = new BehaviorSubject<Notification | null>(null);
   public notification$ = this.notificationSubject.asObservable();
 
-  constructor(private zone: NgZone) {}
-
   showError(message: string) {
-    this.zone.run(() => {
-      this.notificationSubject.next({ message, type: 'error' });
-      this.autoClose();
-    });
+    this.notificationSubject.next({ message, type: 'error' });
+    this.autoClose();
   }
 
   showSuccess(message: string) {
-    this.zone.run(() => {
-      this.notificationSubject.next({ message, type: 'success' });
-      this.autoClose();
-    });
+    this.notificationSubject.next({ message, type: 'success' });
+    this.autoClose();
   }
 
   clear() {
-    this.zone.run(() => {
-      this.notificationSubject.next(null);
-    });
+    this.notificationSubject.next(null);
   }
 
   private autoClose() {
-    setTimeout(() => {
-      this.clear();
-    }, 3000);
+    setTimeout(() => this.clear(), 3000);
   }
 }
