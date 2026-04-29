@@ -13,7 +13,8 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./database/01_init.sql:/docker-entrypoint-initdb.d/01_init.sql
+      - ./database/02_data_test.sql:/docker-entrypoint-initdb.d/02_data_test.sql
       - pgdata:/var/lib/postgresql/data
 
   # Backend Node.js
