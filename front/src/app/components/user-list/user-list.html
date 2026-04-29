@@ -1,0 +1,59 @@
+<div class="user-manager">
+  <div class="header">
+    <h2>Gestion des Utilisateurs</h2>
+  </div>
+
+  <div class="add-user-card">
+    <h3>Ajouter un utilisateur</h3>
+    <form (ngSubmit)="onAddUser()" class="user-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Login</label>
+          <input type="text" [(ngModel)]="newUser.login" name="login" required placeholder="Identifiant">
+        </div>
+        <div class="form-group">
+          <label>Mot de passe</label>
+          <input type="password" [(ngModel)]="newUser.password" name="password" required placeholder="Mot de passe">
+        </div>
+        <div class="form-group checkbox">
+          <label>
+            <input type="checkbox" [(ngModel)]="newUser.is_admin" name="is_admin">
+            Administrateur
+          </label>
+        </div>
+        <button type="submit" class="btn-add" [disabled]="!newUser.login || !newUser.password">
+          Ajouter
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="user-list-card">
+    <div *ngIf="loading" class="loader">Chargement...</div>
+    
+    <table *ngIf="!loading">
+      <thead>
+        <tr>
+          <th>Login</th>
+          <th>Rôle</th>
+          <th>Dernière connexion</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users">
+          <td>{{ user.login }}</td>
+          <td>
+            <span class="badge" [class.admin]="user.is_admin">
+              {{ user.is_admin ? 'Admin' : 'Utilisateur' }}
+            </span>
+          </td>
+          <td>{{ user.last_connection ? (user.last_connection | date:'dd/MM/yyyy HH:mm') : 'Jamais' }}</td>
+          <td>
+            <button class="btn-delete" (click)="onDeleteUser(user.id!)">Supprimer</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

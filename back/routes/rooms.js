@@ -7,13 +7,13 @@ router.get('/', async (req, res) => {
   const { floor, min_doors, min_capacity, type, min_sockets } = req.query;
   
   let query = `
-    SELECT r.id, r.name, r.max_capacity, r.room_type_id, r.doors, r.floor, r.coordinates, r.color, 
-           rt.label as room_type_label,
-           (SELECT json_agg(json_build_object('id', s.id, 'first_name', s.first_name, 'last_name', s.last_name)) FROM staff s WHERE s.room_id = r.id) as staff,
-           (SELECT json_agg(json_build_object('id', e.id, 'name', e.name, 'serial_number', e.serial_number)) FROM equipment e WHERE e.room_id = r.id) as equipments,
-           (SELECT json_agg(json_build_object('id', so.id, 'identifier', so.identifier)) FROM socket so WHERE so.room_id = r.id) as sockets
-    FROM room r
-    LEFT JOIN room_type rt ON r.room_type_id = rt.id
+    SELECT room.id, room.name, room.max_capacity, room.room_type_id, room.doors, room.floor, room.coordinates, room.color, 
+           room_type.label as room_type_label,
+           (SELECT json_agg(json_build_object('id', staff.id, 'first_name', staff.first_name, 'last_name', staff.last_name)) FROM staff WHERE staff.room_id = room.id) as staff,
+           (SELECT json_agg(json_build_object('id', equipment.id, 'name', equipment.name, 'serial_number', equipment.serial_number)) FROM equipment WHERE equipment.room_id = room.id) as equipments,
+           (SELECT json_agg(json_build_object('id', socket.id, 'identifier', socket.identifier)) FROM socket WHERE socket.room_id = room.id) as sockets
+    FROM room
+    LEFT JOIN room_type ON room.room_type_id = room_type.id
     WHERE 1=1
   `;
   
@@ -21,27 +21,27 @@ router.get('/', async (req, res) => {
   let paramIdx = 1;
 
   if (floor !== undefined) {
-    query += ` AND r.floor = $${paramIdx++}`;
+    query += ` AND room.floor = $${paramIdx++}`;
     params.push(parseInt(floor));
   }
 
   if (min_doors !== undefined) {
-    query += ` AND r.doors >= $${paramIdx++}`;
+    query += ` AND room.doors >= $${paramIdx++}`;
     params.push(parseInt(min_doors));
   }
 
   if (min_capacity !== undefined) {
-    query += ` AND r.max_capacity >= $${paramIdx++}`;
+    query += ` AND room.max_capacity >= $${paramIdx++}`;
     params.push(parseInt(min_capacity));
   }
 
   if (type !== undefined) {
-    query += ` AND r.room_type_id = $${paramIdx++}`;
+    query += ` AND room.room_type_id = $${paramIdx++}`;
     params.push(type);
   }
 
   if (min_sockets !== undefined) {
-    query += ` AND (SELECT count(*) FROM socket so WHERE so.room_id = r.id) >= $${paramIdx++}`;
+    query += ` AND (SELECT count(*) FROM socket WHERE socket.room_id = room.id) >= $${paramIdx++}`;
     params.push(parseInt(min_sockets));
   }
 
@@ -70,7 +70,7 @@ router.post('/', async (req, res) => {
   if (room_type_id === "") room_type_id = null;
   try {
     const result = await db.query(
-      'INSERT INTO room (name, max_capacity, room_type_id, doors, floor, coordinates, color) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
+      'INSERT INTO room (name, max_capacity, room_type_id, doors, floor, coordinates, color) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, name, max_capacity, room_type_id, doors, floor, coordinates, color',
       [name, max_capacity, room_type_id, doors, floor || 0, coordinates, color || '#3498db']
     );
     res.status(201).json(result.rows[0]);
@@ -85,7 +85,7 @@ router.put('/:id', async (req, res) => {
   if (room_type_id === "") room_type_id = null;
   try {
     const result = await db.query(
-        'UPDATE room SET name = $1, max_capacity = $2, room_type_id = $3, doors = $4, floor = $5, coordinates = $6, color = $7 WHERE id = $8 RETURNING *',
+        'UPDATE room SET name = $1, max_capacity = $2, room_type_id = $3, doors = $4, floor = $5, coordinates = $6, color = $7 WHERE id = $8 RETURNING id, name, max_capacity, room_type_id, doors, floor, coordinates, color',
         [name, max_capacity, room_type_id, doors, floor, coordinates, color, req.params.id]
     );
     res.json(result.rows[0]);
@@ -111,7 +111,7 @@ router.post('/:id/staff', async (req, res) => {
   const room_id = req.params.id;
   try {
     const result = await db.query(
-      'INSERT INTO staff (first_name, last_name, room_id) VALUES ($1, $2, $3) RETURNING *',
+      'INSERT INTO staff (first_name, last_name, room_id) VALUES ($1, $2, $3) RETURNING id, first_name, last_name, room_id',
       [first_name, last_name, room_id]
     );
     res.status(201).json(result.rows[0]);
@@ -125,7 +125,7 @@ router.post('/:id/equipment', async (req, res) => {
   const room_id = req.params.id;
   try {
     const result = await db.query(
-      'INSERT INTO equipment (name, serial_number, equipment_type_id, room_id) VALUES ($1, $2, $3, $4) RETURNING *',
+      'INSERT INTO equipment (name, serial_number, equipment_type_id, room_id) VALUES ($1, $2, $3, $4) RETURNING id, name, serial_number, equipment_type_id, room_id',
       [name, serial_number, equipment_type_id, room_id]
     );
     res.status(201).json(result.rows[0]);

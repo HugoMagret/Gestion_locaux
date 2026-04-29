@@ -33,6 +33,14 @@
   color: white;
   background: rgba(255,255,255,0.2);
 }
+.logout-btn {
+  background-color: #ef4444 !important;
+  color: white !important;
+  margin-left: 20px;
+}
+.logout-btn:hover {
+  background-color: #dc2626 !important;
+}
 main {
   height: calc(100vh - 64px);
   overflow: auto;

@@ -19,7 +19,7 @@ const createTypeRoutes = (tableName, path) => {
   router.post(`/${path}`, async (req, res) => {
     const { label } = req.body;
     try {
-      const result = await db.query(`INSERT INTO ${tableName} (label) VALUES ($1) RETURNING *`, [label]);
+      const result = await db.query(`INSERT INTO ${tableName} (label) VALUES ($1) RETURNING id, label`, [label]);
       res.status(201).json(result.rows[0]);
     } catch (err) {
       res.status(500).json({ error: err.message });
@@ -30,7 +30,7 @@ const createTypeRoutes = (tableName, path) => {
   router.put(`/${path}/:id`, async (req, res) => {
     const { label } = req.body;
     try {
-      const result = await db.query(`UPDATE ${tableName} SET label = $1 WHERE id = $2 RETURNING *`, [label, req.params.id]);
+      const result = await db.query(`UPDATE ${tableName} SET label = $1 WHERE id = $2 RETURNING id, label`, [label, req.params.id]);
       res.json(result.rows[0]);
     } catch (err) {
       res.status(500).json({ error: err.message });

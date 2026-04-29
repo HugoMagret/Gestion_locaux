@@ -1,0 +1,38 @@
+<div class="login-container">
+  <div class="login-card">
+    <h1>Gestion des Locaux</h1>
+    <p>Veuillez vous connecter pour accéder à l'application</p>
+    
+    <form (ngSubmit)="onLogin()">
+      <div class="form-group">
+        <label for="username">Identifiant</label>
+        <input 
+          type="text" 
+          id="username" 
+          name="username" 
+          [(ngModel)]="username" 
+          placeholder="admin"
+          required
+        >
+      </div>
+      
+      <div class="form-group">
+        <label for="password">Mot de passe</label>
+        <input 
+          type="password" 
+          id="password" 
+          name="password" 
+          [(ngModel)]="password" 
+          placeholder="••••••••"
+          required
+        >
+      </div>
+      
+      <div *ngIf="error" class="error-message">
+        {{ error }}
+      </div>
+      
+      <button type="submit" class="login-button">Se connecter</button>
+    </form>
+  </div>
+</div>

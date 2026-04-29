@@ -6,10 +6,10 @@ const db = require('../config/db');
 router.get('/', async (req, res) => {
   try {
     const result = await db.query(`
-      SELECT s.id, s.identifier, s.socket_type_id, s.room_id, st.label as socket_type_label, r.name as room_name 
-      FROM socket s 
-      LEFT JOIN socket_type st ON s.socket_type_id = st.id
-      LEFT JOIN room r ON s.room_id = r.id
+      SELECT socket.id, socket.identifier, socket.socket_type_id, socket.room_id, socket_type.label as socket_type_label, room.name as room_name 
+      FROM socket 
+      LEFT JOIN socket_type ON socket.socket_type_id = socket_type.id
+      LEFT JOIN room ON socket.room_id = room.id
     `);
     res.json(result.rows);
   } catch (err) {
@@ -22,7 +22,7 @@ router.post('/', async (req, res) => {
   const { identifier, socket_type_id, room_id } = req.body;
   try {
     const result = await db.query(
-      'INSERT INTO socket (identifier, socket_type_id, room_id) VALUES ($1, $2, $3) RETURNING *',
+      'INSERT INTO socket (identifier, socket_type_id, room_id) VALUES ($1, $2, $3) RETURNING id, identifier, socket_type_id, room_id',
       [identifier, socket_type_id, room_id]
     );
     res.status(201).json(result.rows[0]);
