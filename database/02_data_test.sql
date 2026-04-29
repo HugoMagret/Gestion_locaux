@@ -1,8 +1,8 @@
 -- Fichier de données de test (Seed) pour Gestion Locaux
 
 -- 1. DONNÉES DE RÉFÉRENCE
-INSERT INTO room_type (label) VALUES ('Bureau'), ('Salle de cours'), ('Amphithéâtre'), ('Cafétéria'), ('Réunion'), ('Labo Info'), ('Bibliothèque'), ('Stockage'), ('Sanitaires'), ('Local Technique') ON CONFLICT DO NOTHING;
-INSERT INTO equipment_type (label) VALUES ('Tableau blanc'), ('Vidéoprojecteur'), ('Ordinateur Fixe'), ('Serveur'), ('Imprimante 3D'), ('Scanner') ON CONFLICT DO NOTHING;
+INSERT INTO room_type (label) VALUES ('Bureau'), ('Salle de cours'), ('Amphithéâtre'), ('Cafétéria'), ('Réunion'), ('Labo Info'), ('Bibliothèque'), ('Stockage'), ('Sanitaires'), ('Local Technique'), ('Amphi'), ('Infirmerie'), ('Salle de sport'), ('Laboratoire de recherche'), ('Salle de conférence') ON CONFLICT DO NOTHING;
+INSERT INTO equipment_type (label) VALUES ('Tableau blanc'), ('Vidéoprojecteur'), ('Ordinateur Fixe'), ('Serveur'), ('Imprimante 3D'), ('Scanner'), ('Microphone sans fil'), ('Casque VR'), ('Robotique éducative'), ('Caméra de visioconférence'), ('Oscilloscope') ON CONFLICT DO NOTHING;
 INSERT INTO socket_type (label) VALUES ('Réseau (RJ45)'), ('Prise Électrique'), ('HDMI'), ('Fibre') ON CONFLICT DO NOTHING;
 
 -- 2. SALLES (ÉTAGES 0, 1, 2, 3, 4)

@@ -273,6 +273,95 @@ svg {
 
 .item-list {
   list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Edit Form */
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-size: 11px;
+  font-weight: 800;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.form-group input, .form-group select {
+  padding: 10px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 14px;
+  font-family: inherit;
+  color: #1e293b;
+  outline: none;
+  transition: all 0.2s;
+  background: #f8fafc;
+}
+
+.form-group input:focus, .form-group select:focus {
+  border-color: #3b82f6;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.color-input-wrapper {
+  display: flex;
+  gap: 8px;
+}
+
+.color-input-wrapper input[type="color"] {
+  width: 42px;
+  height: 42px;
+  padding: 2px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.actions-footer {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.actions-footer button {
+  flex: 1;
+}
+
+.btn-outline {
+  background: #ffffff;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+  padding: 14px;
+  border-radius: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-outline:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
 }
 
 .btn-primary {

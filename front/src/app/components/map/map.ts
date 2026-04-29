@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Room } from '../../models/room.model';
 import { RoomService } from '../../services/room.service';
 import { FloorService } from '../../services/floor.service';
@@ -7,22 +8,25 @@ import { FloorService } from '../../services/floor.service';
 @Component({
   selector: 'app-map',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './map.html',
   styleUrls: ['./map.css'],
 })
 export class MapComponent implements OnInit {
+  @Output() roomSelected = new EventEmitter<string>();
   allRooms: Room[] = [];
   filteredRooms: Room[] = [];
   selectedRoom: Room | null = null;
+  isEditing = false;
+  editRoomData: any = {};
 
   // Navigation state
   selectedFloor = 0;
 
   // Filters / Layers state
-  showResearchers = false;
-  showEquipment = false;
-  showSockets = false;
+  showResearchers = true;
+  showEquipment = true;
+  showSockets = true;
 
   availableFloors: number[] = [];
 
@@ -69,15 +73,18 @@ export class MapComponent implements OnInit {
   selectFloor(floor: number): void {
     this.selectedFloor = floor;
     this.selectedRoom = null;
+    this.isEditing = false;
     this.applyFilters();
   }
 
   selectRoom(room: Room): void {
     this.selectedRoom = room;
+    this.isEditing = false;
   }
 
   onMapClick(event: MouseEvent): void {
     this.selectedRoom = null;
+    this.isEditing = false;
   }
 
   toggleLayer(layer: 'researchers' | 'equipment' | 'sockets'): void {
@@ -86,6 +93,24 @@ export class MapComponent implements OnInit {
     if (layer === 'sockets') this.showSockets = !this.showSockets;
   }
 
-  addReservation(room: Room): void {
+  startEditing(): void {
+    if (this.selectedRoom) {
+      this.isEditing = true;
+      this.editRoomData = { ...this.selectedRoom };
+    }
+  }
+
+  cancelEditing(): void {
+    this.isEditing = false;
+  }
+
+  saveRoom(): void {
+    if (this.selectedRoom) {
+      // In a real app, we would call a service to update the DB
+      // Here we update the local model
+      Object.assign(this.selectedRoom, this.editRoomData);
+      this.isEditing = false;
+      this.applyFilters();
+    }
   }
 }

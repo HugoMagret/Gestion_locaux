@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RoomService } from '../../services/room.service';
@@ -15,6 +15,7 @@ import { forkJoin } from 'rxjs';
   styleUrls: ['./room-list.css']
 })
 export class RoomListComponent implements OnInit {
+  @Output() roomSelected = new EventEmitter<string>();
   allRooms: Room[] = [];
   filteredRooms: Room[] = [];
   roomTypes: RoomType[] = [];
@@ -78,5 +79,9 @@ export class RoomListComponent implements OnInit {
       // RoomService updates the BehaviorSubject, so we need to refresh or listen
       // For simplicity, RoomService should update its internal state which we subscribe to
     }
+  }
+
+  selectRoom(id: string): void {
+    this.roomSelected.emit(id);
   }
 }

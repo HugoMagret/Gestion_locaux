@@ -125,73 +125,126 @@
     </svg>
   </div>
 
-  <!-- Right Sidebar (Details) -->
+  <!-- Right Sidebar (Details or Edit Form) -->
   <aside class="side-panel" *ngIf="selectedRoom; else noSelection">
-    <header>
-      <span class="badge">{{ selectedRoom.room_type_label || 'Local' }}</span>
-      <h2>{{ selectedRoom.name }}</h2>
-    </header>
+    
+    <!-- View Mode -->
+    <div *ngIf="!isEditing">
+      <header>
+        <span class="badge">{{ selectedRoom.room_type_label || 'Local' }}</span>
+        <h2>{{ selectedRoom.name }}</h2>
+      </header>
 
-    <section class="info-card">
-      <div class="section-title">Localisation</div>
-      <div class="item-row">
-        <div class="icon-box"><i class="fa-solid fa-location-dot"></i></div>
-        <div>{{ selectedFloor === 0 ? 'RDC' : 'Étage ' + selectedFloor }}</div>
-      </div>
-    </section>
-
-    <section class="info-card">
-      <div class="section-title">Capacité &amp; Sécurité</div>
-      <div class="item-row">
-        <div class="icon-box"><i class="fa-solid fa-people-group"></i></div>
-        <div>
-          <strong>{{ selectedRoom.max_capacity }}</strong> personnes max
+      <section class="info-card">
+        <div class="section-title">Localisation</div>
+        <div class="item-row">
+          <div class="icon-box"><i class="fa-solid fa-location-dot"></i></div>
+          <div>{{ selectedFloor === 0 ? 'RDC' : 'Étage ' + selectedFloor }}</div>
         </div>
-      </div>
-      <div class="item-row">
-        <div class="icon-box"><i class="fa-solid fa-door-closed"></i></div>
-        <div>
-          <strong>{{ selectedRoom.doors }}</strong> accès directs
-        </div>
-      </div>
-    </section>
+      </section>
 
-    <section *ngIf="selectedRoom.staff.length > 0">
-      <div class="section-title">Enseignant-Chercheur affecté ({{ selectedRoom.staff.length }})</div>
-      <ul class="item-list">
-        <li *ngFor="let person of selectedRoom.staff" class="item-row">
-          <div class="icon-box"><i class="fa-solid fa-user-graduate"></i></div>
-          {{ person.fullName }}
-        </li>
-      </ul>
-    </section>
-
-    <section *ngIf="selectedRoom.equipments.length > 0">
-      <div class="section-title">Matériels</div>
-      <ul class="item-list">
-        <li *ngFor="let eq of selectedRoom.equipments" class="item-row">
-          <div class="icon-box"><i class="fa-solid fa-box-open"></i></div>
+      <section class="info-card">
+        <div class="section-title">Capacité &amp; Sécurité</div>
+        <div class="item-row">
+          <div class="icon-box"><i class="fa-solid fa-people-group"></i></div>
           <div>
-            <div>{{ eq.name }}</div>
-            <small style="color: #94a3b8" *ngIf="eq.serial_number">S/N: {{ eq.serial_number }}</small>
+            <strong>{{ selectedRoom.max_capacity }}</strong> personnes max
           </div>
-        </li>
-      </ul>
-    </section>
+        </div>
+        <div class="item-row">
+          <div class="icon-box"><i class="fa-solid fa-door-closed"></i></div>
+          <div>
+            <strong>{{ selectedRoom.doors }}</strong> accès directs
+          </div>
+        </div>
+      </section>
 
-    <section *ngIf="selectedRoom.sockets.length > 0">
-      <div class="section-title">Connectique</div>
-      <ul class="item-list">
-        <li *ngFor="let socket of selectedRoom.sockets" class="item-row">
-          <div class="icon-box"><i class="fa-solid fa-plug"></i></div>
-          {{ socket.identifier }} ({{ socket.socket_type_label || 'Prise' }})
-        </li>
-      </ul>
-    </section>
+      <section *ngIf="selectedRoom.staff.length > 0">
+        <div class="section-title">Enseignant-Chercheur affecté ({{ selectedRoom.staff.length }})</div>
+        <ul class="item-list">
+          <li *ngFor="let person of selectedRoom.staff" class="item-row">
+            <div class="icon-box"><i class="fa-solid fa-user-graduate"></i></div>
+            {{ person.fullName }}
+          </li>
+        </ul>
+      </section>
 
-    <button class="btn-primary" (click)="addReservation(selectedRoom)">
-      <i class="fa-solid fa-pen-to-square"></i> Gérer les affectations
-    </button>
+      <section *ngIf="selectedRoom.equipments.length > 0">
+        <div class="section-title">Matériels</div>
+        <ul class="item-list">
+          <li *ngFor="let eq of selectedRoom.equipments" class="item-row">
+            <div class="icon-box"><i class="fa-solid fa-box-open"></i></div>
+            <div>
+              <div>{{ eq.name }}</div>
+              <small style="color: #94a3b8" *ngIf="eq.serial_number">S/N: {{ eq.serial_number }}</small>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <section *ngIf="selectedRoom.sockets.length > 0">
+        <div class="section-title">Connectique</div>
+        <ul class="item-list">
+          <li *ngFor="let socket of selectedRoom.sockets" class="item-row">
+            <div class="icon-box"><i class="fa-solid fa-plug"></i></div>
+            {{ socket.identifier }} ({{ socket.socket_type_label || 'Prise' }})
+          </li>
+        </ul>
+      </section>
+
+      <button class="btn-primary" (click)="startEditing()">
+        <i class="fa-solid fa-pen-to-square"></i> Gérer le local
+      </button>
+    </div>
+
+    <!-- Edit Mode -->
+    <div *ngIf="isEditing" class="edit-form">
+      <header>
+        <span class="badge">Édition</span>
+        <h2>Modifier {{ selectedRoom.name }}</h2>
+      </header>
+
+      <div class="form-group">
+        <label>Nom du local</label>
+        <input type="text" [(ngModel)]="editRoomData.name" placeholder="Nom...">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Capacité max</label>
+          <input type="number" [(ngModel)]="editRoomData.max_capacity">
+        </div>
+        <div class="form-group">
+          <label>Accès (portes)</label>
+          <input type="number" [(ngModel)]="editRoomData.doors">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Étage</label>
+        <select [(ngModel)]="editRoomData.floor">
+          <option *ngFor="let f of availableFloors" [value]="f">
+            {{ f === 0 ? 'RDC' : 'Étage ' + f }}
+          </option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Couleur (Hex)</label>
+        <div class="color-input-wrapper">
+          <input type="color" [(ngModel)]="editRoomData.color">
+          <input type="text" [(ngModel)]="editRoomData.color" placeholder="#000000">
+        </div>
+      </div>
+
+      <div class="actions-footer">
+        <button class="btn-outline" (click)="cancelEditing()">Annuler</button>
+        <button class="btn-primary" (click)="saveRoom()">
+          <i class="fa-solid fa-check"></i> Enregistrer
+        </button>
+      </div>
+    </div>
+
   </aside>
 
   <ng-template #noSelection>

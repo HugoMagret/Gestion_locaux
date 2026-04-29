@@ -1,0 +1,99 @@
+<div class="detail-container">
+  <header class="detail-header">
+    <button class="btn-back" (click)="goBack()">
+      <i class="fa-solid fa-arrow-left"></i> Retour à la liste
+    </button>
+    <div class="header-title">
+      <h1>Gestion du local</h1>
+      <p *ngIf="room">{{ room.name }} — ID: {{ room.id.substring(0,8) }}...</p>
+    </div>
+  </header>
+
+  <div class="detail-content" *ngIf="room; else loading">
+    <div class="detail-grid">
+      <!-- Main Info -->
+      <section class="detail-section card">
+        <div class="section-header">
+          <i class="fa-solid fa-circle-info"></i> Informations Générales
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Nom du local</label>
+            <input type="text" [(ngModel)]="editData.name">
+          </div>
+          <div class="form-group">
+            <label>Type de local</label>
+            <select [(ngModel)]="editData.room_type_id">
+              <option *ngFor="let t of roomTypes" [value]="t.id">{{ t.label }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Étage</label>
+            <select [(ngModel)]="editData.floor">
+              <option *ngFor="let f of availableFloors" [value]="f">
+                {{ f === 0 ? 'RDC' : 'Étage ' + f }}
+              </option>
+            </select>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Capacité</label>
+              <input type="number" [(ngModel)]="editData.max_capacity">
+            </div>
+            <div class="form-group">
+              <label>Portes</label>
+              <input type="number" [(ngModel)]="editData.doors">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Couleur</label>
+            <div class="color-picker">
+              <input type="color" [(ngModel)]="editData.color">
+              <input type="text" [(ngModel)]="editData.color">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Stats / Summary -->
+      <section class="detail-section card">
+        <div class="section-header">
+          <i class="fa-solid fa-chart-pie"></i> Résumé des ressources
+        </div>
+        <div class="stats-list">
+          <div class="stat-row">
+            <div class="stat-label"><i class="fa-solid fa-user-graduate"></i> Personnel</div>
+            <div class="stat-value">{{ room.staff.length }}</div>
+          </div>
+          <div class="stat-row">
+            <div class="stat-label"><i class="fa-solid fa-box-open"></i> Équipements</div>
+            <div class="stat-value">{{ room.equipments.length }}</div>
+          </div>
+          <div class="stat-row">
+            <div class="stat-label"><i class="fa-solid fa-plug"></i> Connectique</div>
+            <div class="stat-value">{{ room.sockets.length }}</div>
+          </div>
+        </div>
+        <div class="info-alert">
+          <i class="fa-solid fa-circle-exclamation"></i>
+          La gestion précise du personnel et du matériel se fait via les modules dédiés.
+        </div>
+      </section>
+    </div>
+
+    <footer class="detail-actions">
+      <button class="btn-cancel" (click)="goBack()">Annuler</button>
+      <button class="btn-save" (click)="save()" [disabled]="isSaving">
+        <i class="fa-solid" [class.fa-spinner]="isSaving" [class.fa-spin]="isSaving" [class.fa-check]="!isSaving"></i>
+        {{ isSaving ? 'Enregistrement...' : 'Enregistrer les modifications' }}
+      </button>
+    </footer>
+  </div>
+
+  <ng-template #loading>
+    <div class="loading-state">
+      <i class="fa-solid fa-circle-notch fa-spin"></i>
+      Chargement du local...
+    </div>
+  </ng-template>
+</div>

@@ -10,6 +10,7 @@ import { UserListComponent } from './components/user-list/user-list';
 import { ProfileComponent } from './components/profile/profile';
 import { AlertComponent } from './components/alert/alert';
 import { LoginComponent } from './components/login/login';
+import { RoomDetailComponent } from './components/room-detail/room-detail';
 import { AuthService } from './services/auth.service';
 
 @Component({
@@ -26,7 +27,8 @@ import { AuthService } from './services/auth.service';
     UserListComponent,
     ProfileComponent,
     AlertComponent,
-    LoginComponent
+    LoginComponent,
+    RoomDetailComponent
   ],
   templateUrl: './app.html',
   styleUrls: ['./app.css']
@@ -34,7 +36,8 @@ import { AuthService } from './services/auth.service';
 export class App implements OnInit {
   private authService = inject(AuthService);
   
-  view: 'map' | 'floors' | 'staff' | 'types' | 'equipment-types' | 'rooms' | 'users' | 'profile' = 'map';
+  view: 'map' | 'floors' | 'staff' | 'types' | 'equipment-types' | 'rooms' | 'users' | 'profile' | 'room-detail' = 'map';
+  selectedRoomId: string | null = null;
   isAuthenticated$ = this.authService.isAuthenticated$;
 
   ngOnInit() {
@@ -43,6 +46,16 @@ export class App implements OnInit {
         this.view = 'map';
       }
     });
+  }
+
+  onRoomSelected(roomId: string) {
+    this.selectedRoomId = roomId;
+    this.view = 'room-detail';
+  }
+
+  closeRoomDetail() {
+    this.view = 'rooms';
+    this.selectedRoomId = null;
   }
 
   get isAdmin(): boolean {

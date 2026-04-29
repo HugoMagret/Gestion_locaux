@@ -45,7 +45,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let room of filteredRooms">
+        <tr *ngFor="let room of filteredRooms" (click)="selectRoom(room.id)" class="clickable-row">
           <td>
             <div class="room-name">
               <span class="color-dot" [style.background]="room.color"></span>
@@ -70,7 +70,7 @@
           </td>
           <td class="center">{{ room.doors }}</td>
           <td class="actions">
-            <button class="btn-delete" (click)="deleteRoom(room.id)" title="Supprimer">
+            <button class="btn-delete" (click)="deleteRoom(room.id); $event.stopPropagation()" title="Supprimer">
               <i class="fa-solid fa-trash-can"></i>
             </button>
           </td>
