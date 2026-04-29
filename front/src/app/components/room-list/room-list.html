@@ -63,7 +63,9 @@
             <span class="count-pill" [class.active]="room.staff.length > 0">{{ room.staff.length }}</span>
           </td>
           <td class="center">
-            <span class="count-pill" [class.active]="room.equipments.length > 0">{{ room.equipments.length }}</span>
+            <span class="count-pill" [class.active]="room.equipments.length > 0" [title]="getEquipmentSummary(room)">
+              {{ room.equipments.length }}
+            </span>
           </td>
           <td class="center">
             <span class="count-pill" [class.active]="room.sockets.length > 0">{{ room.sockets.length }}</span>

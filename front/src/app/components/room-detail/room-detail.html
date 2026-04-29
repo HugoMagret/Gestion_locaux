@@ -127,7 +127,7 @@
               <option *ngFor="let t of equipmentTypes" [value]="t.id">{{ t.label }}</option>
             </select>
           </div>
-          <button class="btn-add" (click)="addEquipment()" [disabled]="!newEquipment.name">
+          <button class="btn-add" (click)="addEquipment()" [disabled]="!newEquipment.name || !newEquipment.serial_number || !newEquipment.equipment_type_id">
             <i class="fa-solid fa-plus"></i> Ajouter
           </button>
         </div>

@@ -44,5 +44,11 @@ export class RoomService {
     const roomsToDelete = this.roomsSubject.value.filter(r => r.floor === floor);
     roomsToDelete.forEach(r => this.deleteRoom(r.id));
   }
+
+  getRoomById(id: string): Observable<Room> {
+    return this.http.get<any>(`${API_URL}/rooms/${id}`).pipe(
+      map(r => new Room(r))
+    );
+  }
 }
 

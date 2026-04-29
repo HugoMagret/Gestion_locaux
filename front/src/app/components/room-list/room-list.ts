@@ -84,4 +84,12 @@ export class RoomListComponent implements OnInit {
   selectRoom(id: string): void {
     this.roomSelected.emit(id);
   }
+
+  getEquipmentSummary(room: Room): string {
+    if (!room.equipments || room.equipments.length === 0) return 'Aucun matériel';
+    const types = room.equipments
+      .map(e => e.equipment_type_label || 'Matériel inconnu')
+      .filter((v, i, a) => a.indexOf(v) === i);
+    return types.join(', ');
+  }
 }

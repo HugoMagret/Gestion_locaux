@@ -53,10 +53,11 @@ export class RoomDetailComponent implements OnInit {
   selectedStaffId: string = '';
 
   ngOnInit(): void {
-    this.loadData();
+    this.loadReferences();
+    this.loadRoom();
   }
 
-  loadData(): void {
+  loadReferences(): void {
     this.referenceService.getRoomTypes().subscribe(types => this.roomTypes = types);
     this.referenceService.getEquipmentTypes().subscribe(types => this.equipmentTypes = types);
     this.referenceService.getSocketTypes().subscribe(types => this.socketTypes = types);
@@ -64,12 +65,14 @@ export class RoomDetailComponent implements OnInit {
       this.availableFloors = [...new Set(floors.map(f => f.level))].sort((a, b) => a - b);
     });
     this.staffService.getStaff().subscribe(staff => this.allStaff = staff);
+  }
 
-    this.roomService.getRooms().subscribe(rooms => {
-      const found = rooms.find(r => r.id === this.roomId);
-      if (found) {
-        this.room = found;
-        this.editData = { ...found };
+  loadRoom(): void {
+    this.roomService.getRoomById(this.roomId).subscribe(room => {
+      this.room = room;
+      // Only reset editData if not currently editing (to avoid losing unsaved changes)
+      if (!this.isSaving) {
+        this.editData = { ...room };
       }
     });
   }
@@ -77,8 +80,12 @@ export class RoomDetailComponent implements OnInit {
   saveGeneral(): void {
     this.isSaving = true;
     if (this.room) {
+      // In a real app, call roomService.updateRoom(this.editData)
       Object.assign(this.room, this.editData);
-      setTimeout(() => { this.isSaving = false; }, 500);
+      setTimeout(() => { 
+        this.isSaving = false; 
+        this.loadRoom(); // Reload to get fresh data
+      }, 500);
     }
   }
 
@@ -89,9 +96,9 @@ export class RoomDetailComponent implements OnInit {
     if (staff) {
       staff.room_id = this.room.id;
       this.staffService.updateStaff(staff).subscribe(() => {
-        if (this.room && !this.room.staff.find(s => s.id === staff.id)) {
-          this.room.staff.push(staff);
-        }
+        this.loadRoom();
+        // Refresh allStaff to update dropdown states
+        this.staffService.getStaff().subscribe(all => this.allStaff = all);
         this.selectedStaffId = '';
       });
     }
@@ -102,31 +109,29 @@ export class RoomDetailComponent implements OnInit {
     if (staff) {
       staff.room_id = null;
       this.staffService.updateStaff(staff).subscribe(() => {
-        if (this.room) {
-          this.room.staff = this.room.staff.filter(s => s.id !== staffId);
-        }
+        this.loadRoom();
+        // Refresh allStaff to update dropdown states
+        this.staffService.getStaff().subscribe(all => this.allStaff = all);
       });
     }
   }
 
   // Equipment Management
   addEquipment(): void {
-    if (!this.newEquipment.name || !this.room) return;
+    if (!this.newEquipment.name || !this.newEquipment.serial_number || !this.newEquipment.equipment_type_id || !this.room) return;
     const equipment = new Equipment({
       ...this.newEquipment,
       room_id: this.room.id
     });
-    this.equipmentService.addEquipment(equipment).subscribe(saved => {
-      this.room?.equipments.push(saved);
+    this.equipmentService.addEquipment(equipment).subscribe(() => {
+      this.loadRoom();
       this.newEquipment = { name: '', serial_number: '', equipment_type_id: '' };
     });
   }
 
   deleteEquipment(id: string): void {
     this.equipmentService.deleteEquipment(id).subscribe(() => {
-      if (this.room) {
-        this.room.equipments = this.room.equipments.filter(e => e.id !== id);
-      }
+      this.loadRoom();
     });
   }
 
@@ -137,21 +142,21 @@ export class RoomDetailComponent implements OnInit {
       ...this.newSocket,
       room_id: this.room.id
     });
-    this.socketService.addSocket(socket).subscribe(saved => {
-      this.room?.sockets.push(saved);
+    this.socketService.addSocket(socket).subscribe(() => {
+      this.loadRoom();
       this.newSocket = { identifier: '', socket_type_id: '' };
     });
   }
 
   deleteSocket(id: string): void {
     this.socketService.deleteSocket(id).subscribe(() => {
-      if (this.room) {
-        this.room.sockets = this.room.sockets.filter(s => s.id !== id);
-      }
+      this.loadRoom();
     });
   }
 
   goBack(): void {
+    // Notify room list to refresh
+    this.roomService.refreshRooms();
     this.back.emit();
   }
 }

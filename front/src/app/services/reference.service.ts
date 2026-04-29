@@ -43,12 +43,9 @@ export class ReferenceService {
   }
 
   getSocketTypes(): Observable<SocketType[]> {
-    // Note: The current backend doesn't have a /api/types/socket endpoint.
-    // Returning a default mock for now or you can add it to the backend.
-    return of([
-      new SocketType({ id: 'st1', label: 'Réseau (RJ45)' }),
-      new SocketType({ id: 'st2', label: 'Prise Électrique' }),
-    ]);
+    return this.http.get<any[]>(`${API_URL}/types/socket`).pipe(
+      map(types => types.map(t => new SocketType(t)))
+    );
   }
 }
 

@@ -20,10 +20,18 @@ router.get('/', async (req, res) => {
 // POST new equipment
 router.post('/', async (req, res) => {
   let { name, serial_number, equipment_type_id, room_id } = req.body;
+  
+  if (!name || !serial_number || !equipment_type_id) {
+    return res.status(400).json({ error: "Missing mandatory fields: name, serial_number and equipment_type_id are required." });
+  }
+
   if (room_id === "") room_id = null;
   try {
     const result = await db.query(
-      'INSERT INTO equipment (name, serial_number, equipment_type_id, room_id) VALUES ($1, $2, $3, $4) RETURNING id, name, serial_number, equipment_type_id, room_id',
+      `INSERT INTO equipment (name, serial_number, equipment_type_id, room_id) 
+       VALUES ($1, $2, $3, $4) 
+       RETURNING id, name, serial_number, equipment_type_id, room_id,
+       (SELECT label FROM equipment_type WHERE id = equipment_type_id) as equipment_type_label`,
       [name, serial_number, equipment_type_id, room_id]
     );
     res.status(201).json(result.rows[0]);
@@ -35,9 +43,17 @@ router.post('/', async (req, res) => {
 // PUT update equipment
 router.put('/:id', async (req, res) => {
   const { name, serial_number, equipment_type_id, room_id } = req.body;
+
+  if (!name || !serial_number || !equipment_type_id) {
+    return res.status(400).json({ error: "Name, serial_number and equipment_type_id are required for update." });
+  }
+
   try {
     const result = await db.query(
-      'UPDATE equipment SET name = $1, serial_number = $2, equipment_type_id = $3, room_id = $4 WHERE id = $5 RETURNING id, name, serial_number, equipment_type_id, room_id',
+      `UPDATE equipment SET name = $1, serial_number = $2, equipment_type_id = $3, room_id = $4 
+       WHERE id = $5 
+       RETURNING id, name, serial_number, equipment_type_id, room_id,
+       (SELECT label FROM equipment_type WHERE id = equipment_type_id) as equipment_type_label`,
       [name, serial_number, equipment_type_id, room_id, req.params.id]
     );
     res.json(result.rows[0]);
