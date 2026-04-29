@@ -7,7 +7,7 @@ const { hashPassword } = require('../config/auth');
 const adminOnly = (req, res, next) => {
   const isAdmin = req.headers['x-is-admin'] === 'true';
   if (!isAdmin) {
-    return res.status(403).json({ error: 'Action réservée aux administrateurs' });
+    return res.status(403).json({ success: false, message: 'Action réservée aux administrateurs' });
   }
   next();
 };
@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
     const result = await db.query('SELECT id, login, is_admin, last_connection FROM "user" ORDER BY login');
     res.json(result.rows);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ success: false, message: err.message });
   }
 });
 
@@ -33,7 +33,7 @@ router.post('/', adminOnly, async (req, res) => {
     );
     res.status(201).json(result.rows[0]);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ success: false, message: err.message });
   }
 });
 
@@ -48,7 +48,7 @@ router.put('/:id', adminOnly, async (req, res) => {
     );
     res.json(result.rows[0]);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ success: false, message: err.message });
   }
 });
 
@@ -58,7 +58,7 @@ router.delete('/:id', adminOnly, async (req, res) => {
     await db.query('DELETE FROM "user" WHERE id = $1', [req.params.id]);
     res.status(204).send();
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ success: false, message: err.message });
   }
 });
 

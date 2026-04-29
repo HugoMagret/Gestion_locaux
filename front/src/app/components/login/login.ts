@@ -13,17 +13,10 @@ import { AuthService } from '../../services/auth.service';
 export class LoginComponent {
   username = 'admin';
   password = '';
-  error = '';
 
   constructor(private authService: AuthService) {}
 
   onLogin() {
-    this.authService.login(this.username, this.password).subscribe(success => {
-      if (success) {
-        this.error = '';
-      } else {
-        this.error = 'Identifiants incorrects';
-      }
-    });
+    this.authService.login(this.username, this.password).subscribe();
   }
 }

@@ -34,7 +34,7 @@ router.post('/login', async (req, res) => {
       res.status(401).json({ success: false, message: 'Identifiants incorrects' });
     }
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ success: false, message: err.message });
   }
 });
 
@@ -46,7 +46,7 @@ router.post('/change-password', async (req, res) => {
     await db.query('UPDATE "user" SET password = $1 WHERE id = $2', [hashedPassword, userId]);
     res.json({ success: true, message: 'Mot de passe mis à jour' });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ success: false, message: err.message });
   }
 });
 

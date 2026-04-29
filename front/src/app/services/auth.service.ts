@@ -25,19 +25,16 @@ export class AuthService {
     return user ? JSON.parse(user) : null;
   }
 
-  login(login: string, password: string): Observable<boolean> {
+  login(login: string, password: string): Observable<any> {
     return this.http.post<any>(`${API_URL}/auth/login`, { login, password }).pipe(
-      map(response => {
+      tap(response => {
         if (response.success) {
           localStorage.setItem('auth_token', response.token);
           localStorage.setItem('current_user', JSON.stringify(response.user));
           this.isAuthenticatedSubject.next(true);
           this.currentUserSubject.next(response.user);
-          return true;
         }
-        return false;
-      }),
-      catchError(() => of(false))
+      })
     );
   }
 

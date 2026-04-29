@@ -8,6 +8,7 @@ import { EquipmentTypeManagerComponent } from './components/equipment-type-manag
 import { RoomListComponent } from './components/room-list/room-list';
 import { UserListComponent } from './components/user-list/user-list';
 import { ProfileComponent } from './components/profile/profile';
+import { AlertComponent } from './components/alert/alert';
 import { LoginComponent } from './components/login/login';
 import { AuthService } from './services/auth.service';
 
@@ -24,6 +25,7 @@ import { AuthService } from './services/auth.service';
     RoomListComponent,
     UserListComponent,
     ProfileComponent,
+    AlertComponent,
     LoginComponent
   ],
   templateUrl: './app.html',
