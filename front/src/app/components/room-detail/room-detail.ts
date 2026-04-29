@@ -3,9 +3,17 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Room } from '../../models/room.model';
 import { RoomType } from '../../models/room-type.model';
+import { Staff } from '../../models/staff.model';
+import { Equipment } from '../../models/equipment.model';
+import { Socket } from '../../models/socket.model';
+import { EquipmentType } from '../../models/equipment-type.model';
+import { SocketType } from '../../models/socket-type.model';
 import { RoomService } from '../../services/room.service';
 import { ReferenceService } from '../../services/reference.service';
 import { FloorService } from '../../services/floor.service';
+import { StaffService } from '../../services/staff.service';
+import { EquipmentService } from '../../services/equipment.service';
+import { SocketService } from '../../services/socket.service';
 
 @Component({
   selector: 'app-room-detail',
@@ -21,26 +29,42 @@ export class RoomDetailComponent implements OnInit {
   private roomService = inject(RoomService);
   private referenceService = inject(ReferenceService);
   private floorService = inject(FloorService);
+  private staffService = inject(StaffService);
+  private equipmentService = inject(EquipmentService);
+  private socketService = inject(SocketService);
 
   room: Room | null = null;
+  activeTab: 'general' | 'staff' | 'equipment' | 'sockets' = 'general';
+  
+  // Reference data
   roomTypes: RoomType[] = [];
   availableFloors: number[] = [];
-  
+  equipmentTypes: EquipmentType[] = [];
+  socketTypes: SocketType[] = [];
+  allStaff: Staff[] = [];
+
+  // Edit states
   editData: any = {};
   isSaving = false;
+
+  // New item states
+  newEquipment: any = { name: '', serial_number: '', equipment_type_id: '' };
+  newSocket: any = { identifier: '', socket_type_id: '' };
+  selectedStaffId: string = '';
 
   ngOnInit(): void {
     this.loadData();
   }
 
   loadData(): void {
-    // Load reference data
     this.referenceService.getRoomTypes().subscribe(types => this.roomTypes = types);
+    this.referenceService.getEquipmentTypes().subscribe(types => this.equipmentTypes = types);
+    this.referenceService.getSocketTypes().subscribe(types => this.socketTypes = types);
     this.floorService.getFloors().subscribe(floors => {
       this.availableFloors = [...new Set(floors.map(f => f.level))].sort((a, b) => a - b);
     });
+    this.staffService.getStaff().subscribe(staff => this.allStaff = staff);
 
-    // Load room
     this.roomService.getRooms().subscribe(rooms => {
       const found = rooms.find(r => r.id === this.roomId);
       if (found) {
@@ -50,17 +74,81 @@ export class RoomDetailComponent implements OnInit {
     });
   }
 
-  save(): void {
+  saveGeneral(): void {
     this.isSaving = true;
-    // In a real app, call service.updateRoom()
-    // For now, simulate local update
     if (this.room) {
       Object.assign(this.room, this.editData);
-      setTimeout(() => {
-        this.isSaving = false;
-        this.goBack();
-      }, 500);
+      setTimeout(() => { this.isSaving = false; }, 500);
     }
+  }
+
+  // Staff Management
+  assignStaff(): void {
+    if (!this.selectedStaffId || !this.room) return;
+    const staff = this.allStaff.find(s => s.id === this.selectedStaffId);
+    if (staff) {
+      staff.room_id = this.room.id;
+      this.staffService.updateStaff(staff).subscribe(() => {
+        if (this.room && !this.room.staff.find(s => s.id === staff.id)) {
+          this.room.staff.push(staff);
+        }
+        this.selectedStaffId = '';
+      });
+    }
+  }
+
+  unassignStaff(staffId: string): void {
+    const staff = this.allStaff.find(s => s.id === staffId);
+    if (staff) {
+      staff.room_id = null;
+      this.staffService.updateStaff(staff).subscribe(() => {
+        if (this.room) {
+          this.room.staff = this.room.staff.filter(s => s.id !== staffId);
+        }
+      });
+    }
+  }
+
+  // Equipment Management
+  addEquipment(): void {
+    if (!this.newEquipment.name || !this.room) return;
+    const equipment = new Equipment({
+      ...this.newEquipment,
+      room_id: this.room.id
+    });
+    this.equipmentService.addEquipment(equipment).subscribe(saved => {
+      this.room?.equipments.push(saved);
+      this.newEquipment = { name: '', serial_number: '', equipment_type_id: '' };
+    });
+  }
+
+  deleteEquipment(id: string): void {
+    this.equipmentService.deleteEquipment(id).subscribe(() => {
+      if (this.room) {
+        this.room.equipments = this.room.equipments.filter(e => e.id !== id);
+      }
+    });
+  }
+
+  // Socket Management
+  addSocket(): void {
+    if (!this.newSocket.identifier || !this.room) return;
+    const socket = new Socket({
+      ...this.newSocket,
+      room_id: this.room.id
+    });
+    this.socketService.addSocket(socket).subscribe(saved => {
+      this.room?.sockets.push(saved);
+      this.newSocket = { identifier: '', socket_type_id: '' };
+    });
+  }
+
+  deleteSocket(id: string): void {
+    this.socketService.deleteSocket(id).subscribe(() => {
+      if (this.room) {
+        this.room.sockets = this.room.sockets.filter(s => s.id !== id);
+      }
+    });
   }
 
   goBack(): void {

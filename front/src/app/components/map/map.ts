@@ -17,8 +17,6 @@ export class MapComponent implements OnInit {
   allRooms: Room[] = [];
   filteredRooms: Room[] = [];
   selectedRoom: Room | null = null;
-  isEditing = false;
-  editRoomData: any = {};
 
   // Navigation state
   selectedFloor = 0;
@@ -73,18 +71,15 @@ export class MapComponent implements OnInit {
   selectFloor(floor: number): void {
     this.selectedFloor = floor;
     this.selectedRoom = null;
-    this.isEditing = false;
     this.applyFilters();
   }
 
   selectRoom(room: Room): void {
     this.selectedRoom = room;
-    this.isEditing = false;
   }
 
   onMapClick(event: MouseEvent): void {
     this.selectedRoom = null;
-    this.isEditing = false;
   }
 
   toggleLayer(layer: 'researchers' | 'equipment' | 'sockets'): void {
@@ -93,24 +88,9 @@ export class MapComponent implements OnInit {
     if (layer === 'sockets') this.showSockets = !this.showSockets;
   }
 
-  startEditing(): void {
+  goToDetail(): void {
     if (this.selectedRoom) {
-      this.isEditing = true;
-      this.editRoomData = { ...this.selectedRoom };
-    }
-  }
-
-  cancelEditing(): void {
-    this.isEditing = false;
-  }
-
-  saveRoom(): void {
-    if (this.selectedRoom) {
-      // In a real app, we would call a service to update the DB
-      // Here we update the local model
-      Object.assign(this.selectedRoom, this.editRoomData);
-      this.isEditing = false;
-      this.applyFilters();
+      this.roomSelected.emit(this.selectedRoom.id);
     }
   }
 }

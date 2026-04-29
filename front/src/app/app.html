@@ -17,7 +17,7 @@
   </nav>
 
   <main>
-    <app-map *ngIf="view === 'map'"></app-map>
+    <app-map *ngIf="view === 'map'" (roomSelected)="onRoomSelected($event)"></app-map>
     <app-room-list *ngIf="view === 'rooms'" (roomSelected)="onRoomSelected($event)"></app-room-list>
     <app-room-detail *ngIf="view === 'room-detail' && selectedRoomId" [roomId]="selectedRoomId" (back)="closeRoomDetail()"></app-room-detail>
     <app-floor-manager *ngIf="view === 'floors'"></app-floor-manager>

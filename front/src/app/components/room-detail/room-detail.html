@@ -1,7 +1,7 @@
 <div class="detail-container">
   <header class="detail-header">
     <button class="btn-back" (click)="goBack()">
-      <i class="fa-solid fa-arrow-left"></i> Retour à la liste
+      <i class="fa-solid fa-arrow-left"></i> Retour
     </button>
     <div class="header-title">
       <h1>Gestion du local</h1>
@@ -9,13 +9,27 @@
     </div>
   </header>
 
+  <nav class="detail-tabs">
+    <button [class.active]="activeTab === 'general'" (click)="activeTab = 'general'">
+      <i class="fa-solid fa-circle-info"></i> Général
+    </button>
+    <button [class.active]="activeTab === 'staff'" (click)="activeTab = 'staff'">
+      <i class="fa-solid fa-user-graduate"></i> Personnel ({{ room?.staff?.length || 0 }})
+    </button>
+    <button [class.active]="activeTab === 'equipment'" (click)="activeTab = 'equipment'">
+      <i class="fa-solid fa-box-open"></i> Matériel ({{ room?.equipments?.length || 0 }})
+    </button>
+    <button [class.active]="activeTab === 'sockets'" (click)="activeTab = 'sockets'">
+      <i class="fa-solid fa-plug"></i> Connectique ({{ room?.sockets?.length || 0 }})
+    </button>
+  </nav>
+
   <div class="detail-content" *ngIf="room; else loading">
-    <div class="detail-grid">
-      <!-- Main Info -->
-      <section class="detail-section card">
-        <div class="section-header">
-          <i class="fa-solid fa-circle-info"></i> Informations Générales
-        </div>
+    
+    <!-- GENERAL TAB -->
+    <div *ngIf="activeTab === 'general'" class="tab-pane">
+      <section class="card">
+        <div class="section-header">Informations Générales</div>
         <div class="form-grid">
           <div class="form-group">
             <label>Nom du local</label>
@@ -46,48 +60,123 @@
             </div>
           </div>
           <div class="form-group">
-            <label>Couleur</label>
+            <label>Couleur d'affichage</label>
             <div class="color-picker">
               <input type="color" [(ngModel)]="editData.color">
               <input type="text" [(ngModel)]="editData.color">
             </div>
           </div>
         </div>
-      </section>
-
-      <!-- Stats / Summary -->
-      <section class="detail-section card">
-        <div class="section-header">
-          <i class="fa-solid fa-chart-pie"></i> Résumé des ressources
-        </div>
-        <div class="stats-list">
-          <div class="stat-row">
-            <div class="stat-label"><i class="fa-solid fa-user-graduate"></i> Personnel</div>
-            <div class="stat-value">{{ room.staff.length }}</div>
-          </div>
-          <div class="stat-row">
-            <div class="stat-label"><i class="fa-solid fa-box-open"></i> Équipements</div>
-            <div class="stat-value">{{ room.equipments.length }}</div>
-          </div>
-          <div class="stat-row">
-            <div class="stat-label"><i class="fa-solid fa-plug"></i> Connectique</div>
-            <div class="stat-value">{{ room.sockets.length }}</div>
-          </div>
-        </div>
-        <div class="info-alert">
-          <i class="fa-solid fa-circle-exclamation"></i>
-          La gestion précise du personnel et du matériel se fait via les modules dédiés.
+        <div class="actions-footer">
+          <button class="btn-save" (click)="saveGeneral()" [disabled]="isSaving">
+            <i class="fa-solid" [class.fa-spinner]="isSaving" [class.fa-spin]="isSaving" [class.fa-check]="!isSaving"></i>
+            {{ isSaving ? 'Enregistrement...' : 'Enregistrer les modifications' }}
+          </button>
         </div>
       </section>
     </div>
 
-    <footer class="detail-actions">
-      <button class="btn-cancel" (click)="goBack()">Annuler</button>
-      <button class="btn-save" (click)="save()" [disabled]="isSaving">
-        <i class="fa-solid" [class.fa-spinner]="isSaving" [class.fa-spin]="isSaving" [class.fa-check]="!isSaving"></i>
-        {{ isSaving ? 'Enregistrement...' : 'Enregistrer les modifications' }}
-      </button>
-    </footer>
+    <!-- STAFF TAB -->
+    <div *ngIf="activeTab === 'staff'" class="tab-pane">
+      <section class="card">
+        <div class="section-header">Affecter un membre du personnel</div>
+        <div class="add-row">
+          <select [(ngModel)]="selectedStaffId">
+            <option value="">Sélectionner un membre...</option>
+            <option *ngFor="let s of allStaff" [value]="s.id" [disabled]="s.room_id === room.id">
+              {{ s.fullName }} {{ s.room_id ? '(Déjà affecté)' : '' }}
+            </option>
+          </select>
+          <button class="btn-add" (click)="assignStaff()" [disabled]="!selectedStaffId">
+            <i class="fa-solid fa-plus"></i> Affecter
+          </button>
+        </div>
+      </section>
+
+      <div class="item-list-grid">
+        <div *ngFor="let person of room.staff" class="item-card">
+          <div class="item-icon"><i class="fa-solid fa-user-graduate"></i></div>
+          <div class="item-info">
+            <strong>{{ person.fullName }}</strong>
+            <span>Enseignant-Chercheur</span>
+          </div>
+          <button class="btn-remove" (click)="unassignStaff(person.id)" title="Désaffecter">
+            <i class="fa-solid fa-link-slash"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- EQUIPMENT TAB -->
+    <div *ngIf="activeTab === 'equipment'" class="tab-pane">
+      <section class="card">
+        <div class="section-header">Ajouter un matériel</div>
+        <div class="add-grid">
+          <div class="form-group">
+            <label>Nom du matériel</label>
+            <input type="text" [(ngModel)]="newEquipment.name" placeholder="Ex: iMac Pro">
+          </div>
+          <div class="form-group">
+            <label>N° Série</label>
+            <input type="text" [(ngModel)]="newEquipment.serial_number" placeholder="Ex: SN-123">
+          </div>
+          <div class="form-group">
+            <label>Type</label>
+            <select [(ngModel)]="newEquipment.equipment_type_id">
+              <option value="">Type...</option>
+              <option *ngFor="let t of equipmentTypes" [value]="t.id">{{ t.label }}</option>
+            </select>
+          </div>
+          <button class="btn-add" (click)="addEquipment()" [disabled]="!newEquipment.name">
+            <i class="fa-solid fa-plus"></i> Ajouter
+          </button>
+        </div>
+      </section>
+
+      <div class="item-list-grid">
+        <div *ngFor="let eq of room.equipments" class="item-card">
+          <div class="item-icon"><i class="fa-solid fa-box-open"></i></div>
+          <div class="item-info">
+            <strong>{{ eq.name }}</strong>
+            <span>{{ eq.equipment_type_label || 'Matériel' }} — S/N: {{ eq.serial_number || 'N/A' }}</span>
+          </div>
+          <button class="btn-remove" (click)="deleteEquipment(eq.id)" title="Supprimer">
+            <i class="fa-solid fa-trash-can"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SOCKETS TAB -->
+    <div *ngIf="activeTab === 'sockets'" class="tab-pane">
+      <section class="card">
+        <div class="section-header">Ajouter une connectique</div>
+        <div class="add-row">
+          <input type="text" [(ngModel)]="newSocket.identifier" placeholder="Identifiant (ex: ETH-01)">
+          <select [(ngModel)]="newSocket.socket_type_id">
+            <option value="">Type...</option>
+            <option *ngFor="let t of socketTypes" [value]="t.id">{{ t.label }}</option>
+          </select>
+          <button class="btn-add" (click)="addSocket()" [disabled]="!newSocket.identifier">
+            <i class="fa-solid fa-plus"></i> Ajouter
+          </button>
+        </div>
+      </section>
+
+      <div class="item-list-grid">
+        <div *ngFor="let s of room.sockets" class="item-card">
+          <div class="item-icon"><i class="fa-solid fa-plug"></i></div>
+          <div class="item-info">
+            <strong>{{ s.identifier }}</strong>
+            <span>{{ s.socket_type_label || 'Prise' }}</span>
+          </div>
+          <button class="btn-remove" (click)="deleteSocket(s.id)" title="Supprimer">
+            <i class="fa-solid fa-trash-can"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <ng-template #loading>

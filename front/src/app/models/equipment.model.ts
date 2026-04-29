@@ -5,7 +5,7 @@ export class Equipment {
   name: string;
   serial_number?: string;
   equipment_type_id: string;
-  room_id?: string;
+  room_id: string | null;
   
   // Joined field
   equipment_type_label?: string;

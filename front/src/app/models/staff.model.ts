@@ -2,7 +2,7 @@ export class Staff {
   id: string;
   first_name: string;
   last_name: string;
-  room_id?: string;
+  room_id: string | null;
 
   constructor(data: any) {
     this.id = data.id;
