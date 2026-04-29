@@ -1,0 +1,24 @@
+# --- Node & Angular ---
+node_modules/
+dist/
+.angular/
+
+# --- Environnement ---
+# .env
+
+# --- LaTeX ---
+*.aux
+*.bbl
+*.blg
+*.brf
+*.fls
+*.fdb_latexmk
+*.idx
+*.ilg
+*.ind
+*.lof
+*.lot
+*.log
+*.out
+*.toc
+*.synctex.gz
