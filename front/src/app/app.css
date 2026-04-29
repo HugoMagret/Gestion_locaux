@@ -29,6 +29,9 @@
   color: white;
   background: rgba(255,255,255,0.1);
 }
+.nav-links button i {
+  margin-right: 8px;
+}
 .nav-links button.active {
   color: white;
   background: rgba(255,255,255,0.2);

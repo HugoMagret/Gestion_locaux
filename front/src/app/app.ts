@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MapComponent } from './components/map/map';
 import { FloorManagerComponent } from './components/floor-manager/floor-manager';
@@ -32,15 +32,12 @@ import { AuthService } from './services/auth.service';
   styleUrls: ['./app.css']
 })
 export class App implements OnInit {
+  private authService = inject(AuthService);
+  
   view: 'map' | 'floors' | 'staff' | 'types' | 'equipment-types' | 'rooms' | 'users' | 'profile' = 'map';
-  isAuthenticated = false;
-
-  constructor(private authService: AuthService) {}
+  isAuthenticated$ = this.authService.isAuthenticated$;
 
   ngOnInit() {
-    this.authService.isAuthenticated$.subscribe(status => {
-      this.isAuthenticated = status;
-    });
   }
 
   get isAdmin(): boolean {

@@ -1,18 +1,18 @@
 <app-alert></app-alert>
 
-<ng-container *ngIf="isAuthenticated; else loginTemplate">
+<ng-container *ngIf="isAuthenticated$ | async; else loginTemplate">
   <nav class="top-nav">
     <div class="nav-brand">LocauxAdmin</div>
     <div class="nav-links">
-      <button [class.active]="view === 'map'" (click)="view = 'map'">Plan 2D</button>
-      <button [class.active]="view === 'rooms'" (click)="view = 'rooms'">Liste Salles</button>
-      <button [class.active]="view === 'floors'" (click)="view = 'floors'">Gestion Étages</button>
-      <button [class.active]="view === 'staff'" (click)="view = 'staff'">Personnel</button>
-      <button [class.active]="view === 'types'" (click)="view = 'types'">Types de Salles</button>
-      <button [class.active]="view === 'equipment-types'" (click)="view = 'equipment-types'">Types de Matériels</button>
-      <button *ngIf="isAdmin" [class.active]="view === 'users'" (click)="view = 'users'">Utilisateurs</button>
-      <button [class.active]="view === 'profile'" (click)="view = 'profile'">Mon Profil</button>
-      <button class="logout-btn" (click)="logout()">Déconnexion</button>
+      <button [class.active]="view === 'map'" (click)="view = 'map'"><i class="fa-solid fa-map"></i> Plan 2D</button>
+      <button [class.active]="view === 'rooms'" (click)="view = 'rooms'"><i class="fa-solid fa-door-open"></i> Liste Salles</button>
+      <button [class.active]="view === 'floors'" (click)="view = 'floors'"><i class="fa-solid fa-layer-group"></i> Gestion Étages</button>
+      <button [class.active]="view === 'staff'" (click)="view = 'staff'"><i class="fa-solid fa-users"></i> Personnel</button>
+      <button [class.active]="view === 'types'" (click)="view = 'types'"><i class="fa-solid fa-tags"></i> Types de Salles</button>
+      <button [class.active]="view === 'equipment-types'" (click)="view = 'equipment-types'"><i class="fa-solid fa-toolbox"></i> Types de Matériels</button>
+      <button *ngIf="isAdmin" [class.active]="view === 'users'" (click)="view = 'users'"><i class="fa-solid fa-user-shield"></i> Utilisateurs</button>
+      <button [class.active]="view === 'profile'" (click)="view = 'profile'"><i class="fa-solid fa-user"></i> Mon Profil</button>
+      <button class="logout-btn" (click)="logout()"><i class="fa-solid fa-right-from-bracket"></i> Déconnexion</button>
     </div>
   </nav>
 

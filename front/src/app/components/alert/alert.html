@@ -1,8 +1,8 @@
 <div *ngIf="notification" class="alert-box" [ngClass]="notification.type">
   <div class="alert-content">
-    <span class="icon" *ngIf="notification.type === 'error'">⚠️</span>
-    <span class="icon" *ngIf="notification.type === 'success'">✅</span>
-    <span class="icon" *ngIf="notification.type === 'info'">ℹ️</span>
+    <i class="fa-solid fa-triangle-exclamation icon" *ngIf="notification.type === 'error'"></i>
+    <i class="fa-solid fa-circle-check icon" *ngIf="notification.type === 'success'"></i>
+    <i class="fa-solid fa-circle-info icon" *ngIf="notification.type === 'info'"></i>
     <p>{{ notification.message }}</p>
   </div>
   <button class="close-btn" (click)="close()">&times;</button>
