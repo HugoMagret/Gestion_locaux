@@ -10,8 +10,8 @@ Ce système doit permettre de classer les espaces selon leur type (bureau, salle
 \section{Enjeux et Périmètre}
 Au-delà du simple développement d'un système d'information de type CRUD (Create, Read, Update, Delete), les attentes de ce projet portent sur la maintenabilité de l'application et son ergonomie[cite: 12, 14]. Parmi les fonctionnalités majeures attendues, nous devons implémenter :
 \begin{itemize}
-    \item Une interface interactive permettant de visualiser les locaux via un plan cliquable, rendant l'expérience utilisateur plus intuitive[cite: 15]. Nous utiliserons pour cela les plans fournis au format vectoriel et PDF.
-    \item Un moteur de génération de plans au format PDF pour exporter l'état d'un étage d'un batiment, avec le matériel et les personnels affectés[cite: 16].
+\item \textbf{Une cartographie interactive :} Le système doit permettre de visualiser les locaux via un plan interactif. Bien que des plans au format PDF nous aient été fournis, nous exploiterons principalement leur version vectorielle (SVG), qui sont techniquement beaucoup plus sympathiques à manipuler dans un contexte web. Ils nous permettent en effet de définir facilement des zones cliquables (via des balises HTML/SVG) afin de rendre l'expérience utilisateur plus intuitive.
+\item Un moteur de génération de plans au format PDF pour exporter l'état d'un étage d'un batiment, avec le matériel et les personnels affectés[cite: 16].
 \end{itemize}
 
 Ce rapport détaillera l'ensemble du processus de création de cette plateforme, depuis nos choix technologiques orientés "industrie" jusqu'à la mise en place de notre architecture logicielle.
