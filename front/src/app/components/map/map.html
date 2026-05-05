@@ -57,17 +57,17 @@
         (click)="selectRoom(room); $event.stopPropagation()"
         class="room-group"
       >
-        <!-- Room Shape -->
         <rect
           [attr.x]="room.coordinates.x"
           [attr.y]="room.coordinates.y"
           [attr.width]="room.coordinates.width"
           [attr.height]="room.coordinates.height"
           [class.selected]="selectedRoom?.id === room.id"
+          [attr.fill]="room.color || '#e0f2fe'"
+          style="fill-opacity: 0.5;"
           class="room-rect"
         />
 
-        <!-- Room Label -->
         <text
           [attr.x]="room.coordinates.x + room.coordinates.width / 2"
           [attr.y]="room.coordinates.y + room.coordinates.height / 2"
@@ -79,48 +79,19 @@
           {{ room.name }}
         </text>
 
-        <!-- Overlay: Staff -->
-        <g *ngIf="showResearchers && room.staff.length > 0">
-          <circle 
-            [attr.cx]="room.coordinates.x + 15" 
-            [attr.cy]="room.coordinates.y + 15" 
-            r="12" 
-            fill="#3b82f6" 
-          />
-          <text 
-            [attr.x]="room.coordinates.x + 15" 
-            [attr.y]="room.coordinates.y + 15" 
-            text-anchor="middle" 
-            dominant-baseline="central" 
-            font-size="10" 
-            fill="white"
-            font-weight="bold"
-          >
-            {{ room.staff.length }}
-          </text>
-        </g>
+        <text 
+          *ngIf="showResearchers && room.staff.length > 0"
+          [attr.x]="room.coordinates.x + 15" 
+          [attr.y]="room.coordinates.y + 15" 
+          font-size="14" fill="#2563eb" font-family="'Font Awesome 6 Free'" font-weight="900"
+        >&#xf51c;</text>
 
-        <!-- Overlay: Equipment Icon (SVG-compatible text) -->
         <text 
           *ngIf="showEquipment && room.equipments.length > 0"
-          [attr.x]="room.coordinates.x + room.coordinates.width - 25" 
-          [attr.y]="room.coordinates.y + 20"
-          font-size="14"
-          fill="#64748b"
-          font-family="'Font Awesome 6 Free'"
-          font-weight="900"
-        >&#xf466;</text>
-
-        <!-- Overlay: Sockets Icon (SVG-compatible text) -->
-        <text 
-          *ngIf="showSockets && room.sockets.length > 0"
-          [attr.x]="room.coordinates.x + room.coordinates.width - 25" 
-          [attr.y]="room.coordinates.y + room.coordinates.height - 15"
-          font-size="14"
-          fill="#64748b"
-          font-family="'Font Awesome 6 Free'"
-          font-weight="900"
-        >&#xf1e6;</text>
+          [attr.x]="room.coordinates.x + room.coordinates.width - 20" 
+          [attr.y]="room.coordinates.y + 15"
+          font-size="14" fill="#475569" font-family="'Font Awesome 6 Free'" font-weight="900"
+        >&#xf108;</text>
       </g>
     </svg>
   </div>

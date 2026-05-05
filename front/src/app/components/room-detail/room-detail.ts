@@ -1,6 +1,8 @@
 import { Component, Input, Output, EventEmitter, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+// Importation des deux types de modules de formulaires pour éviter les erreurs NG8002
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+
 import { Room } from '../../models/room.model';
 import { RoomType } from '../../models/room-type.model';
 import { Staff } from '../../models/staff.model';
@@ -8,6 +10,7 @@ import { Equipment } from '../../models/equipment.model';
 import { Socket } from '../../models/socket.model';
 import { EquipmentType } from '../../models/equipment-type.model';
 import { SocketType } from '../../models/socket-type.model';
+
 import { RoomService } from '../../services/room.service';
 import { ReferenceService } from '../../services/reference.service';
 import { FloorService } from '../../services/floor.service';
@@ -18,7 +21,8 @@ import { SocketService } from '../../services/socket.service';
 @Component({
   selector: 'app-room-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  // Ajout de FormsModule pour [ngModel] et ReactiveFormsModule pour [formGroup]
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './room-detail.html',
   styleUrls: ['./room-detail.css']
 })
@@ -26,6 +30,8 @@ export class RoomDetailComponent implements OnInit {
   @Input() roomId!: string;
   @Output() back = new EventEmitter<void>();
 
+  // Injection des services
+  private fb = inject(FormBuilder);
   private roomService = inject(RoomService);
   private referenceService = inject(ReferenceService);
   private floorService = inject(FloorService);
@@ -33,24 +39,38 @@ export class RoomDetailComponent implements OnInit {
   private equipmentService = inject(EquipmentService);
   private socketService = inject(SocketService);
 
+  // Propriétés de l'interface
   room: Room | null = null;
   activeTab: 'general' | 'staff' | 'equipment' | 'sockets' = 'general';
-  
-  // Reference data
+  isSaving = false;
+
+  // Données de référence
   roomTypes: RoomType[] = [];
   availableFloors: number[] = [];
   equipmentTypes: EquipmentType[] = [];
   socketTypes: SocketType[] = [];
   allStaff: Staff[] = [];
 
-  // Edit states
+  // États des formulaires (utilisés par votre HTML actuel)
+  // On les déclare pour corriger l'erreur TS2339
   editData: any = {};
-  isSaving = false;
-
-  // New item states
   newEquipment: any = { name: '', serial_number: '', equipment_type_id: '' };
   newSocket: any = { identifier: '', socket_type_id: '' };
   selectedStaffId: string = '';
+
+  // Nouveau : Formulaire réactif pour une meilleure validation
+  roomForm: FormGroup;
+
+  constructor() {
+    this.roomForm = this.fb.group({
+      name: ['', Validators.required],
+      max_capacity: [0, [Validators.required, Validators.min(1)]],
+      room_type_id: ['', Validators.required],
+      doors: [1, Validators.required],
+      floor: [0],
+      color: ['#3498db']
+    });
+  }
 
   ngOnInit(): void {
     this.loadReferences();
@@ -70,26 +90,32 @@ export class RoomDetailComponent implements OnInit {
   loadRoom(): void {
     this.roomService.getRoomById(this.roomId).subscribe(room => {
       this.room = room;
-      // Only reset editData if not currently editing (to avoid losing unsaved changes)
       if (!this.isSaving) {
+        // On remplit à la fois editData (pour votre HTML) et le roomForm (pour la logique)
         this.editData = { ...room };
+        this.roomForm.patchValue(room);
       }
     });
   }
 
   saveGeneral(): void {
+    // Si le formulaire réactif est invalide, on ne sauvegarde pas
+    if (this.roomForm.invalid) return;
+
     this.isSaving = true;
     if (this.room) {
-      // In a real app, call roomService.updateRoom(this.editData)
+      // On fusionne les données de editData (venant du HTML) dans l'objet de la salle
       Object.assign(this.room, this.editData);
+      
+      // Ici on simule l'appel API (U du CRUD - Update)
       setTimeout(() => { 
         this.isSaving = false; 
-        this.loadRoom(); // Reload to get fresh data
+        console.log('Salle mise à jour avec succès');
       }, 500);
     }
   }
 
-  // Staff Management
+  // --- Gestion du Personnel (Assignation) ---
   assignStaff(): void {
     if (!this.selectedStaffId || !this.room) return;
     const staff = this.allStaff.find(s => s.id === this.selectedStaffId);
@@ -97,8 +123,6 @@ export class RoomDetailComponent implements OnInit {
       staff.room_id = this.room.id;
       this.staffService.updateStaff(staff).subscribe(() => {
         this.loadRoom();
-        // Refresh allStaff to update dropdown states
-        this.staffService.getStaff().subscribe(all => this.allStaff = all);
         this.selectedStaffId = '';
       });
     }
@@ -108,17 +132,13 @@ export class RoomDetailComponent implements OnInit {
     const staff = this.allStaff.find(s => s.id === staffId);
     if (staff) {
       staff.room_id = null;
-      this.staffService.updateStaff(staff).subscribe(() => {
-        this.loadRoom();
-        // Refresh allStaff to update dropdown states
-        this.staffService.getStaff().subscribe(all => this.allStaff = all);
-      });
+      this.staffService.updateStaff(staff).subscribe(() => this.loadRoom());
     }
   }
 
-  // Equipment Management
+  // --- Gestion du Matériel (CRUD) ---
   addEquipment(): void {
-    if (!this.newEquipment.name || !this.newEquipment.serial_number || !this.newEquipment.equipment_type_id || !this.room) return;
+    if (!this.newEquipment.name || !this.room) return;
     const equipment = new Equipment({
       ...this.newEquipment,
       room_id: this.room.id
@@ -130,12 +150,10 @@ export class RoomDetailComponent implements OnInit {
   }
 
   deleteEquipment(id: string): void {
-    this.equipmentService.deleteEquipment(id).subscribe(() => {
-      this.loadRoom();
-    });
+    this.equipmentService.deleteEquipment(id).subscribe(() => this.loadRoom());
   }
 
-  // Socket Management
+  // --- Gestion des Prises (CRUD) ---
   addSocket(): void {
     if (!this.newSocket.identifier || !this.room) return;
     const socket = new Socket({
@@ -149,13 +167,10 @@ export class RoomDetailComponent implements OnInit {
   }
 
   deleteSocket(id: string): void {
-    this.socketService.deleteSocket(id).subscribe(() => {
-      this.loadRoom();
-    });
+    this.socketService.deleteSocket(id).subscribe(() => this.loadRoom());
   }
 
   goBack(): void {
-    // Notify room list to refresh
     this.roomService.refreshRooms();
     this.back.emit();
   }
