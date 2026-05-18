@@ -11,6 +11,16 @@ Bien que notre formation de 5 ans en informatique nous ait permis d'acquérir un
 \section[Base de données : PostgreSQL]{Base de données : PostgreSQL \raisebox{-0.2\height}{\includegraphics[height=0.6cm]{img/logo_postgresql.jpeg}}}
 Le système devant gérer de potentielles écritures simultanées (modification de salles, ajout de matériels), nous avons rapidement écarté SQLite. Très léger, SQLite nous semblait trop faible pour nos besoins. Notre choix final s'est donc porté sur PostgreSQL, un Système de Gestion de Base de Données Relationnelle (SGBDR) robuste et open-source. Il s'intègre également de manière fluide avec Node.js.
 
+\subsection{Schéma de fonctionnement}
+Le schéma suivant illustre le workflow principal de l'application : l'utilisateur interagit avec le frontend Angular, qui transmet des requêtes HTTP au backend Node.js. Ce backend traite la logique métier, interroge PostgreSQL pour lire ou modifier les données, puis renvoie les réponses au frontend.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\linewidth,height=0.75\textheight,keepaspectratio]{img/workflow_front_back_db.png}
+    \caption{Workflow de communication entre l'utilisateur, le frontend, le backend et la base de données}
+    \label{fig:workflow-front-back-db}
+\end{figure}
+
 \section[Déploiement et Conteneurisation : Docker]{Déploiement et Conteneurisation : Docker \raisebox{-0.2\height}{\includegraphics[height=0.6cm]{img/logo_docker.png}}}
 Afin de garantir que notre site soit "facilement installable" sur n'importe quel serveur du département informatique[cite: 14], nous avons intégré Docker dès le premier jour de développement. Docker nous permet d'encapsuler notre base de données, notre backend et notre frontend dans des conteneurs isolés. L'utilisation de \texttt{docker-compose} permet de lancer l'intégralité de l'environnement avec une seule commande, résolvant ainsi les problèmes de compatibilité entre les systèmes d'exploitation, que ce soit pour nous développeurs du projet, ou pour les futurs utilisateurs.
 
