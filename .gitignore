@@ -1,13 +1,14 @@
 # See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
 
 # Compiled output
-/dist
-/tmp
-/out-tsc
-/bazel-out
+/front/dist
+/front/tmp
+/front/out-tsc
+/front/bazel-out
 
 # Node
-/node_modules
+/front/node_modules
+/back/node_modules
 npm-debug.log
 yarn-error.log
 
@@ -30,13 +31,13 @@ yarn-error.log
 .history/*
 
 # Miscellaneous
-/.angular/cache
+/front/.angular/cache
 .sass-cache/
-/connect.lock
-/coverage
-/libpeerconnection.log
+/front/connect.lock
+/front/coverage
+/front/libpeerconnection.log
 testem.log
-/typings
+/front/typings
 __screenshots__/
 
 # System files
