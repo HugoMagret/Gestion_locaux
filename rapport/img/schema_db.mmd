@@ -1,0 +1,63 @@
+erDiagram
+    ROOM_TYPE ||--o{ ROOM : categorise
+    ROOM ||--o{ STAFF : accueille
+    ROOM ||--o{ EQUIPMENT : contient
+    ROOM ||--o{ SOCKET : possede
+    EQUIPMENT_TYPE ||--o{ EQUIPMENT : definit
+    SOCKET_TYPE ||--o{ SOCKET : classifie
+
+    ROOM {
+        UUID id PK
+        VARCHAR name
+        INTEGER max_capacity
+        UUID room_type_id FK
+        INTEGER doors
+        INTEGER floor
+        JSONB coordinates
+        VARCHAR color
+    }
+
+    ROOM_TYPE {
+        UUID id PK
+        VARCHAR label
+    }
+
+    STAFF {
+        UUID id PK
+        VARCHAR last_name
+        VARCHAR first_name
+        UUID room_id FK
+    }
+
+    EQUIPMENT {
+        UUID id PK
+        VARCHAR name
+        VARCHAR serial_number
+        UUID equipment_type_id FK
+        UUID room_id FK
+    }
+
+    EQUIPMENT_TYPE {
+        UUID id PK
+        VARCHAR label
+    }
+
+    SOCKET {
+        UUID id PK
+        VARCHAR identifier
+        UUID socket_type_id FK
+        UUID room_id FK
+    }
+
+    SOCKET_TYPE {
+        UUID id PK
+        VARCHAR label
+    }
+
+    USER {
+        UUID id PK
+        VARCHAR login
+        VARCHAR password
+        BOOLEAN is_admin
+        TIMESTAMP last_connection
+    }

@@ -1,0 +1,23 @@
+{
+  "name": "gestion_locaux",
+  "version": "1.0.0",
+  "description": "Lancez la commande : ```bash docker compose up -d ``` Cela lancera automatiquement : - PostgreSQL sur le port `5432`. - Le Backend sur le port `3000`.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HugoMagret/Gestion_locaux.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HugoMagret/Gestion_locaux/issues"
+  },
+  "homepage": "https://github.com/HugoMagret/Gestion_locaux#readme",
+  "devDependencies": {
+    "@mermaid-js/mermaid-cli": "^9.4.0"
+  }
+}

@@ -1,0 +1,23 @@
+\chapter{Conception Logicielle}
+
+Après avoir défini la persistance, nous avons structuré l'application en deux couches principales : le backend Node.js, qui fournit l'API REST, et le frontend Angular, qui orchestre l'interface et la manipulation des données côté client.
+
+\section{Diagramme de Classes UML}
+Le diagramme ci-dessous illustre la structure objet de l'application Angular et les principaux services métiers. Il montre comment les composants, les modèles et les services collaborent pour gérer les locaux, le personnel, le matériel et les prises.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[height=0.9\textheight,keepaspectratio]{img/diagramme_classes_uml.png}
+    \caption{Diagramme de classes UML - Architecture applicative Angular}
+    \label{fig:uml_logiciel}
+\end{figure}
+
+\section{Paradigme de développement}
+La conception logicielle privilégie une séparation claire des responsabilités entre :
+\begin{itemize}
+    \item \textbf{Modèles} : Les classes \texttt{Room}, \texttt{Equipment}, \texttt{Staff}, \texttt{RoomType}, \texttt{EquipmentType} et \texttt{SocketType} définissent les entités manipulées par le client.
+    \item \textbf{Services} : Les services Angular (\texttt{RoomService}, \texttt{AuthService}, \texttt{ReferenceService}, \texttt{EquipmentService}, \texttt{StaffService}, \texttt{SocketService}) encapsulent l'accès aux API et la logique de synchronisation des données.
+    \item \textbf{Composants} : Les composants gèrent l'affichage et l'interaction utilisateur : liste des salles, détail d'une salle, gestion des types, connexion, etc.
+\end{itemize}
+
+Cette architecture améliore la maintenabilité du projet. Le backend reste léger et modulaire, tandis qu'Angular assure un rendu dynamique et une expérience utilisateur fluide.

@@ -1,0 +1,63 @@
+flowchart TB
+  classDef app fill:#e8f0ff,stroke:#2f4b91,stroke-width:2px,color:#000
+  classDef service fill:#f0faf0,stroke:#2f7d32,stroke-width:2px,color:#000
+  classDef component fill:#fff7e8,stroke:#a65a00,stroke-width:2px,color:#000
+  classDef model fill:#f8f0ff,stroke:#5a2c7d,stroke-width:2px,color:#000
+
+  App[App]:::app
+
+  subgraph Composants[Composants clés]
+    direction TB
+    LoginComponent[LoginComponent]:::component
+    ProfileComponent[ProfileComponent]:::component
+    RoomListComponent[RoomListComponent]:::component
+    RoomDetailComponent[RoomDetailComponent]:::component
+  end
+
+  subgraph Services[Services Angular]
+    direction TB
+    AuthService[AuthService]:::service
+    RoomService[RoomService]:::service
+    ReferenceService[ReferenceService]:::service
+    NotificationService[NotificationService]:::service
+    UserService[UserService]:::service
+  end
+
+  subgraph Modeles[Modèles métiers]
+    direction TB
+    Room[Room]:::model
+    User[User]:::model
+    Equipment[Equipment]:::model
+    Staff[Staff]:::model
+    RoomType[RoomType]:::model
+    EquipmentType[EquipmentType]:::model
+    Socket[Socket]:::model
+    SocketType[SocketType]:::model
+  end
+
+  App --> LoginComponent
+  App --> ProfileComponent
+  App --> RoomListComponent
+  App --> RoomDetailComponent
+  App --> AuthService
+  App --> RoomService
+  App --> UserService
+  App --> NotificationService
+
+  LoginComponent --> AuthService
+  ProfileComponent --> AuthService
+  RoomListComponent --> RoomService
+  RoomDetailComponent --> RoomService
+  RoomDetailComponent --> ReferenceService
+
+  AuthService --> User
+  RoomService --> Room
+  Room --> RoomType
+  Room --> Equipment
+  Room --> Staff
+  Room --> Socket
+  Equipment --> EquipmentType
+  Socket --> SocketType
+  ReferenceService --> RoomType
+  ReferenceService --> EquipmentType
+  ReferenceService --> SocketType
