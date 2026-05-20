@@ -8,13 +8,22 @@
     <div class="menu-section">
       <div class="section-title">Étage</div>
       <div class="floor-selector">
-        <button 
-          *ngFor="let f of availableFloors" 
-          (click)="selectFloor(f)"
-          [class.active]="selectedFloor === f"
-        >
-          {{ f === 0 ? 'RDC' : 'Étage ' + f }}
-        </button>
+        <div class="floor-group" *ngFor="let f of availableFloors">
+          <button class="floor-btn" (click)="toggleFloorAccordion(f)" [class.active]="selectedFloor === f">
+            <span>{{ f === 0 ? 'RDC' : 'Étage ' + f }}</span>
+            <i class="fa-solid fa-chevron-down" [class.rotated]="expandedFloor === f"></i>
+          </button>
+
+          <div class="room-sublist" *ngIf="expandedFloor === f">
+            <button
+              *ngFor="let r of getRoomsForFloor(f)"
+              class="room-subitem"
+              [class.active-room]="selectedRoom?.id === r.id"
+              (click)="selectRoom(r)">
+              {{ r.name }}
+            </button>
+          </div>
+        </div>
         <div *ngIf="availableFloors.length === 0" style="font-size: 12px; color: #94a3b8; padding: 10px;">
           Aucun étage défini
         </div>
@@ -50,50 +59,61 @@
 
   <!-- Central Map Viewport -->
   <div class="map-viewport">
-    <svg viewBox="0 0 1000 600" (click)="onMapClick($event)">
-      <g
-        *ngFor="let room of filteredRooms"
-        [attr.id]="room.id"
-        (click)="selectRoom(room); $event.stopPropagation()"
-        class="room-group"
-      >
-        <rect
-          [attr.x]="room.coordinates.x"
-          [attr.y]="room.coordinates.y"
-          [attr.width]="room.coordinates.width"
-          [attr.height]="room.coordinates.height"
-          [class.selected]="selectedRoom?.id === room.id"
-          [attr.fill]="room.color || '#e0f2fe'"
-          style="fill-opacity: 0.5;"
-          class="room-rect"
-        />
+    <div class="zoom-controls">
+      <button type="button" (click)="zoomIn()" aria-label="Zoom avant">
+        <i class="fa-solid fa-plus"></i>
+      </button>
+      <button type="button" (click)="zoomOut()" aria-label="Zoom arrière">
+        <i class="fa-solid fa-minus"></i>
+      </button>
+    </div>
 
-        <text
-          [attr.x]="room.coordinates.x + room.coordinates.width / 2"
-          [attr.y]="room.coordinates.y + room.coordinates.height / 2"
-          text-anchor="middle"
-          dominant-baseline="central"
-          [class.selected]="selectedRoom?.id === room.id"
-          class="room-label"
+    <div class="zoom-wrapper" [style.transform]="'scale(' + currentZoom + ')'" [style.transform-origin]="'center center'">
+      <svg viewBox="0 0 1000 600" (click)="onMapClick($event)">
+        <g
+          *ngFor="let room of filteredRooms"
+          [attr.id]="room.id"
+          (click)="selectRoom(room); $event.stopPropagation()"
+          class="room-group"
         >
-          {{ room.name }}
-        </text>
+          <rect
+            [attr.x]="room.coordinates.x"
+            [attr.y]="room.coordinates.y"
+            [attr.width]="room.coordinates.width"
+            [attr.height]="room.coordinates.height"
+            [class.selected]="selectedRoom?.id === room.id"
+            [attr.fill]="room.color || '#e0f2fe'"
+            style="fill-opacity: 0.5;"
+            class="room-rect"
+          />
 
-        <text 
-          *ngIf="showResearchers && room.staff.length > 0"
-          [attr.x]="room.coordinates.x + 15" 
-          [attr.y]="room.coordinates.y + 15" 
-          font-size="14" fill="#2563eb" font-family="'Font Awesome 6 Free'" font-weight="900"
-        >&#xf51c;</text>
+          <text
+            [attr.x]="room.coordinates.x + room.coordinates.width / 2"
+            [attr.y]="room.coordinates.y + room.coordinates.height / 2"
+            text-anchor="middle"
+            dominant-baseline="central"
+            [class.selected]="selectedRoom?.id === room.id"
+            class="room-label"
+          >
+            {{ room.name }}
+          </text>
 
-        <text 
-          *ngIf="showEquipment && room.equipments.length > 0"
-          [attr.x]="room.coordinates.x + room.coordinates.width - 20" 
-          [attr.y]="room.coordinates.y + 15"
-          font-size="14" fill="#475569" font-family="'Font Awesome 6 Free'" font-weight="900"
-        >&#xf108;</text>
-      </g>
-    </svg>
+          <text
+            *ngIf="showResearchers && room.staff.length > 0"
+            [attr.x]="room.coordinates.x + 15"
+            [attr.y]="room.coordinates.y + 15"
+            font-size="14" fill="#2563eb" font-family="'Font Awesome 6 Free'" font-weight="900"
+          >&#xf51c;</text>
+
+          <text
+            *ngIf="showEquipment && room.equipments.length > 0"
+            [attr.x]="room.coordinates.x + room.coordinates.width - 20"
+            [attr.y]="room.coordinates.y + 15"
+            font-size="14" fill="#475569" font-family="'Font Awesome 6 Free'" font-weight="900"
+          >&#xf108;</text>
+        </g>
+      </svg>
+    </div>
   </div>
 
   <!-- Right Sidebar (Details) -->
@@ -132,7 +152,11 @@
       <ul class="item-list">
         <li *ngFor="let person of selectedRoom.staff" class="item-row">
           <div class="icon-box"><i class="fa-solid fa-user-graduate"></i></div>
-          {{ person.fullName }}
+          <div>
+            <div>{{ person.fullName }}</div>
+            <small style="color: #94a3b8" *ngIf="person.phone"><i class="fa-solid fa-phone"></i> {{ person.phone }}</small>
+            <small style="color: #94a3b8; display: block;" *ngIf="person.email"><i class="fa-solid fa-envelope"></i> {{ person.email }}</small>
+          </div>
         </li>
       </ul>
     </section>

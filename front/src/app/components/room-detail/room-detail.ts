@@ -99,20 +99,25 @@ export class RoomDetailComponent implements OnInit {
   }
 
   saveGeneral(): void {
-    // Si le formulaire réactif est invalide, on ne sauvegarde pas
-    if (this.roomForm.invalid) return;
-
+    if (!this.room) return;
     this.isSaving = true;
-    if (this.room) {
-      // On fusionne les données de editData (venant du HTML) dans l'objet de la salle
-      Object.assign(this.room, this.editData);
-      
-      // Ici on simule l'appel API (U du CRUD - Update)
-      setTimeout(() => { 
-        this.isSaving = false; 
-        console.log('Salle mise à jour avec succès');
-      }, 500);
-    }
+
+    const updatedData = { ...this.room, ...this.editData };
+
+    this.roomService.updateRoom(updatedData).subscribe({
+      next: (savedRoom) => {
+        this.room = savedRoom;
+        this.editData = { ...savedRoom };
+        this.roomForm.patchValue(savedRoom);
+        this.isSaving = false;
+        alert('Salle mise à jour !');
+      },
+      error: (err) => {
+        console.error(err);
+        this.isSaving = false;
+        alert('Erreur lors de la sauvegarde');
+      }
+    });
   }
 
   // --- Gestion du Personnel (Assignation) ---

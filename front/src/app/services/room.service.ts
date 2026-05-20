@@ -50,5 +50,20 @@ export class RoomService {
       map(r => new Room(r))
     );
   }
+
+  updateRoom(roomData: any): Observable<Room> {
+    return this.http.put<any>(`${API_URL}/rooms/${roomData.id}`, roomData).pipe(
+      map(r => {
+        const updatedRoom = new Room(r);
+        const current = this.roomsSubject.value;
+        const index = current.findIndex(existing => existing.id === updatedRoom.id);
+        if (index !== -1) {
+          current[index] = updatedRoom;
+          this.roomsSubject.next([...current]);
+        }
+        return updatedRoom;
+      })
+    );
+  }
 }
 

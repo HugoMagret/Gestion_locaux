@@ -20,6 +20,10 @@ export class MapComponent implements OnInit {
 
   // Navigation state
   selectedFloor = 0;
+  expandedFloor: number | null = null;
+  currentZoom = 1;
+  private readonly minZoom = 0.5;
+  private readonly maxZoom = 2;
 
   // Filters / Layers state
   showResearchers = true;
@@ -36,6 +40,13 @@ export class MapComponent implements OnInit {
   ngOnInit(): void {
     this.loadRooms();
     this.loadFloors();
+    // Initialize expandedFloor to show first floor by default
+    this.floorService.getFloors().subscribe(floors => {
+      const floorLevels = [...new Set(floors.map(f => f.level))].sort((a, b) => a - b);
+      if (floorLevels.length > 0) {
+        this.expandedFloor = floorLevels[0];
+      }
+    });
   }
 
   loadRooms(): void {
@@ -74,7 +85,22 @@ export class MapComponent implements OnInit {
     this.applyFilters();
   }
 
+  toggleFloorAccordion(floor: number): void {
+    this.expandedFloor = this.expandedFloor === floor ? null : floor;
+    if (this.selectedFloor !== floor) {
+      this.selectFloor(floor);
+    }
+  }
+
+  getRoomsForFloor(floor: number): Room[] {
+    return this.allRooms.filter(r => r.floor === floor);
+  }
+
   selectRoom(room: Room): void {
+    if (this.selectedFloor !== room.floor) {
+      this.selectedFloor = room.floor;
+      this.applyFilters();
+    }
     this.selectedRoom = room;
   }
 
@@ -86,6 +112,14 @@ export class MapComponent implements OnInit {
     if (layer === 'researchers') this.showResearchers = !this.showResearchers;
     if (layer === 'equipment') this.showEquipment = !this.showEquipment;
     if (layer === 'sockets') this.showSockets = !this.showSockets;
+  }
+
+  zoomIn(): void {
+    this.currentZoom = Math.min(this.maxZoom, this.currentZoom + 0.1);
+  }
+
+  zoomOut(): void {
+    this.currentZoom = Math.max(this.minZoom, this.currentZoom - 0.1);
   }
 
   goToDetail(): void {

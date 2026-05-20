@@ -18,9 +18,22 @@ import { Room } from '../../models/room.model';
         <div class="menu-section">
           <div class="section-title">Étage</div>
           <div class="floor-selector">
-            <button *ngFor="let f of availableFloors" (click)="selectFloor(f)" [class.active]="selectedFloor === f">
-              {{ f === 0 ? 'RDC' : 'Étage ' + f }}
-            </button>
+            <div class="floor-group" *ngFor="let f of availableFloors">
+              <button class="floor-btn" (click)="toggleFloorAccordion(f)" [class.active]="selectedFloor === f">
+                <span>{{ f === 0 ? 'RDC' : 'Étage ' + f }}</span>
+                <i class="fa-solid fa-chevron-down" [class.rotated]="expandedFloor === f"></i>
+              </button>
+
+              <div class="room-sublist" *ngIf="expandedFloor === f">
+                <button
+                  *ngFor="let r of getRoomsForFloor(f)"
+                  class="room-subitem"
+                  [class.active-room]="selectedRoom?.id === r.id"
+                  (click)="selectRoom(r)">
+                  {{ r.name }}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </nav>
@@ -61,7 +74,11 @@ import { Room } from '../../models/room.model';
           <ul class="item-list">
             <li *ngFor="let person of selectedRoom.staff" class="item-row">
               <div class="icon-box"><i class="fa-solid fa-user"></i></div>
-              {{ person.fullName }}
+              <div>
+                <div>{{ person.fullName }}</div>
+                <small style=\"color: #94a3b8\" *ngIf=\"person.phone\"><i class=\"fa-solid fa-phone\"></i> {{ person.phone }}</small>
+                <small style=\"color: #94a3b8; display: block;\" *ngIf=\"person.email\"><i class=\"fa-solid fa-envelope\"></i> {{ person.email }}</small>
+              </div>
             </li>
           </ul>
         </section>
@@ -102,6 +119,7 @@ export class Map3dComponent implements OnInit, OnDestroy {
   availableFloors: number[] = [];
   selectedFloor = 0;
   selectedRoom: Room | null = null;
+  expandedFloor: number | null = null;
 
   private roomMeshes: THREE.Mesh[] = [];
   private roomHitMeshes: THREE.Mesh[] = [];
@@ -136,9 +154,12 @@ export class Map3dComponent implements OnInit, OnDestroy {
 
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls.enableDamping = true;
+    this.controls.dampingFactor = 0.05;
     this.controls.enablePan = true;
     this.controls.enableZoom = true;
     this.controls.maxPolarAngle = Math.PI / 2.1;
+    this.controls.minDistance = 200;
+    this.controls.maxDistance = 2000;
     this.controls.target.set(0, 0, 0);
     this.controls.update();
 
@@ -160,6 +181,10 @@ export class Map3dComponent implements OnInit, OnDestroy {
       if (this.availableFloors.length && !this.availableFloors.includes(this.selectedFloor)) {
         this.selectedFloor = this.availableFloors[0];
       }
+      // Initialize expandedFloor to show first floor by default
+      if (this.availableFloors.length > 0) {
+        this.expandedFloor = this.availableFloors[0];
+      }
       this.cdr.detectChanges();
     });
 
@@ -173,6 +198,26 @@ export class Map3dComponent implements OnInit, OnDestroy {
     this.selectedFloor = floor;
     this.selectedRoom = null;
     this.buildFloor();
+    this.cdr.detectChanges();
+  }
+
+  toggleFloorAccordion(floor: number): void {
+    this.expandedFloor = this.expandedFloor === floor ? null : floor;
+    if (this.selectedFloor !== floor) {
+      this.selectFloor(floor);
+    }
+  }
+
+  getRoomsForFloor(floor: number): Room[] {
+    return this.allRooms.filter(room => room.floor === floor);
+  }
+
+  selectRoom(room: Room): void {
+    if (this.selectedFloor !== room.floor) {
+      this.selectedFloor = room.floor;
+      this.buildFloor();
+    }
+    this.selectedRoom = room;
     this.cdr.detectChanges();
   }
 
@@ -194,11 +239,13 @@ export class Map3dComponent implements OnInit, OnDestroy {
       const cx = room.coordinates.x + room.coordinates.width / 2;
       const cz = room.coordinates.y + room.coordinates.height / 2;
 
+      const innerHeight = Math.max(room.coordinates.height - wallThickness * 2, wallThickness);
+
       const walls = [
-        { w: room.coordinates.width + wallThickness * 2, d: wallThickness, x: cx, z: room.coordinates.y },
-        { w: room.coordinates.width + wallThickness * 2, d: wallThickness, x: cx, z: room.coordinates.y + room.coordinates.height },
-        { w: wallThickness, d: room.coordinates.height, x: room.coordinates.x, z: cz },
-        { w: wallThickness, d: room.coordinates.height, x: room.coordinates.x + room.coordinates.width, z: cz }
+        { w: room.coordinates.width, d: wallThickness, x: cx, z: room.coordinates.y + wallThickness / 2 },
+        { w: room.coordinates.width, d: wallThickness, x: cx, z: room.coordinates.y + room.coordinates.height - wallThickness / 2 },
+        { w: wallThickness, d: innerHeight, x: room.coordinates.x + wallThickness / 2, z: cz },
+        { w: wallThickness, d: innerHeight, x: room.coordinates.x + room.coordinates.width - wallThickness / 2, z: cz }
       ];
 
       walls.forEach(w => {

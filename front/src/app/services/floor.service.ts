@@ -31,6 +31,7 @@ export class FloorService {
       this.floorsSubject.next(Array.from(uniqueFloors.values()));
     });
   }
+  
 
   getFloors(): Observable<Floor[]> {
     return this.floorsSubject.asObservable();
