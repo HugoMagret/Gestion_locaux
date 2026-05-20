@@ -463,7 +463,7 @@ svg {
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
-  margin-top: auto;
+  margin-top: 16px;
 }
 
 .btn-primary:hover {
