@@ -9,7 +9,7 @@ router.get('/', async (req, res) => {
   let query = `
     SELECT room.id, room.name, room.max_capacity, room.room_type_id, room.doors, room.floor, room.coordinates, room.color, 
            room_type.label as room_type_label,
-           (SELECT json_agg(json_build_object('id', staff.id, 'first_name', staff.first_name, 'last_name', staff.last_name)) FROM staff WHERE staff.room_id = room.id) as staff,
+           (SELECT json_agg(json_build_object('id', staff.id, 'first_name', staff.first_name, 'last_name', staff.last_name, 'email', staff.email, 'phone', staff.phone)) FROM staff WHERE staff.room_id = room.id) as staff,
            (SELECT json_agg(json_build_object('id', equipment.id, 'name', equipment.name, 'serial_number', equipment.serial_number, 'equipment_type_id', equipment.equipment_type_id, 'equipment_type_label', (SELECT label FROM equipment_type WHERE id = equipment.equipment_type_id))) FROM equipment WHERE equipment.room_id = room.id) as equipments,
            (SELECT json_agg(json_build_object('id', socket.id, 'identifier', socket.identifier, 'socket_type_id', socket.socket_type_id, 'socket_type_label', (SELECT label FROM socket_type WHERE id = socket.socket_type_id))) FROM socket WHERE socket.room_id = room.id) as sockets
     FROM room
@@ -59,7 +59,7 @@ router.get('/:id', async (req, res) => {
     const query = `
       SELECT room.id, room.name, room.max_capacity, room.room_type_id, room.doors, room.floor, room.coordinates, room.color, 
              room_type.label as room_type_label,
-             (SELECT json_agg(json_build_object('id', staff.id, 'first_name', staff.first_name, 'last_name', staff.last_name)) FROM staff WHERE staff.room_id = room.id) as staff,
+             (SELECT json_agg(json_build_object('id', staff.id, 'first_name', staff.first_name, 'last_name', staff.last_name, 'email', staff.email, 'phone', staff.phone)) FROM staff WHERE staff.room_id = room.id) as staff,
              (SELECT json_agg(json_build_object('id', equipment.id, 'name', equipment.name, 'serial_number', equipment.serial_number, 'equipment_type_id', equipment.equipment_type_id, 'equipment_type_label', (SELECT label FROM equipment_type WHERE id = equipment.equipment_type_id))) FROM equipment WHERE equipment.room_id = room.id) as equipments,
              (SELECT json_agg(json_build_object('id', socket.id, 'identifier', socket.identifier, 'socket_type_id', socket.socket_type_id, 'socket_type_label', (SELECT label FROM socket_type WHERE id = socket.socket_type_id))) FROM socket WHERE socket.room_id = room.id) as sockets
       FROM room
@@ -123,12 +123,12 @@ router.delete('/:id', async (req, res) => {
 // --- ROUTES DE COMMODITÉ (SETTERS) ---
 
 router.post('/:id/staff', async (req, res) => {
-  const { first_name, last_name } = req.body;
+  const { first_name, last_name, email, phone } = req.body;
   const room_id = req.params.id;
   try {
     const result = await db.query(
-      'INSERT INTO staff (first_name, last_name, room_id) VALUES ($1, $2, $3) RETURNING id, first_name, last_name, room_id',
-      [first_name, last_name, room_id]
+      'INSERT INTO staff (first_name, last_name, email, phone, room_id) VALUES ($1, $2, $3, $4, $5) RETURNING id, first_name, last_name, email, phone, room_id',
+      [first_name, last_name, email, phone, room_id]
     );
     res.status(201).json(result.rows[0]);
   } catch (err) {
