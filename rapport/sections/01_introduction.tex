@@ -1,17 +1,26 @@
 \chapter{Introduction}
 
-Dans le cadre de notre dernière année de Master 2 en Informatique, parcours Conception et Développement, il nous a été confié la réalisation d'un projet de fin d'études axé sur la gestion du personnel et du matériel du département informatique[cite: 1, 2]. 
+Dans le cadre de notre dernière année de Master 2 en Informatique, parcours Conception et Développement, il nous a été confié la réalisation d'un projet de fin d'études axé sur la gestion du personnel et du matériel du département informatique. 
 
 \section{Contexte et Objectifs}
-L'objectif principal de ce projet est de concevoir et développer un site web complet permettant de recenser et de gérer efficacement les personnels ainsi que le matériel informatique au sein des différents locaux du département[cite: 6]. 
+L'objectif principal de ce projet est de concevoir et développer une web app complète permettant de recenser et de gérer les personnels ainsi que le matériel informatique au sein des différents locaux du département. 
 
-Ce système doit permettre de classer les espaces selon leur type (bureau, salle de classe, salle de réunion...) et de gérer finement leur capacité d'accueil[cite: 7, 8]. Il est également crucial de pouvoir suivre l'équipement présent dans chaque salle (prises réseaux, vidéoprojecteurs tableaux...), et de gérer dynamiquement les affectations du personnel[cite: 7, 10].
+Ce système doit permettre de classer les espaces selon leur type (bureau, salle de classe, salle de réunion...) et de gérer leur capacité d'accueil. Il est également nécessaire de pouvoir suivre l'équipement présent dans chaque salle (prises réseaux, vidéoprojecteurs tableaux...), et de gérer dynamiquement les affectations du personnel.
+
+Un point important de ce projet est la gestion des plans de la faculté au format JSON. Ce format structuré est facile à manipuler et à créer manuellement, permettant une maintenance et une évolution simplifiées. Les plans JSON sont ensuite rendus de manière interactive directement dans le navigateur, affichant les zones cliquables et s'adaptant facilement à différents écrans. De plus, l'application offre la capacité d'exporter en PDF les plans qui auront été modifiés par les utilisateurs, afin de conserver un rendu imprimable et partageable.
+
+\newpage
 
 \section{Enjeux et Périmètre}
-Au-delà du simple développement d'un système d'information de type CRUD (Create, Read, Update, Delete), les attentes de ce projet portent sur la maintenabilité de l'application et son ergonomie[cite: 12, 14]. Parmi les fonctionnalités majeures attendues, nous devons implémenter :
+Au-delà du simple développement d'un système d'information de type CRUD (Create, Read, Update, Delete), les attentes de ce projet portent sur la maintenabilité de l'application et son ergonomie. Parmi les fonctionnalités majeures attendues, nous devons implémenter :
 \begin{itemize}
-\item \textbf{Une cartographie interactive :} Le système doit permettre de visualiser les locaux via un plan interactif. Bien que des plans au format PDF nous aient été fournis, nous exploiterons principalement leur version vectorielle (SVG), qui sont techniquement beaucoup plus sympathiques à manipuler dans un contexte web. Ils nous permettent en effet de définir facilement des zones cliquables (via des balises HTML/SVG) afin de rendre l'expérience utilisateur plus intuitive.
-\item Un moteur de génération de plans au format PDF pour exporter l'état d'un étage d'un batiment, avec le matériel et les personnels affectés[cite: 16].
+\item \textbf{Plans interactifs 2D et 3D :} Le système doit permettre de visualiser les locaux de manière interactive via un plan 2D exploitant le format JSON pour plus de flexibilité. Un plan 3D complète cette vue, offrant une perspective supplémentaire des espaces. En cliquant sur une salle, un panneau latéral affiche en temps réel les détails de la salle (nom, capacité, type, étage), la liste complète du matériel présent et l'affectation du personnel.
+
+\item \textbf{Gestion complète de l'inventaire :} L'application doit permettre de consulter, modifier et gérer l'ensemble des données : matériel, personnel, salles, types d'équipements. Les utilisateurs peuvent ajouter, supprimer ou éditer des éléments. Le matériel peut être déplacé entre les salles directement via l'interface.
+
+\item \textbf{Authentification et profils utilisateurs :} Un système de connexion/déconnexion sécurisé. Les administrateurs disposent d'une interface dédiée pour gérer la liste du personnel et les droits d'accès.
+
+\item \textbf{Export en PDF :} Capacité à exporter les plans et états des étages (avec matériel et personnels affectés) au format PDF pour archivage et partage.
 \end{itemize}
 
 Ce rapport détaillera l'ensemble du processus de création de cette plateforme, depuis nos choix technologiques orientés "industrie" jusqu'à la mise en place de notre architecture logicielle.
