@@ -14,11 +14,19 @@
     <div class="staff-form">
       <input type="text" [(ngModel)]="newStaff.first_name" placeholder="Prénom">
       <input type="text" [(ngModel)]="newStaff.last_name" placeholder="Nom">
+      <div class="form-input-group">
+        <input type="tel" [(ngModel)]="newStaff.phone" placeholder="Numéro de téléphone (optionnel)" [class.input-error]="newStaff.phone && !isValidPhone(newStaff.phone)">
+        <small *ngIf="newStaff.phone && !isValidPhone(newStaff.phone)" class="error-message">Téléphone invalide (min 10 chiffres)</small>
+      </div>
+      <div class="form-input-group">
+        <input type="email" [(ngModel)]="newStaff.email" placeholder="Adresse mail (optionnel)" [class.input-error]="newStaff.email && !isValidEmail(newStaff.email)">
+        <small *ngIf="newStaff.email && !isValidEmail(newStaff.email)" class="error-message">Email invalide</small>
+      </div>
       <select [(ngModel)]="newStaff.room_id">
         <option value="">Sélectionner une salle</option>
         <option *ngFor="let room of (rooms$ | async)" [value]="room.id">{{ room.name }}</option>
       </select>
-      <button class="btn-primary" (click)="addStaff()" [disabled]="!newStaff.first_name || !newStaff.last_name">
+      <button class="btn-primary" (click)="addStaff()" [disabled]="!isFormValid()">
         Ajouter
       </button>
     </div>
@@ -30,6 +38,8 @@
         <thead>
           <tr>
             <th>Nom Complet</th>
+            <th>Téléphone</th>
+            <th>Mail</th>
             <th>Bureau / Salle</th>
             <th>Étage</th>
             <th>Actions</th>
@@ -42,6 +52,14 @@
                 <span class="avatar">{{ member.first_name[0] }}{{ member.last_name[0] }}</span>
                 <span class="name">{{ member.first_name }} {{ member.last_name }}</span>
               </div>
+            </td>
+            <td>
+              <span *ngIf="member.phone" class="contact-info"><i class="fa-solid fa-phone"></i> {{ member.phone }}</span>
+              <span *ngIf="!member.phone" class="no-data">-</span>
+            </td>
+            <td>
+              <span *ngIf="member.email" class="contact-info"><i class="fa-solid fa-envelope"></i> {{ member.email }}</span>
+              <span *ngIf="!member.email" class="no-data">-</span>
             </td>
             <td>
               <span class="room-tag" *ngIf="member.room">
