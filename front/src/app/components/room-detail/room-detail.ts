@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 // Importation des deux types de modules de formulaires pour éviter les erreurs NG8002
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -38,6 +38,7 @@ export class RoomDetailComponent implements OnInit {
   private staffService = inject(StaffService);
   private equipmentService = inject(EquipmentService);
   private socketService = inject(SocketService);
+  private cdr = inject(ChangeDetectorRef);
 
   // Propriétés de l'interface
   room: Room | null = null;
@@ -78,22 +79,40 @@ export class RoomDetailComponent implements OnInit {
   }
 
   loadReferences(): void {
-    this.referenceService.getRoomTypes().subscribe(types => this.roomTypes = types);
-    this.referenceService.getEquipmentTypes().subscribe(types => this.equipmentTypes = types);
-    this.referenceService.getSocketTypes().subscribe(types => this.socketTypes = types);
+    this.referenceService.getRoomTypes().subscribe(types => {
+      this.roomTypes = types;
+      this.cdr.detectChanges();
+    });
+    this.referenceService.getEquipmentTypes().subscribe(types => {
+      this.equipmentTypes = types;
+      this.cdr.detectChanges();
+    });
+    this.referenceService.getSocketTypes().subscribe(types => {
+      this.socketTypes = types;
+      this.cdr.detectChanges();
+    });
     this.floorService.getFloors().subscribe(floors => {
       this.availableFloors = [...new Set(floors.map(f => f.level))].sort((a, b) => a - b);
+      this.cdr.detectChanges();
     });
-    this.staffService.getStaff().subscribe(staff => this.allStaff = staff);
+    this.staffService.getStaff().subscribe(staff => {
+      this.allStaff = staff;
+      this.cdr.detectChanges();
+    });
   }
 
   loadRoom(): void {
-    this.roomService.getRoomById(this.roomId).subscribe(room => {
-      this.room = room;
-      if (!this.isSaving) {
-        // On remplit à la fois editData (pour votre HTML) et le roomForm (pour la logique)
-        this.editData = { ...room };
-        this.roomForm.patchValue(room);
+    this.roomService.getRoomById(this.roomId).subscribe({
+      next: (room) => {
+        this.room = room;
+        if (!this.isSaving) {
+          this.editData = { ...room };
+          this.roomForm.patchValue(room);
+        }
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error(err);
       }
     });
   }
@@ -110,11 +129,13 @@ export class RoomDetailComponent implements OnInit {
         this.editData = { ...savedRoom };
         this.roomForm.patchValue(savedRoom);
         this.isSaving = false;
+        this.cdr.detectChanges();
         alert('Salle mise à jour !');
       },
       error: (err) => {
         console.error(err);
         this.isSaving = false;
+        this.cdr.detectChanges();
         alert('Erreur lors de la sauvegarde');
       }
     });
