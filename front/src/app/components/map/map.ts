@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Room } from '../../models/room.model';
@@ -18,35 +18,26 @@ export class MapComponent implements OnInit {
   filteredRooms: Room[] = [];
   selectedRoom: Room | null = null;
 
-  // Navigation state
   selectedFloor = 0;
   expandedFloor: number | null = null;
   currentZoom = 1;
   private readonly minZoom = 0.5;
-  private readonly maxZoom = 2;
+  private readonly maxZoom = 3;
 
-  // Filters / Layers state
   showResearchers = true;
   showEquipment = true;
   showSockets = true;
-
   availableFloors: number[] = [];
 
   constructor(
     private roomService: RoomService,
-    private floorService: FloorService
+    private floorService: FloorService,
+    private cdr: ChangeDetectorRef // Injecté pour corriger le bug d'affichage
   ) {}
 
   ngOnInit(): void {
     this.loadRooms();
     this.loadFloors();
-    // Initialize expandedFloor to show first floor by default
-    this.floorService.getFloors().subscribe(floors => {
-      const floorLevels = [...new Set(floors.map(f => f.level))].sort((a, b) => a - b);
-      if (floorLevels.length > 0) {
-        this.expandedFloor = floorLevels[0];
-      }
-    });
   }
 
   loadRooms(): void {
@@ -54,42 +45,48 @@ export class MapComponent implements OnInit {
       next: (data) => {
         this.allRooms = data;
         this.applyFilters();
+        this.cdr.detectChanges(); // Forcer la mise à jour UI
       },
     });
   }
 
   loadFloors(): void {
     this.floorService.getFloors().subscribe(floors => {
-      // Get unique levels
-      this.availableFloors = [...new Set(
-        floors.map(f => f.level)
-      )].sort((a, b) => a - b);
+      this.availableFloors = [...new Set(floors.map(f => f.level))].sort((a, b) => a - b);
       
-      // If selected floor is no longer available, pick first available
       if (!this.availableFloors.includes(this.selectedFloor) && this.availableFloors.length > 0) {
         this.selectedFloor = this.availableFloors[0];
       }
+      
+      // Dérouler le premier étage dispo par défaut
+      if (this.expandedFloor === null && this.availableFloors.length > 0) {
+        this.expandedFloor = this.selectedFloor;
+      }
+
       this.applyFilters();
+      this.cdr.detectChanges(); // Forcer la mise à jour UI
     });
   }
 
   applyFilters(): void {
-    this.filteredRooms = this.allRooms.filter(
-      (r) => r.floor === this.selectedFloor
-    );
+    this.filteredRooms = this.allRooms.filter((r) => r.floor === this.selectedFloor);
   }
 
   selectFloor(floor: number): void {
     this.selectedFloor = floor;
     this.selectedRoom = null;
     this.applyFilters();
+    this.cdr.detectChanges();
   }
 
   toggleFloorAccordion(floor: number): void {
+    // Ferme si on reclique, sinon ouvre
     this.expandedFloor = this.expandedFloor === floor ? null : floor;
-    if (this.selectedFloor !== floor) {
+    // Sélectionne l'étage sur la carte si on l'ouvre
+    if (this.expandedFloor !== null && this.selectedFloor !== floor) {
       this.selectFloor(floor);
     }
+    this.cdr.detectChanges();
   }
 
   getRoomsForFloor(floor: number): Room[] {
@@ -102,10 +99,12 @@ export class MapComponent implements OnInit {
       this.applyFilters();
     }
     this.selectedRoom = room;
+    this.cdr.detectChanges();
   }
 
   onMapClick(event: MouseEvent): void {
     this.selectedRoom = null;
+    this.cdr.detectChanges();
   }
 
   toggleLayer(layer: 'researchers' | 'equipment' | 'sockets'): void {
@@ -114,13 +113,8 @@ export class MapComponent implements OnInit {
     if (layer === 'sockets') this.showSockets = !this.showSockets;
   }
 
-  zoomIn(): void {
-    this.currentZoom = Math.min(this.maxZoom, this.currentZoom + 0.1);
-  }
-
-  zoomOut(): void {
-    this.currentZoom = Math.max(this.minZoom, this.currentZoom - 0.1);
-  }
+  zoomIn(): void { this.currentZoom = Math.min(this.maxZoom, this.currentZoom + 0.15); }
+  zoomOut(): void { this.currentZoom = Math.max(this.minZoom, this.currentZoom - 0.15); }
 
   goToDetail(): void {
     if (this.selectedRoom) {
@@ -128,3 +122,4 @@ export class MapComponent implements OnInit {
     }
   }
 }
+

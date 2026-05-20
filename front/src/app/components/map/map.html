@@ -59,16 +59,14 @@
 
   <!-- Central Map Viewport -->
   <div class="map-viewport">
+    
     <div class="zoom-controls">
-      <button type="button" (click)="zoomIn()" aria-label="Zoom avant">
-        <i class="fa-solid fa-plus"></i>
-      </button>
-      <button type="button" (click)="zoomOut()" aria-label="Zoom arrière">
-        <i class="fa-solid fa-minus"></i>
-      </button>
+      <button type="button" (click)="zoomIn()" title="Zoomer">+</button>
+      <div class="zoom-separator"></div>
+      <button type="button" (click)="zoomOut()" title="Dézoomer">-</button>
     </div>
 
-    <div class="zoom-wrapper" [style.transform]="'scale(' + currentZoom + ')'" [style.transform-origin]="'center center'">
+    <div class="zoom-wrapper" [style.transform]="'scale(' + currentZoom + ')'">
       <svg viewBox="0 0 1000 600" (click)="onMapClick($event)">
         <g
           *ngFor="let room of filteredRooms"
@@ -82,8 +80,6 @@
             [attr.width]="room.coordinates.width"
             [attr.height]="room.coordinates.height"
             [class.selected]="selectedRoom?.id === room.id"
-            [attr.fill]="room.color || '#e0f2fe'"
-            style="fill-opacity: 0.5;"
             class="room-rect"
           />
 
@@ -98,19 +94,9 @@
             {{ room.name }}
           </text>
 
-          <text
-            *ngIf="showResearchers && room.staff.length > 0"
-            [attr.x]="room.coordinates.x + 15"
-            [attr.y]="room.coordinates.y + 15"
-            font-size="14" fill="#2563eb" font-family="'Font Awesome 6 Free'" font-weight="900"
-          >&#xf51c;</text>
-
-          <text
-            *ngIf="showEquipment && room.equipments.length > 0"
-            [attr.x]="room.coordinates.x + room.coordinates.width - 20"
-            [attr.y]="room.coordinates.y + 15"
-            font-size="14" fill="#475569" font-family="'Font Awesome 6 Free'" font-weight="900"
-          >&#xf108;</text>
+          <text *ngIf="showResearchers && room.staff.length > 0" [attr.x]="room.coordinates.x + 15" [attr.y]="room.coordinates.y + 15" font-size="14" fill="#2563eb" font-family="'Font Awesome 6 Free'" font-weight="900">&#xf51c;</text>
+          <text *ngIf="showEquipment && room.equipments.length > 0" [attr.x]="room.coordinates.x + room.coordinates.width - 20" [attr.y]="room.coordinates.y + 15" font-size="14" fill="#475569" font-family="'Font Awesome 6 Free'" font-weight="900">&#xf108;</text>
+          <text *ngIf="showSockets && room.sockets.length > 0" [attr.x]="room.coordinates.x + room.coordinates.width - 20" [attr.y]="room.coordinates.y + room.coordinates.height - 15" font-size="14" fill="#ef4444" font-family="'Font Awesome 6 Free'" font-weight="900">&#xf1e6;</text>
         </g>
       </svg>
     </div>

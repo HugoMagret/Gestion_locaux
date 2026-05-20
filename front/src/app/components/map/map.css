@@ -186,92 +186,110 @@
   text-align: center;
 }
 
-/* Map Viewport Styles - Continuous architect plan */
+/* Map Viewport Styles */
 .map-viewport {
   flex: 1;
-  background-color: var(--primary-bg);
-  /* No grid pattern - unified background for architect-style rendering */
-  background-image: none;
-  
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 40px;
-  overflow: auto;
+  overflow: hidden; 
+  height: calc(100vh - 64px);
+  background-color: #f8fafc;
 }
 
+/* Centrage parfait du zoom */
 .zoom-wrapper {
   width: 100%;
-  transition: transform 0.2s ease;
-}
-
-.zoom-controls {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  z-index: 5;
+  height: 100%;
   display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.zoom-controls button {
-  width: 36px;
-  height: 36px;
-  padding: 0;
-  border-radius: 8px;
-  background: #ffffff;
-  color: #334155;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
-}
-
-.zoom-controls button:hover {
-  background: #f8fafc;
-  color: #0f172a;
+  align-items: center;
+  justify-content: center;
+  transform-origin: center center;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 svg {
-  flex: 1;
-  background-color: var(--primary-bg);
-  background-image: none;
-  filter: drop-shadow(0 20px 25px -5px rgba(0, 0, 0, 0.05));
+  max-width: 90%;
+  max-height: 90%;
+  filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.05));
 }
 
-.room-group {
+/* --- Boutons de Zoom identiques à ta photo --- */
+.zoom-controls {
+  position: absolute;
+  bottom: 40px;
+  right: 40px;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.1);
+  width: 42px;
+  overflow: hidden;
+}
+
+.zoom-controls button {
+  width: 100%;
+  height: 42px;
+  background: transparent;
+  border: none;
+  color: #334155;
+  font-size: 24px;
+  font-weight: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
+  transition: background 0.2s;
+  padding: 0;
 }
 
+.zoom-controls button:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.zoom-separator {
+  height: 1px;
+  background-color: #e2e8f0;
+  width: 24px;
+  margin: 0 auto;
+}
+
+/* Suppression de l'opacité sur les salles (Blanc pur) */
 .room-rect {
-  fill: var(--room-fill);
-  stroke: var(--room-stroke);
+  fill: #ffffff;
+  stroke: #94a3b8;
   stroke-width: 2px;
   vector-effect: non-scaling-stroke;
-  transition: fill 0.2s ease;
+  transition: all 0.2s ease;
+  fill-opacity: 1; /* <--- 1 = Blanc pur opaque */
 }
 
 .room-rect:hover {
-  fill: var(--room-hover);
-  cursor: pointer;
+  fill: #f1f5f9;
+  stroke: #64748b;
 }
 
 .room-rect.selected {
+  fill: #eff6ff;
   stroke: #3b82f6;
   stroke-width: 3px;
-  fill: rgba(59, 130, 246, 0.1);
 }
 
 .room-label {
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 600;
   fill: #475569;
   pointer-events: none;
 }
 
 .room-label.selected {
   fill: #1e40af;
+  font-weight: 800;
 }
 
 /* Right Sidebar (Details) */
