@@ -1,0 +1,40 @@
+\documentclass[12pt,a4paper]{report}
+
+% Encodage et langue
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+
+% Mise en page et images
+\usepackage{geometry}
+\geometry{a4paper, top=2.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{hyperref}
+
+% Configuration des liens
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    filecolor=magenta,      
+    urlcolor=blue,
+    pdftitle={Rapport Projet M2 - Gestion de Locaux},
+}
+
+\begin{document}
+
+% Inclusion de la page de garde
+\input{sections/00_page_de_garde}
+
+% Sommaire généré automatiquement
+\tableofcontents
+\newpage
+
+% Inclusion des sections
+\input{sections/01_introduction}
+\input{sections/02_visualisation}
+\input{sections/03_architecture}
+\input{sections/04_database}
+\input{sections/05_logiciel}
+
+\end{document}
