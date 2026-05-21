@@ -200,7 +200,10 @@ export class RoomDetailComponent implements OnInit {
   }
 
   openEditStaffModal(person: Staff): void {
-    this.editingStaff = { ...person };
+    this.editingStaff = { 
+      ...person,
+      room_id: person.room_id || (this.room ? this.room.id : null)
+    };
     this.cdr.detectChanges();
   }
 

@@ -59,7 +59,7 @@ router.get('/:id', async (req, res) => {
       SELECT room.id, room.name, room.max_capacity, room.room_type_id, room.doors, room.floor, room.coordinates,
              COALESCE(room_type.color, '#3498db') as color, 
              room_type.label as room_type_label,
-             (SELECT json_agg(json_build_object('id', staff.id, 'first_name', staff.first_name, 'last_name', staff.last_name, 'email', staff.email, 'phone', staff.phone)) FROM staff WHERE staff.room_id = room.id) as staff,
+             (SELECT json_agg(json_build_object('id', staff.id, 'first_name', staff.first_name, 'last_name', staff.last_name, 'email', staff.email, 'phone', staff.phone, 'room_id', staff.room_id)) FROM staff WHERE staff.room_id = room.id) as staff,
              (SELECT json_agg(json_build_object('id', equipment.id, 'name', equipment.name, 'serial_number', equipment.serial_number, 'equipment_type_id', equipment.equipment_type_id, 'equipment_type_label', (SELECT label FROM equipment_type WHERE id = equipment.equipment_type_id))) FROM equipment WHERE equipment.room_id = room.id) as equipments,
              (SELECT json_agg(json_build_object('id', socket.id, 'identifier', socket.identifier, 'socket_type_id', socket.socket_type_id, 'socket_type_label', (SELECT label FROM socket_type WHERE id = socket.socket_type_id))) FROM socket WHERE socket.room_id = room.id) as sockets
       FROM room
