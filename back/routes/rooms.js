@@ -100,17 +100,25 @@ router.put('/:id', async (req, res) => {
   let { name, max_capacity, room_type_id, doors, floor, coordinates } = req.body;
   if (room_type_id === "") room_type_id = null;
   try {
-    const result = await db.query(
+    await db.query(
         `UPDATE room SET name = $1, max_capacity = $2, room_type_id = $3, doors = $4, floor = $5, coordinates = $6 
-         WHERE id = $7 
-         RETURNING id, name, max_capacity, room_type_id, doors, floor, coordinates,
-         (SELECT color FROM room_type WHERE id = room_type_id) as color,
-         (SELECT label FROM room_type WHERE id = room_type_id) as room_type_label`,
+         WHERE id = $7`,
         [name, max_capacity, room_type_id, doors, floor, coordinates, req.params.id]
     );
-    if (!result.rows[0].color) {
-      result.rows[0].color = '#3498db';
-    }
+    
+    const query = `
+      SELECT room.id, room.name, room.max_capacity, room.room_type_id, room.doors, room.floor, room.coordinates,
+             COALESCE(room_type.color, '#3498db') as color, 
+             room_type.label as room_type_label,
+             (SELECT json_agg(json_build_object('id', staff.id, 'first_name', staff.first_name, 'last_name', staff.last_name, 'email', staff.email, 'phone', staff.phone, 'room_id', staff.room_id)) FROM staff WHERE staff.room_id = room.id) as staff,
+             (SELECT json_agg(json_build_object('id', equipment.id, 'name', equipment.name, 'serial_number', equipment.serial_number, 'equipment_type_id', equipment.equipment_type_id, 'equipment_type_label', (SELECT label FROM equipment_type WHERE id = equipment.equipment_type_id))) FROM equipment WHERE equipment.room_id = room.id) as equipments,
+             (SELECT json_agg(json_build_object('id', socket.id, 'identifier', socket.identifier, 'socket_type_id', socket.socket_type_id, 'socket_type_label', (SELECT label FROM socket_type WHERE id = socket.socket_type_id))) FROM socket WHERE socket.room_id = room.id) as sockets
+      FROM room
+      LEFT JOIN room_type ON room.room_type_id = room_type.id
+      WHERE room.id = $1
+    `;
+    const result = await db.query(query, [req.params.id]);
+    if (result.rows.length === 0) return res.status(404).json({ error: 'Salle non trouvée' });
     res.json(result.rows[0]);
   } catch (err) {
     res.status(500).json({ error: err.message });
