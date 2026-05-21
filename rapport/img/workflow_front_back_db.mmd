@@ -1,0 +1,22 @@
+flowchart LR
+    User[Utilisateur]
+    Front[Frontend Angular]
+    Backend[Backend Node.js / API REST]
+    Database[PostgreSQL]
+
+    User -->|"navigation / formulaires / actions"| Front
+    Front -->|"requêtes HTTP REST (GET/POST/PUT/DELETE)"| Backend
+    Backend -->|"SQL / ORM / transactions"| Database
+    Database -->|"résultats JSON / confirmations"| Backend
+    Backend -->|"réponses HTTP JSON"| Front
+    Front -->|affiche données / messages| User
+
+    subgraph Navigateur
+      User
+      Front
+    end
+
+    subgraph Serveur
+      Backend
+      Database
+    end

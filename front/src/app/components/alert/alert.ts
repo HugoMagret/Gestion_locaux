@@ -38,4 +38,14 @@ export class AlertComponent implements OnInit, OnDestroy {
   close() {
     this.notificationService.clear();
   }
+
+  getTitle(): string {
+    if (!this.notification) return '';
+    switch (this.notification.type) {
+      case 'success': return 'Succès';
+      case 'error': return 'Erreur';
+      case 'info': return 'Information';
+      default: return '';
+    }
+  }
 }

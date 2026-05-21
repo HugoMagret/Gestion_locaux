@@ -14,6 +14,7 @@ import { RoomType } from '../../models/room-type.model';
 export class RoomTypeManagerComponent implements OnInit {
   roomTypes: RoomType[] = [];
   newTypeLabel: string = '';
+  newTypeColor: string = '#3498db';
 
   constructor(
     private referenceService: ReferenceService,
@@ -37,9 +38,10 @@ export class RoomTypeManagerComponent implements OnInit {
   addType(): void {
     if (!this.newTypeLabel.trim()) return;
 
-    this.referenceService.addRoomType(this.newTypeLabel).subscribe({
+    this.referenceService.addRoomType(this.newTypeLabel, this.newTypeColor).subscribe({
       next: () => {
         this.newTypeLabel = '';
+        this.newTypeColor = '#3498db';
         this.loadTypes();
       },
       error: (err) => console.error('Erreur lors de l\'ajout du type:', err)

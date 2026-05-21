@@ -60,10 +60,10 @@
             </div>
           </div>
           <div class="form-group">
-            <label>Couleur d'affichage</label>
-            <div class="color-picker">
-              <input type="color" [(ngModel)]="editData.color">
-              <input type="text" [(ngModel)]="editData.color">
+            <label>Couleur d'affichage (définie par le type)</label>
+            <div class="color-preview" style="display: flex; align-items: center; gap: 10px; padding: 6px 0;">
+              <span class="color-dot" [style.background]="editData.color || '#3498db'" style="width: 24px; height: 24px; border-radius: 50%; display: inline-block; border: 1px solid #cbd5e1;"></span>
+              <span style="font-family: monospace; color: #475569; font-weight: 500;">{{ editData.color || '#3498db' }}</span>
             </div>
           </div>
         </div>
@@ -94,13 +94,21 @@
       </section>
 
       <div class="item-list-grid">
-        <div *ngFor="let person of room.staff" class="item-card">
+        <div *ngFor="let person of room.staff" class="item-card clickable-card" (click)="openEditStaffModal(person)" title="Modifier les coordonnées" style="cursor: pointer;">
           <div class="item-icon"><i class="fa-solid fa-user-graduate"></i></div>
           <div class="item-info">
             <strong>{{ person.fullName }}</strong>
-            <span>Enseignant-Chercheur</span>
+            <span *ngIf="person.email" style="font-size: 12px; color: #64748b; display: flex; align-items: center; gap: 6px; margin-top: 4px;">
+              <i class="fa-solid fa-envelope" style="width: 14px;"></i> {{ person.email }}
+            </span>
+            <span *ngIf="person.phone" style="font-size: 12px; color: #64748b; display: flex; align-items: center; gap: 6px; margin-top: 2px;">
+              <i class="fa-solid fa-phone" style="width: 14px;"></i> {{ person.phone }}
+            </span>
+            <span *ngIf="!person.email && !person.phone" style="font-size: 11px; color: #94a3b8; font-style: italic; margin-top: 4px;">
+              Aucune coordonnée
+            </span>
           </div>
-          <button class="btn-remove" (click)="unassignStaff(person.id)" title="Désaffecter">
+          <button class="btn-remove" (click)="unassignStaff(person.id); $event.stopPropagation()" title="Désaffecter">
             <i class="fa-solid fa-link-slash"></i>
           </button>
         </div>
@@ -185,4 +193,38 @@
       Chargement du local...
     </div>
   </ng-template>
+</div>
+
+<!-- Modal d'édition du membre du personnel -->
+<div class="modal-overlay" *ngIf="editingStaff" (click)="closeEditStaffModal()">
+  <div class="modal-card card" (click)="$event.stopPropagation()" style="animation: scaleUp 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); width: 100%; max-width: 450px; padding: 24px;">
+    <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <h3 style="margin: 0; font-size: 18px; font-weight: 700; color: #0f172a;">Modifier le membre du personnel</h3>
+      <button (click)="closeEditStaffModal()" style="background: transparent; border: none; font-size: 20px; color: #94a3b8; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
+    </header>
+    
+    <div class="edit-form" style="display: flex; flex-direction: column; gap: 16px;">
+      <div class="form-group">
+        <label style="font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase;">Prénom</label>
+        <input type="text" [(ngModel)]="editingStaff.first_name" style="width: 100%;" placeholder="Prénom">
+      </div>
+      <div class="form-group">
+        <label style="font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase;">Nom</label>
+        <input type="text" [(ngModel)]="editingStaff.last_name" style="width: 100%;" placeholder="Nom">
+      </div>
+      <div class="form-group">
+        <label style="font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase;">Email</label>
+        <input type="email" [(ngModel)]="editingStaff.email" style="width: 100%;" placeholder="Adresse mail">
+      </div>
+      <div class="form-group">
+        <label style="font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase;">Téléphone</label>
+        <input type="tel" [(ngModel)]="editingStaff.phone" style="width: 100%;" placeholder="Numéro de téléphone">
+      </div>
+      
+      <div style="display: flex; gap: 12px; margin-top: 10px;">
+        <button class="btn-outline" (click)="closeEditStaffModal()" style="flex: 1; padding: 12px; border-radius: 10px;">Annuler</button>
+        <button class="btn-primary" (click)="saveStaff()" [disabled]="!editingStaff.first_name?.trim() || !editingStaff.last_name?.trim()" style="flex: 1; padding: 12px; border-radius: 10px; margin: 0;">Enregistrer</button>
+      </div>
+    </div>
+  </div>
 </div>

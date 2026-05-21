@@ -1,0 +1,45 @@
+\chapter{Architecture et Choix Techniques}
+
+Au-delà de répondre aux exigences de maintenabilité et de simplicité de déploiement imposées par le sujet, ce projet de fin d'études porte sur un certain objectif : s'entraîner à développer selon les pratiques et standards de l'industrie. Il aurait été possible de réaliser cette application intégralement en Python, mais nous avons plutôt opté pour une stack technologique composée d'outils professionnels largement utilisés dans le monde de l'entreprise, afin d'acquérir une expertise transférable et valorisable dans notre future carrière.
+
+Nos choix technologiques ont ainsi été guidés par deux critères majeurs : la robustesse de la solution et notre volonté de consolider des compétences demandées dans le monde de l'entreprise. Cette approche garantit à la fois une application fiable et maintenable, mais constitue aussi un investissement pédagogique majeur pour notre insertion professionnelle.
+
+
+\section[Frontend : Angular]{Frontend : Angular \raisebox{-0.2\height}{\includegraphics[height=0.6cm]{img/logo_angular.jpeg}}}
+Pour l'interface utilisateur, notre choix s'est porté sur le framework Angular. Ce choix s'explique tout d'abord par une compétence déjà présente au sein de l'équipe (deux membres avaient déjà utilisé cette technologie). De plus, Angular est aujourd'hui un standard de l'industrie pour les applications web complexes (Single Page Applications). Sa structure basée sur les composants et l'utilisation de TypeScript garantissent un code typé, maintenable et évolutif.
+
+\section[Backend : Node.js]{Backend : Node.js \raisebox{-0.2\height}{\includegraphics[height=0.6cm]{img/logo_nodejs.png}}}
+Bien que notre formation de 5 ans en informatique nous ait permis d'acquérir une grande expertise sur le langage comme Java, nous avons décidé d'implémenter notre API Backend en Node.js. Ce choix est doublement stratégique. D'une part, Node.js est extrêmement populaire dans l'industrie actuelle pour le développement de micro-services et d'API REST. D'autre part, cela nous permettait de sortir de notre zone de confort académique (Java) pour relever un défi technique pertinent pour notre future insertion professionnelle.
+
+\section[Base de données : PostgreSQL]{Base de données : PostgreSQL \raisebox{-0.2\height}{\includegraphics[height=0.6cm]{img/logo_postgresql.jpeg}}}
+Le système devant gérer de potentielles écritures simultanées (modification de salles, ajout de matériels), nous avons rapidement écarté SQLite. Très léger, SQLite nous semblait trop faible pour nos besoins. Notre choix final s'est donc porté sur PostgreSQL, un Système de Gestion de Base de Données Relationnelle (SGBDR) robuste et open-source. Il s'intègre également de manière fluide avec Node.js.
+
+\subsection{Schéma de fonctionnement}
+Le schéma suivant illustre le workflow principal de l'application : l'utilisateur interagit avec le frontend Angular, qui transmet des requêtes HTTP au backend Node.js. Ce backend traite la logique métier, interroge PostgreSQL pour lire ou modifier les données, puis renvoie les réponses au frontend.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\linewidth,height=0.75\textheight,keepaspectratio]{img/workflow_front_back_db.png}
+    \caption{Workflow de communication entre l'utilisateur, le frontend, le backend et la base de données}
+    \label{fig:workflow-front-back-db}
+\end{figure}
+
+\section[Déploiement et Conteneurisation : Docker]{Déploiement et Conteneurisation : Docker \raisebox{-0.2\height}{\includegraphics[height=0.6cm]{img/logo_docker.png}}}
+Afin de garantir que notre site soit "facilement installable" sur n'importe quel serveur du département informatique, nous avons intégré Docker dès le premier jour de développement. Docker nous permet d'encapsuler notre base de données, notre backend et notre frontend dans des conteneurs isolés. L'utilisation de \texttt{docker-compose} permet de lancer l'intégralité de l'environnement avec une seule commande, résolvant ainsi les problèmes de compatibilité entre les systèmes d'exploitation, que ce soit pour nous développeurs du projet, ou pour les futurs utilisateurs.
+
+\section[Collaboration et Intégration Continue : GitHub]{Collaboration et Intégration Continue : GitHub \raisebox{-0.2\height}{\includegraphics[height=0.6cm]{img/logo_github.png}}}
+Travaillant en équipe de quatre, nous avons choisi GitHub comme plateforme de gestion des versions du code. Cette approche nous a permis de maintenir une traçabilité rigoureuse des modifications, de créer des releases versionnées pour nos livrables, et de répartir le travail via des tickets (issues). Ce choix reproduit les bonnes pratiques observées dans les équipes professionnelles et facilite la collaboration entre membres de l'équipe.
+
+\section{Organisation du Projet}
+Afin de garantir une séparation stricte des responsabilités (separation of concerns), notre dépôt de code est structuré de la manière suivante :
+
+\begin{verbatim}
+    Gestion_locaux/
+    |-- back/               # API Node.js (Logique metier et acces DB)
+    |-- front/              # Application Angular (Interface utilisateur)
+    |-- database/           # Fichiers SQL et scripts d'initialisation PostgreSQL
+    |-- rapport/            # Sources LaTeX de ce document
+    +-- docker-compose.yml  # Orchestrateur des differents conteneurs
+\end{verbatim}
+
+Cette arborescence permet à chaque membre de l'équipe de se repérer facilement et facilite le déploiement automatisé.

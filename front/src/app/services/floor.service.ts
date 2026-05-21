@@ -12,12 +12,13 @@ export interface Floor {
 @Injectable({ providedIn: 'root' })
 export class FloorService {
   private floorsSubject = new BehaviorSubject<Floor[]>([]);
+  private manuallyAddedLevels = new Set<number>();
 
   constructor(private roomService: RoomService, private http: HttpClient) {
     this.roomService.getRooms().subscribe(rooms => {
       const uniqueFloors = new Map<number, Floor>();
       
-      // Ajout dynamique basé UNIQUEMENT sur les salles existantes
+      // Ajout dynamique basé sur les salles existantes
       rooms.forEach(room => {
         if (!uniqueFloors.has(room.floor)) {
           uniqueFloors.set(room.floor, {
@@ -27,7 +28,17 @@ export class FloorService {
         }
       });
 
-      // S'il n'y a absolument aucune salle en BDD, on affiche au moins le RDC pour ne pas avoir un menu vide
+      // Ajout des étages ajoutés manuellement/importés
+      this.manuallyAddedLevels.forEach(level => {
+        if (!uniqueFloors.has(level)) {
+          uniqueFloors.set(level, {
+            id: `floor-${level}`,
+            level: level
+          });
+        }
+      });
+
+      // S'il n'y a absolument aucune salle en BDD et aucun étage manuel, on affiche au moins le RDC pour ne pas avoir un menu vide
       if (uniqueFloors.size === 0) {
         uniqueFloors.set(0, { id: 'floor-0', level: 0 });
       }
@@ -42,6 +53,7 @@ export class FloorService {
   }
 
   addFloor(level: number): void {
+    this.manuallyAddedLevels.add(level);
     const current = this.floorsSubject.value;
     const id = `floor-${level}`;
     if (!current.find(f => f.level === level)) {
@@ -56,6 +68,7 @@ export class FloorService {
   deleteFloor(id: string): void {
     const floorToDelete = this.floorsSubject.value.find(f => f.id === id);
     if (floorToDelete) {
+      this.manuallyAddedLevels.delete(floorToDelete.level);
       this.roomService.deleteRoomsByFloor(floorToDelete.level);
     }
   }

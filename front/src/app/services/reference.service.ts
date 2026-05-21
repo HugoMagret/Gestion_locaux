@@ -16,8 +16,8 @@ export class ReferenceService {
     );
   }
 
-  addRoomType(label: string): Observable<RoomType> {
-    return this.http.post<any>(`${API_URL}/types/room`, { label }).pipe(
+  addRoomType(label: string, color?: string): Observable<RoomType> {
+    return this.http.post<any>(`${API_URL}/types/room`, { label, color }).pipe(
       map(t => new RoomType(t))
     );
   }

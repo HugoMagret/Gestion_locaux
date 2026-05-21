@@ -6,14 +6,23 @@
 
   <div class="add-section card">
     <h3>Ajouter un nouveau type</h3>
-    <div class="form-group">
+    <div class="form-group" style="display: flex; gap: 12px; align-items: center;">
       <input 
         type="text" 
         [(ngModel)]="newTypeLabel" 
         placeholder="Ex: Salle de conférence, Laboratoire..."
         (keyup.enter)="addType()"
+        style="flex: 1;"
       >
-      <button class="btn-primary" (click)="addType()" [disabled]="!newTypeLabel.trim()">
+      <div class="color-picker-wrapper" style="display: flex; align-items: center; gap: 8px;">
+        <label style="font-size: 13px; font-weight: 600; color: #64748b;">Couleur:</label>
+        <input 
+          type="color" 
+          [(ngModel)]="newTypeColor"
+          style="width: 40px; height: 38px; padding: 2px; border-radius: 8px; border: 1px solid #cbd5e1; cursor: pointer; background: none;"
+        >
+      </div>
+      <button class="btn-primary" (click)="addType()" [disabled]="!newTypeLabel.trim()" style="height: 38px; display: flex; align-items: center; justify-content: center;">
         Ajouter
       </button>
     </div>
@@ -24,12 +33,18 @@
       <table class="type-table">
         <thead>
           <tr>
+            <th style="width: 80px; text-align: center;">Couleur</th>
             <th>Libellé</th>
             <th class="actions">Actions</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let type of roomTypes">
+            <td>
+              <div style="display: flex; align-items: center; justify-content: center;">
+                <span class="color-dot" [style.background]="type.color || '#3498db'" style="width: 20px; height: 20px; border-radius: 50%; display: inline-block; border: 1px solid #cbd5e1;"></span>
+              </div>
+            </td>
             <td>{{ type.label }}</td>
             <td class="actions">
               <button class="btn-icon" (click)="deleteType(type.id)" title="Supprimer">
@@ -38,7 +53,7 @@
             </td>
           </tr>
           <tr *ngIf="roomTypes.length === 0">
-            <td colspan="2" class="empty-state">Aucun type de salle défini</td>
+            <td colspan="3" class="empty-state">Aucun type de salle défini</td>
           </tr>
         </tbody>
       </table>

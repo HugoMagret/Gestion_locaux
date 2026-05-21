@@ -17,6 +17,7 @@ import { FloorService } from '../../services/floor.service';
 import { StaffService } from '../../services/staff.service';
 import { EquipmentService } from '../../services/equipment.service';
 import { SocketService } from '../../services/socket.service';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-room-detail',
@@ -39,6 +40,7 @@ export class RoomDetailComponent implements OnInit {
   private equipmentService = inject(EquipmentService);
   private socketService = inject(SocketService);
   private cdr = inject(ChangeDetectorRef);
+  private notificationService = inject(NotificationService);
 
   // Propriétés de l'interface
   room: Room | null = null;
@@ -58,6 +60,7 @@ export class RoomDetailComponent implements OnInit {
   newEquipment: any = { name: '', serial_number: '', equipment_type_id: '' };
   newSocket: any = { identifier: '', socket_type_id: '' };
   selectedStaffId: string = '';
+  editingStaff: any = null;
 
   // Nouveau : Formulaire réactif pour une meilleure validation
   roomForm: FormGroup;
@@ -130,13 +133,13 @@ export class RoomDetailComponent implements OnInit {
         this.roomForm.patchValue(savedRoom);
         this.isSaving = false;
         this.cdr.detectChanges();
-        alert('Salle mise à jour !');
+        this.notificationService.showSuccess('Salle mise à jour !');
       },
       error: (err) => {
         console.error(err);
         this.isSaving = false;
         this.cdr.detectChanges();
-        alert('Erreur lors de la sauvegarde');
+        this.notificationService.showError('Erreur lors de la sauvegarde');
       }
     });
   }
@@ -194,6 +197,37 @@ export class RoomDetailComponent implements OnInit {
 
   deleteSocket(id: string): void {
     this.socketService.deleteSocket(id).subscribe(() => this.loadRoom());
+  }
+
+  openEditStaffModal(person: Staff): void {
+    this.editingStaff = { 
+      ...person,
+      room_id: person.room_id || (this.room ? this.room.id : null)
+    };
+    this.cdr.detectChanges();
+  }
+
+  closeEditStaffModal(): void {
+    this.editingStaff = null;
+    this.cdr.detectChanges();
+  }
+
+  saveStaff(): void {
+    if (!this.editingStaff) return;
+    this.staffService.updateStaff(new Staff(this.editingStaff)).subscribe({
+      next: () => {
+        this.notificationService.showSuccess('Coordonnées du personnel mises à jour !');
+        this.closeEditStaffModal();
+        this.loadRoom();
+        this.staffService.getStaff().subscribe(staff => {
+          this.allStaff = staff;
+          this.cdr.detectChanges();
+        });
+      },
+      error: (err) => {
+        this.notificationService.showError("Erreur lors de la mise à jour : " + (err.error?.error || err.message));
+      }
+    });
   }
 
   goBack(): void {

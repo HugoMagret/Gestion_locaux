@@ -46,7 +46,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let member of (staffWithRooms$ | async)">
+          <tr *ngFor="let member of (staffWithRooms$ | async)" class="clickable-row" (click)="openEditStaffModal(member)">
             <td>
               <div class="staff-info">
                 <span class="avatar">{{ member.first_name[0] }}{{ member.last_name[0] }}</span>
@@ -69,7 +69,7 @@
             </td>
             <td>{{ member.room ? (member.room.floor === 0 ? 'RDC' : 'Étage ' + member.room.floor) : '-' }}</td>
             <td>
-              <button class="btn-icon" (click)="deleteStaff(member.id)" title="Supprimer">
+              <button class="btn-icon" (click)="deleteStaff(member.id); $event.stopPropagation()" title="Supprimer">
                 🗑️
               </button>
             </td>
@@ -79,6 +79,47 @@
           </tr>
         </tbody>
       </table>
+    </div>
+  </div>
+</div>
+
+<!-- Modal d'édition du membre du personnel -->
+<div class="modal-overlay" *ngIf="editingStaff" (click)="closeEditStaffModal()">
+  <div class="modal-card card" (click)="$event.stopPropagation()" style="animation: scaleUp 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); width: 100%; max-width: 450px; padding: 24px;">
+    <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <h3 style="margin: 0; font-size: 18px; font-weight: 700; color: #0f172a;">Modifier le membre du personnel</h3>
+      <button (click)="closeEditStaffModal()" style="background: transparent; border: none; font-size: 20px; color: #94a3b8; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
+    </header>
+    
+    <div class="edit-form" style="display: flex; flex-direction: column; gap: 16px;">
+      <div class="form-group">
+        <label>Prénom</label>
+        <input type="text" [(ngModel)]="editingStaff.first_name" style="width: 100%;" placeholder="Prénom">
+      </div>
+      <div class="form-group">
+        <label>Nom</label>
+        <input type="text" [(ngModel)]="editingStaff.last_name" style="width: 100%;" placeholder="Nom">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" [(ngModel)]="editingStaff.email" style="width: 100%;" placeholder="Adresse mail">
+      </div>
+      <div class="form-group">
+        <label>Téléphone</label>
+        <input type="tel" [(ngModel)]="editingStaff.phone" style="width: 100%;" placeholder="Numéro de téléphone">
+      </div>
+      <div class="form-group">
+        <label>Bureau / Salle</label>
+        <select [(ngModel)]="editingStaff.room_id" style="width: 100%;">
+          <option value="">Sélectionner une salle</option>
+          <option *ngFor="let room of (rooms$ | async)" [value]="room.id">{{ room.name }}</option>
+        </select>
+      </div>
+      
+      <div style="display: flex; gap: 12px; margin-top: 10px;">
+        <button class="btn-outline" (click)="closeEditStaffModal()" style="flex: 1; padding: 12px; border-radius: 10px;">Annuler</button>
+        <button class="btn-primary" (click)="saveStaff()" [disabled]="!editingStaff.first_name?.trim() || !editingStaff.last_name?.trim()" style="flex: 1; padding: 12px; border-radius: 10px; margin: 0;">Enregistrer</button>
+      </div>
     </div>
   </div>
 </div>
