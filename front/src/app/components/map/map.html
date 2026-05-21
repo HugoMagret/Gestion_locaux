@@ -67,7 +67,7 @@
     </div>
 
     <div class="zoom-wrapper" [style.transform]="'scale(' + currentZoom + ')'">
-      <svg viewBox="0 0 1000 600" (click)="onMapClick($event)">
+      <svg viewBox="0 0 1800 800" (click)="onMapClick($event)">
         <g
           *ngFor="let room of filteredRooms"
           [attr.id]="room.id"

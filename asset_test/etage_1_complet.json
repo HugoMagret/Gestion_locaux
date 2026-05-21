@@ -2,38 +2,12 @@
   "level": 1,
   "rooms": [
     {
-      "name": "G101",
-      "coordinates": {
-        "x": 1,
-        "y": 288,
-        "width": 99,
-        "height": 140
-      },
-      "max_capacity": 30,
-      "doors": 1,
-      "floor": 1,
-      "color": "#3498db"
-    },
-    {
-      "name": "G102",
-      "coordinates": {
-        "x": 1,
-        "y": 153,
-        "width": 98,
-        "height": 135
-      },
-      "max_capacity": 30,
-      "doors": 1,
-      "floor": 1,
-      "color": "#3498db"
-    },
-    {
       "name": "G103",
       "coordinates": {
-        "x": 1,
-        "y": 1,
-        "width": 99,
-        "height": 152
+        "x": 2,
+        "y": 2,
+        "width": 177,
+        "height": 231
       },
       "max_capacity": 30,
       "doors": 1,
@@ -43,23 +17,10 @@
     {
       "name": "G104",
       "coordinates": {
-        "x": 100,
-        "y": 1,
-        "width": 104,
-        "height": 128
-      },
-      "max_capacity": 30,
-      "doors": 1,
-      "floor": 1,
-      "color": "#3498db"
-    },
-    {
-      "name": "G105",
-      "coordinates": {
-        "x": 151,
-        "y": 251,
-        "width": 89,
-        "height": 121
+        "x": 179,
+        "y": 2,
+        "width": 186,
+        "height": 232
       },
       "max_capacity": 30,
       "doors": 1,
@@ -69,10 +30,49 @@
     {
       "name": "G109",
       "coordinates": {
-        "x": 204,
-        "y": 1,
-        "width": 52,
-        "height": 130
+        "x": 365,
+        "y": 2,
+        "width": 93,
+        "height": 232
+      },
+      "max_capacity": 30,
+      "doors": 1,
+      "floor": 1,
+      "color": "#3498db"
+    },
+    {
+      "name": "G102",
+      "coordinates": {
+        "x": 2,
+        "y": 274,
+        "width": 177,
+        "height": 212
+      },
+      "max_capacity": 30,
+      "doors": 1,
+      "floor": 1,
+      "color": "#3498db"
+    },
+    {
+      "name": "G101",
+      "coordinates": {
+        "x": 2,
+        "y": 515,
+        "width": 177,
+        "height": 250
+      },
+      "max_capacity": 30,
+      "doors": 1,
+      "floor": 1,
+      "color": "#3498db"
+    },
+    {
+      "name": "G105",
+      "coordinates": {
+        "x": 267,
+        "y": 664,
+        "width": 162,
+        "height": 101
       },
       "max_capacity": 30,
       "doors": 1,
@@ -82,10 +82,10 @@
     {
       "name": "H103",
       "coordinates": {
-        "x": 625,
-        "y": 43,
-        "width": 61,
-        "height": 101
+        "x": 674,
+        "y": 78,
+        "width": 225,
+        "height": 181
       },
       "max_capacity": 30,
       "doors": 1,
@@ -95,10 +95,10 @@
     {
       "name": "H104",
       "coordinates": {
-        "x": 686,
-        "y": 43,
-        "width": 60,
-        "height": 101
+        "x": 899,
+        "y": 78,
+        "width": 217,
+        "height": 181
       },
       "max_capacity": 30,
       "doors": 1,
@@ -108,10 +108,10 @@
     {
       "name": "H105",
       "coordinates": {
-        "x": 745,
-        "y": 43,
-        "width": 62,
-        "height": 101
+        "x": 1116,
+        "y": 78,
+        "width": 109,
+        "height": 181
       },
       "max_capacity": 30,
       "doors": 1,
@@ -121,10 +121,10 @@
     {
       "name": "H106",
       "coordinates": {
-        "x": 807,
-        "y": 43,
-        "width": 61,
-        "height": 101
+        "x": 1225,
+        "y": 78,
+        "width": 107,
+        "height": 181
       },
       "max_capacity": 30,
       "doors": 1,
@@ -134,10 +134,10 @@
     {
       "name": "H107",
       "coordinates": {
-        "x": 868,
-        "y": 43,
-        "width": 60,
-        "height": 101
+        "x": 1332,
+        "y": 78,
+        "width": 111,
+        "height": 181
       },
       "max_capacity": 30,
       "doors": 1,
@@ -145,64 +145,38 @@
       "color": "#3498db"
     },
     {
-      "name": "H108",
+      "name": "Bureau vide 1",
       "coordinates": {
-        "x": 802,
-        "y": 176,
-        "width": 91,
-        "height": 121
+        "x": 1443,
+        "y": 78,
+        "width": 109,
+        "height": 181
       },
       "max_capacity": 30,
       "doors": 1,
       "floor": 1,
-      "color": "#3498db"
+      "color": "#95a5a6"
     },
     {
-      "name": "H109",
+      "name": "Bureau vide 2",
       "coordinates": {
-        "x": 743,
-        "y": 176,
-        "width": 59,
-        "height": 121
+        "x": 1552,
+        "y": 78,
+        "width": 107,
+        "height": 181
       },
       "max_capacity": 30,
       "doors": 1,
       "floor": 1,
-      "color": "#3498db"
+      "color": "#95a5a6"
     },
     {
-      "name": "H110",
+      "name": "H114",
       "coordinates": {
-        "x": 680,
-        "y": 176,
-        "width": 63,
-        "height": 121
-      },
-      "max_capacity": 30,
-      "doors": 1,
-      "floor": 1,
-      "color": "#3498db"
-    },
-    {
-      "name": "H111",
-      "coordinates": {
-        "x": 560,
-        "y": 176,
-        "width": 121,
-        "height": 121
-      },
-      "max_capacity": 30,
-      "doors": 1,
-      "floor": 1,
-      "color": "#3498db"
-    },
-    {
-      "name": "H112",
-      "coordinates": {
-        "x": 503,
-        "y": 176,
-        "width": 57,
-        "height": 121
+        "x": 1659,
+        "y": 78,
+        "width": 126,
+        "height": 181
       },
       "max_capacity": 30,
       "doors": 1,
@@ -212,10 +186,10 @@
     {
       "name": "H113",
       "coordinates": {
-        "x": 373,
-        "y": 176,
-        "width": 130,
-        "height": 121
+        "x": 666,
+        "y": 315,
+        "width": 233,
+        "height": 218
       },
       "max_capacity": 30,
       "doors": 1,
@@ -223,12 +197,12 @@
       "color": "#3498db"
     },
     {
-      "name": "H114",
+      "name": "H112",
       "coordinates": {
-        "x": 893,
-        "y": 144,
-        "width": 35,
-        "height": 153
+        "x": 899,
+        "y": 315,
+        "width": 101,
+        "height": 218
       },
       "max_capacity": 30,
       "doors": 1,
@@ -236,27 +210,118 @@
       "color": "#3498db"
     },
     {
-      "name": "Local Technique (Vide)",
+      "name": "H111",
       "coordinates": {
-        "x": 256,
-        "y": 1,
-        "width": 80,
-        "height": 130
+        "x": 1000,
+        "y": 315,
+        "width": 216,
+        "height": 218
       },
-      "max_capacity": 5,
+      "max_capacity": 30,
+      "doors": 1,
+      "floor": 1,
+      "color": "#3498db"
+    },
+    {
+      "name": "H110",
+      "coordinates": {
+        "x": 1216,
+        "y": 315,
+        "width": 112,
+        "height": 218
+      },
+      "max_capacity": 30,
+      "doors": 1,
+      "floor": 1,
+      "color": "#3498db"
+    },
+    {
+      "name": "H109",
+      "coordinates": {
+        "x": 1328,
+        "y": 315,
+        "width": 105,
+        "height": 218
+      },
+      "max_capacity": 30,
+      "doors": 1,
+      "floor": 1,
+      "color": "#3498db"
+    },
+    {
+      "name": "H108",
+      "coordinates": {
+        "x": 1433,
+        "y": 315,
+        "width": 163,
+        "height": 218
+      },
+      "max_capacity": 30,
+      "doors": 1,
+      "floor": 1,
+      "color": "#3498db"
+    },
+    {
+      "name": "Bureau vide 3",
+      "coordinates": {
+        "x": 1596,
+        "y": 315,
+        "width": 63,
+        "height": 218
+      },
+      "max_capacity": 30,
       "doors": 1,
       "floor": 1,
       "color": "#95a5a6"
     },
     {
-      "name": "Sanitaires (Vide)",
+      "name": "Corridor Central (Vide)",
       "coordinates": {
-        "x": 100,
-        "y": 251,
-        "width": 51,
-        "height": 121
+        "x": 674,
+        "y": 259,
+        "width": 1111,
+        "height": 56
       },
-      "max_capacity": 5,
+      "max_capacity": 30,
+      "doors": 1,
+      "floor": 1,
+      "color": "#95a5a6"
+    },
+    {
+      "name": "Couloir G (Vide)",
+      "coordinates": {
+        "x": 179,
+        "y": 234,
+        "width": 88,
+        "height": 531
+      },
+      "max_capacity": 30,
+      "doors": 1,
+      "floor": 1,
+      "color": "#95a5a6"
+    },
+    {
+      "name": "Hall (Vide)",
+      "coordinates": {
+        "x": 267,
+        "y": 340,
+        "width": 233,
+        "height": 324
+      },
+      "max_capacity": 30,
+      "doors": 1,
+      "floor": 1,
+      "color": "#95a5a6"
+    },
+    {
+      "name": "Réserve (Vide)",
+      "coordinates": {
+        "x": 458,
+        "y": 2,
+        "width": 216,
+        "height": 232
+      },
+      "max_capacity": 30,
       "doors": 1,
       "floor": 1,
       "color": "#95a5a6"
@@ -266,181 +331,190 @@
     {
       "floor": 1,
       "coordinates": {
-        "x": 100,
-        "y": 348,
+        "x": 179,
+        "y": 100,
         "width": 6,
-        "height": 20
+        "height": 50
       }
     },
     {
       "floor": 1,
       "coordinates": {
-        "x": 99,
-        "y": 210,
+        "x": 179,
+        "y": 300,
         "width": 6,
-        "height": 20
+        "height": 50
       }
     },
     {
       "floor": 1,
       "coordinates": {
-        "x": 100,
-        "y": 67,
+        "x": 179,
+        "y": 550,
         "width": 6,
-        "height": 20
+        "height": 50
       }
     },
     {
       "floor": 1,
       "coordinates": {
-        "x": 142,
-        "y": 129,
-        "width": 20,
+        "x": 250,
+        "y": 234,
+        "width": 50,
         "height": 6
       }
     },
     {
       "floor": 1,
       "coordinates": {
-        "x": 185,
-        "y": 245,
-        "width": 20,
+        "x": 400,
+        "y": 234,
+        "width": 50,
         "height": 6
       }
     },
     {
       "floor": 1,
       "coordinates": {
-        "x": 220,
-        "y": 131,
-        "width": 20,
+        "x": 300,
+        "y": 660,
+        "width": 50,
         "height": 6
       }
     },
     {
       "floor": 1,
       "coordinates": {
-        "x": 645,
-        "y": 144,
-        "width": 20,
+        "x": 700,
+        "y": 257,
+        "width": 50,
         "height": 6
       }
     },
     {
       "floor": 1,
       "coordinates": {
-        "x": 706,
-        "y": 144,
-        "width": 20,
+        "x": 950,
+        "y": 257,
+        "width": 50,
         "height": 6
       }
     },
     {
       "floor": 1,
       "coordinates": {
-        "x": 766,
-        "y": 144,
-        "width": 20,
+        "x": 1150,
+        "y": 257,
+        "width": 50,
         "height": 6
       }
     },
     {
       "floor": 1,
       "coordinates": {
-        "x": 827,
-        "y": 144,
-        "width": 20,
+        "x": 1250,
+        "y": 257,
+        "width": 50,
         "height": 6
       }
     },
     {
       "floor": 1,
       "coordinates": {
-        "x": 888,
-        "y": 144,
-        "width": 20,
+        "x": 1350,
+        "y": 257,
+        "width": 50,
         "height": 6
       }
     },
     {
       "floor": 1,
       "coordinates": {
-        "x": 837,
-        "y": 170,
-        "width": 20,
+        "x": 1470,
+        "y": 257,
+        "width": 50,
         "height": 6
       }
     },
     {
       "floor": 1,
       "coordinates": {
-        "x": 762,
-        "y": 170,
-        "width": 20,
+        "x": 1580,
+        "y": 257,
+        "width": 50,
         "height": 6
       }
     },
     {
       "floor": 1,
       "coordinates": {
-        "x": 701,
-        "y": 170,
-        "width": 20,
+        "x": 1700,
+        "y": 257,
+        "width": 50,
         "height": 6
       }
     },
     {
       "floor": 1,
       "coordinates": {
-        "x": 610,
-        "y": 170,
-        "width": 20,
+        "x": 700,
+        "y": 312,
+        "width": 50,
         "height": 6
       }
     },
     {
       "floor": 1,
       "coordinates": {
-        "x": 521,
-        "y": 170,
-        "width": 20,
+        "x": 930,
+        "y": 312,
+        "width": 50,
         "height": 6
       }
     },
     {
       "floor": 1,
       "coordinates": {
-        "x": 428,
-        "y": 170,
-        "width": 20,
+        "x": 1050,
+        "y": 312,
+        "width": 50,
         "height": 6
       }
     },
     {
       "floor": 1,
       "coordinates": {
-        "x": 887,
-        "y": 210,
-        "width": 6,
-        "height": 20
-      }
-    },
-    {
-      "floor": 1,
-      "coordinates": {
-        "x": 286,
-        "y": 131,
-        "width": 20,
+        "x": 1250,
+        "y": 312,
+        "width": 50,
         "height": 6
       }
     },
     {
       "floor": 1,
       "coordinates": {
-        "x": 151,
-        "y": 301,
-        "width": 6,
-        "height": 20
+        "x": 1350,
+        "y": 312,
+        "width": 50,
+        "height": 6
+      }
+    },
+    {
+      "floor": 1,
+      "coordinates": {
+        "x": 1470,
+        "y": 312,
+        "width": 50,
+        "height": 6
+      }
+    },
+    {
+      "floor": 1,
+      "coordinates": {
+        "x": 1610,
+        "y": 312,
+        "width": 50,
+        "height": 6
       }
     }
   ]
