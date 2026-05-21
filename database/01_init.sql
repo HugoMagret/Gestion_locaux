@@ -29,6 +29,12 @@ CREATE TABLE IF NOT EXISTS room (
     color VARCHAR(7) DEFAULT '#3498db'
 );
 
+CREATE TABLE IF NOT EXISTS door (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    floor INTEGER DEFAULT 0,
+    coordinates JSONB NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS staff (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     last_name VARCHAR(255) NOT NULL,

@@ -76,22 +76,15 @@ export class FloorManagerComponent implements OnInit {
       return;
     }
 
-    // Add floor locally
-    this.floorService.addFloor(data.level);
-
-    // Add rooms if present
-    if (data.rooms && Array.isArray(data.rooms)) {
-      data.rooms.forEach((r: any) => {
-        this.roomService.addRoom({
-          ...r,
-          floor: data.level,
-          doors: r.doors || 1,
-          color: r.color || '#3498db'
-        });
-      });
-    }
-
-    alert(`Étage ${data.level} importé avec succès !`);
+    this.floorService.importFloor(data).subscribe({
+      next: (res) => {
+        alert(res.message || `Étage ${data.level} importé avec succès !`);
+        this.roomService.refreshRooms();
+      },
+      error: (err) => {
+        alert(err.error?.error || "Une erreur est survenue lors de l'importation.");
+      }
+    });
   }
 
   deleteFloor(id: string): void {

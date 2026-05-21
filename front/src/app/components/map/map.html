@@ -98,6 +98,19 @@
           <text *ngIf="showEquipment && room.equipments.length > 0" [attr.x]="room.coordinates.x + room.coordinates.width - 20" [attr.y]="room.coordinates.y + 15" font-size="14" fill="#475569" font-family="'Font Awesome 6 Free'" font-weight="900">&#xf108;</text>
           <text *ngIf="showSockets && room.sockets.length > 0" [attr.x]="room.coordinates.x + room.coordinates.width - 20" [attr.y]="room.coordinates.y + room.coordinates.height - 15" font-size="14" fill="#ef4444" font-family="'Font Awesome 6 Free'" font-weight="900">&#xf1e6;</text>
         </g>
+        
+        <!-- Doors Rendering -->
+        <g *ngFor="let door of filteredDoors" class="door-group">
+          <rect
+            [attr.x]="door.coordinates.x"
+            [attr.y]="door.coordinates.y"
+            [attr.width]="door.coordinates.width"
+            [attr.height]="door.coordinates.height"
+            fill="#d97706"
+            stroke="#b45309"
+            stroke-width="1"
+          />
+        </g>
       </svg>
     </div>
   </div>

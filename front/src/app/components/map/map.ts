@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Room } from '../../models/room.model';
 import { RoomService } from '../../services/room.service';
 import { FloorService } from '../../services/floor.service';
+import { DoorService, Door } from '../../services/door.service';
 
 @Component({
   selector: 'app-map',
@@ -16,6 +17,8 @@ export class MapComponent implements OnInit {
   @Output() roomSelected = new EventEmitter<string>();
   allRooms: Room[] = [];
   filteredRooms: Room[] = [];
+  allDoors: Door[] = [];
+  filteredDoors: Door[] = [];
   selectedRoom: Room | null = null;
 
   selectedFloor = 0;
@@ -32,12 +35,26 @@ export class MapComponent implements OnInit {
   constructor(
     private roomService: RoomService,
     private floorService: FloorService,
-    private cdr: ChangeDetectorRef // Injecté pour corriger le bug d'affichage
+    private doorService: DoorService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     this.loadRooms();
     this.loadFloors();
+    this.loadDoors();
+  }
+
+  loadDoors(): void {
+    this.doorService.getDoors().subscribe({
+      next: (data) => {
+        this.allDoors = data;
+        this.applyFilters();
+        this.cdr.detectChanges();
+      }
+    });
+    // Trigger initial fetch
+    this.doorService.fetchDoorsByFloor(this.selectedFloor);
   }
 
   loadRooms(): void {
@@ -70,12 +87,14 @@ export class MapComponent implements OnInit {
 
   applyFilters(): void {
     this.filteredRooms = this.allRooms.filter((r) => r.floor === this.selectedFloor);
+    this.filteredDoors = this.allDoors.filter((d) => d.floor === this.selectedFloor);
   }
 
   selectFloor(floor: number): void {
     this.selectedFloor = floor;
     this.selectedRoom = null;
     this.applyFilters();
+    this.doorService.fetchDoorsByFloor(floor); // Refresh doors when floor changes
     this.cdr.detectChanges();
   }
 

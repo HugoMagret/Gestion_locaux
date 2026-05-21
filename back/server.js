@@ -21,6 +21,8 @@ const socketRoutes = require('./routes/sockets');
 const typeRoutes = require('./routes/types');
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/users');
+const floorRoutes = require('./routes/floors');
+const doorRoutes = require('./routes/doors');
 
 app.use('/api/rooms', roomRoutes);
 app.use('/api/staff', staffRoutes);
@@ -29,6 +31,8 @@ app.use('/api/sockets', socketRoutes);
 app.use('/api/types', typeRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/floors', floorRoutes);
+app.use('/api/doors', doorRoutes);
 
 // Route de base
 app.get('/', (req, res) => {

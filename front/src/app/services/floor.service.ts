@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject, map } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 import { RoomService } from './room.service';
+import { API_URL } from '../api.config';
 
 export interface Floor {
   id: string;
@@ -11,7 +13,7 @@ export interface Floor {
 export class FloorService {
   private floorsSubject = new BehaviorSubject<Floor[]>([]);
 
-  constructor(private roomService: RoomService) {
+  constructor(private roomService: RoomService, private http: HttpClient) {
     this.roomService.getRooms().subscribe(rooms => {
       const uniqueFloors = new Map<number, Floor>();
       
@@ -45,6 +47,10 @@ export class FloorService {
     if (!current.find(f => f.level === level)) {
       this.floorsSubject.next([...current, { level, id }].sort((a, b) => a.level - b.level));
     }
+  }
+
+  importFloor(data: any): Observable<any> {
+    return this.http.post<any>(`${API_URL}/floors/import`, data);
   }
 
   deleteFloor(id: string): void {
