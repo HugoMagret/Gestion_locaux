@@ -33,6 +33,8 @@ CREATE TABLE IF NOT EXISTS staff (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     last_name VARCHAR(255) NOT NULL,
     first_name VARCHAR(255) NOT NULL,
+    email VARCHAR(255),
+    phone VARCHAR(50),
     room_id UUID REFERENCES room(id) ON DELETE SET NULL
 );
 

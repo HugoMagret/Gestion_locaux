@@ -31,29 +31,29 @@ INSERT INTO room (name, max_capacity, room_type_id, doors, floor, coordinates, c
 ON CONFLICT DO NOTHING;
 
 -- 3. PERSONNEL
-INSERT INTO staff (first_name, last_name, room_id) VALUES
-('Jean', 'Dupont', (SELECT id FROM room WHERE name = 'Bureau 204')),
-('Marie', 'Curie', (SELECT id FROM room WHERE name = 'Bureau 201')),
-('Albert', 'Einstein', (SELECT id FROM room WHERE name = 'Salle B102')),
-('Charles', 'Darwin', (SELECT id FROM room WHERE name = 'Labo Info 1')),
-('Ada', 'Lovelace', (SELECT id FROM room WHERE name = 'Labo Info 1')),
-('Alan', 'Turing', (SELECT id FROM room WHERE name = 'Labo Info 1')),
-('Nikola', 'Tesla', (SELECT id FROM room WHERE name = 'Admin Central')),
-('Pierre', 'Bourdieu', (SELECT id FROM room WHERE name = 'Bibliothèque')),
-('Simone', 'de Beauvoir', (SELECT id FROM room WHERE name = 'Bibliothèque')),
-('Thomas', 'Pesquet', (SELECT id FROM room WHERE name = 'Amphi A')),
-('Alice', 'Martin', (SELECT id FROM room WHERE name = 'Accueil')),
-('Bob', 'Laroche', (SELECT id FROM room WHERE name = 'Accueil')),
-('Lucie', 'Vidal', (SELECT id FROM room WHERE name = 'Admin Central')),
-('Grace', 'Hopper', (SELECT id FROM room WHERE name = 'Labo Info 1')),
-('Linus', 'Torvalds', (SELECT id FROM room WHERE name = 'Local Serveur')),
-('Margaret', 'Hamilton', (SELECT id FROM room WHERE name = 'Salle 301')),
-('Steve', 'Wozniak', (SELECT id FROM room WHERE name = 'Salle 302')),
-('Tim', 'Berners-Lee', (SELECT id FROM room WHERE name = 'Labo Réseau')),
-('Guido', 'van Rossum', (SELECT id FROM room WHERE name = 'Bureau 401')),
-('Hedy', 'Lamarr', (SELECT id FROM room WHERE name = 'Labo Réseau')),
-('Victor', 'Hugo', NULL),
-('Emile', 'Zola', NULL)
+INSERT INTO staff (first_name, last_name, email, phone, room_id) VALUES
+('Jean', 'Dupont', 'jean.dupont@univ-fac.fr', '01 23 45 67 01', (SELECT id FROM room WHERE name = 'Bureau 204')),
+('Marie', 'Curie', 'marie.curie@univ-fac.fr', '01 23 45 67 02', (SELECT id FROM room WHERE name = 'Bureau 201')),
+('Albert', 'Einstein', 'albert.einstein@univ-fac.fr', '01 23 45 67 03', (SELECT id FROM room WHERE name = 'Salle B102')),
+('Charles', 'Darwin', 'charles.darwin@univ-fac.fr', '01 23 45 67 04', (SELECT id FROM room WHERE name = 'Labo Info 1')),
+('Ada', 'Lovelace', 'ada.lovelace@univ-fac.fr', '01 23 45 67 05', (SELECT id FROM room WHERE name = 'Labo Info 1')),
+('Alan', 'Turing', 'alan.turing@univ-fac.fr', '01 23 45 67 06', (SELECT id FROM room WHERE name = 'Labo Info 1')),
+('Nikola', 'Tesla', 'nikola.tesla@univ-fac.fr', '01 23 45 67 07', (SELECT id FROM room WHERE name = 'Admin Central')),
+('Pierre', 'Bourdieu', 'pierre.bourdieu@univ-fac.fr', '01 23 45 67 08', (SELECT id FROM room WHERE name = 'Bibliothèque')),
+('Simone', 'de Beauvoir', 'simone.debeauvoir@univ-fac.fr', '01 23 45 67 09', (SELECT id FROM room WHERE name = 'Bibliothèque')),
+('Thomas', 'Pesquet', 'thomas.pesquet@univ-fac.fr', '01 23 45 67 10', (SELECT id FROM room WHERE name = 'Amphi A')),
+('Alice', 'Martin', 'alice.martin@univ-fac.fr', '01 23 45 67 11', (SELECT id FROM room WHERE name = 'Accueil')),
+('Bob', 'Laroche', 'bob.laroche@univ-fac.fr', '01 23 45 67 12', (SELECT id FROM room WHERE name = 'Accueil')),
+('Lucie', 'Vidal', 'lucie.vidal@univ-fac.fr', '01 23 45 67 13', (SELECT id FROM room WHERE name = 'Admin Central')),
+('Grace', 'Hopper', 'grace.hopper@univ-fac.fr', '01 23 45 67 14', (SELECT id FROM room WHERE name = 'Labo Info 1')),
+('Linus', 'Torvalds', 'linus.torvalds@univ-fac.fr', '01 23 45 67 15', (SELECT id FROM room WHERE name = 'Local Serveur')),
+('Margaret', 'Hamilton', 'margaret.hamilton@univ-fac.fr', '01 23 45 67 16', (SELECT id FROM room WHERE name = 'Salle 301')),
+('Steve', 'Wozniak', 'steve.wozniak@univ-fac.fr', '01 23 45 67 17', (SELECT id FROM room WHERE name = 'Salle 302')),
+('Tim', 'Berners-Lee', 'tim.berners-lee@univ-fac.fr', '01 23 45 67 18', (SELECT id FROM room WHERE name = 'Labo Réseau')),
+('Guido', 'van Rossum', 'guido.vanrossum@univ-fac.fr', '01 23 45 67 19', (SELECT id FROM room WHERE name = 'Bureau 401')),
+('Hedy', 'Lamarr', 'hedy.lamarr@univ-fac.fr', '01 23 45 67 20', (SELECT id FROM room WHERE name = 'Labo Réseau')),
+('Victor', 'Hugo', 'victor.hugo@univ-fac.fr', '01 23 45 67 21', NULL),
+('Emile', 'Zola', 'emile.zola@univ-fac.fr', '01 23 45 67 22', NULL)
 ON CONFLICT DO NOTHING;
 
 -- 4. MATÉRIEL
