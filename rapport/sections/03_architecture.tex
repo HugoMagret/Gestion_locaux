@@ -1,6 +1,9 @@
 \chapter{Architecture et Choix Techniques}
 
-Pour répondre aux exigences de maintenabilité et de simplicité de déploiement imposées par le sujet [cite: 12, 14], nous avons fait le choix de nous écarter des solutions CMS existantes pour développer une application sur mesure[cite: 11]. Nos choix technologiques ont été guidés par deux critères majeurs : la robustesse de la solution et notre volonté de consolider des compétences demandées dans le monde de l'entreprise.
+Au-delà de répondre aux exigences de maintenabilité et de simplicité de déploiement imposées par le sujet, ce projet de fin d'études porte sur un certain objectif : s'entraîner à développer selon les pratiques et standards de l'industrie. Il aurait été possible de réaliser cette application intégralement en Python, mais nous avons plutôt opté pour une stack technologique composée d'outils professionnels largement utilisés dans le monde de l'entreprise, afin d'acquérir une expertise transférable et valorisable dans notre future carrière.
+
+Nos choix technologiques ont ainsi été guidés par deux critères majeurs : la robustesse de la solution et notre volonté de consolider des compétences demandées dans le monde de l'entreprise. Cette approche garantit à la fois une application fiable et maintenable, mais constitue aussi un investissement pédagogique majeur pour notre insertion professionnelle.
+
 
 \section[Frontend : Angular]{Frontend : Angular \raisebox{-0.2\height}{\includegraphics[height=0.6cm]{img/logo_angular.jpeg}}}
 Pour l'interface utilisateur, notre choix s'est porté sur le framework Angular. Ce choix s'explique tout d'abord par une compétence déjà présente au sein de l'équipe (deux membres avaient déjà utilisé cette technologie). De plus, Angular est aujourd'hui un standard de l'industrie pour les applications web complexes (Single Page Applications). Sa structure basée sur les composants et l'utilisation de TypeScript garantissent un code typé, maintenable et évolutif.
@@ -22,10 +25,10 @@ Le schéma suivant illustre le workflow principal de l'application : l'utilisate
 \end{figure}
 
 \section[Déploiement et Conteneurisation : Docker]{Déploiement et Conteneurisation : Docker \raisebox{-0.2\height}{\includegraphics[height=0.6cm]{img/logo_docker.png}}}
-Afin de garantir que notre site soit "facilement installable" sur n'importe quel serveur du département informatique[cite: 14], nous avons intégré Docker dès le premier jour de développement. Docker nous permet d'encapsuler notre base de données, notre backend et notre frontend dans des conteneurs isolés. L'utilisation de \texttt{docker-compose} permet de lancer l'intégralité de l'environnement avec une seule commande, résolvant ainsi les problèmes de compatibilité entre les systèmes d'exploitation, que ce soit pour nous développeurs du projet, ou pour les futurs utilisateurs.
+Afin de garantir que notre site soit "facilement installable" sur n'importe quel serveur du département informatique, nous avons intégré Docker dès le premier jour de développement. Docker nous permet d'encapsuler notre base de données, notre backend et notre frontend dans des conteneurs isolés. L'utilisation de \texttt{docker-compose} permet de lancer l'intégralité de l'environnement avec une seule commande, résolvant ainsi les problèmes de compatibilité entre les systèmes d'exploitation, que ce soit pour nous développeurs du projet, ou pour les futurs utilisateurs.
 
 \section[Collaboration et Intégration Continue : GitHub]{Collaboration et Intégration Continue : GitHub \raisebox{-0.2\height}{\includegraphics[height=0.6cm]{img/logo_github.png}}}
-Travaillant en équipe de quatre, la gestion des versions du code était critique. Nous avons utilisé GitHub pour coordonner nos développements. EN plus la fusion des fonctionnalités gérée de manière fluide, GitHub nous offre le possibilitée de céeer des \textit{releases} pour le rendu final, et de créer des tickets (issues) pour répartir les tâches, de manière native.
+Travaillant en équipe de quatre, nous avons choisi GitHub comme plateforme de gestion des versions du code. Cette approche nous a permis de maintenir une traçabilité rigoureuse des modifications, de créer des releases versionnées pour nos livrables, et de répartir le travail via des tickets (issues). Ce choix reproduit les bonnes pratiques observées dans les équipes professionnelles et facilite la collaboration entre membres de l'équipe.
 
 \section{Organisation du Projet}
 Afin de garantir une séparation stricte des responsabilités (separation of concerns), notre dépôt de code est structuré de la manière suivante :
