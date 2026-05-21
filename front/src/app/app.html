@@ -5,6 +5,7 @@
     <div class="nav-brand">LocauxAdmin</div>
     <div class="nav-links">
       <button [class.active]="view === 'map'" (click)="view = 'map'"><i class="fa-solid fa-map"></i> Plan 2D</button>
+      <button [class.active]="view === 'map3d'" (click)="view = 'map3d'"><i class="fa-solid fa-cube"></i> Plan 3D</button>
       <button [class.active]="view === 'rooms'" (click)="view = 'rooms'"><i class="fa-solid fa-door-open"></i> Liste Salles</button>
       <button [class.active]="view === 'floors'" (click)="view = 'floors'"><i class="fa-solid fa-layer-group"></i> Gestion Étages</button>
       <button [class.active]="view === 'staff'" (click)="view = 'staff'"><i class="fa-solid fa-users"></i> Personnel</button>
@@ -18,6 +19,7 @@
 
   <main>
     <app-map *ngIf="view === 'map'" (roomSelected)="onRoomSelected($event)"></app-map>
+    <app-map-3d *ngIf="view === 'map3d'" (roomSelected)="onRoomSelected($event)"></app-map-3d>
     <app-room-list *ngIf="view === 'rooms'" (roomSelected)="onRoomSelected($event)"></app-room-list>
     <app-room-detail *ngIf="view === 'room-detail' && selectedRoomId" [roomId]="selectedRoomId" (back)="closeRoomDetail()"></app-room-detail>
     <app-floor-manager *ngIf="view === 'floors'"></app-floor-manager>

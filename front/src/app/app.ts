@@ -1,6 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MapComponent } from './components/map/map';
+import { Map3dComponent } from './components/map3d/map3d';
 import { FloorManagerComponent } from './components/floor-manager/floor-manager';
 import { StaffListComponent } from './components/staff-list/staff-list';
 import { RoomTypeManagerComponent } from './components/room-type-manager/room-type-manager';
@@ -18,7 +19,8 @@ import { AuthService } from './services/auth.service';
   standalone: true,
   imports: [
     CommonModule, 
-    MapComponent, 
+    MapComponent,
+    Map3dComponent,
     FloorManagerComponent, 
     StaffListComponent, 
     RoomTypeManagerComponent, 
@@ -36,7 +38,7 @@ import { AuthService } from './services/auth.service';
 export class App implements OnInit {
   private authService = inject(AuthService);
   
-  view: 'map' | 'floors' | 'staff' | 'types' | 'equipment-types' | 'rooms' | 'users' | 'profile' | 'room-detail' = 'map';
+  view: 'map' | 'map3d' | 'floors' | 'staff' | 'types' | 'equipment-types' | 'rooms' | 'users' | 'profile' | 'room-detail' = 'map';
   selectedRoomId: string | null = null;
   isAuthenticated$ = this.authService.isAuthenticated$;
 

@@ -22,7 +22,9 @@ export class StaffListComponent implements OnInit {
   newStaff = {
     first_name: '',
     last_name: '',
-    room_id: ''
+    room_id: '',
+    phone: '',
+    email: ''
   };
 
   constructor(
@@ -51,15 +53,32 @@ export class StaffListComponent implements OnInit {
     this.refreshStaff$.next();
   }
 
+  isValidPhone(phone: string): boolean {
+    if (!phone) return true; // Optionnel
+    return /^[0-9\s\-\+\(\)]{10,}$/.test(phone.replace(/\s/g, ''));
+  }
+
+  isValidEmail(email: string): boolean {
+    if (!email) return true; // Optionnel
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  isFormValid(): boolean {
+    return this.newStaff.first_name.trim() !== '' &&
+           this.newStaff.last_name.trim() !== '' &&
+           this.isValidPhone(this.newStaff.phone) &&
+           this.isValidEmail(this.newStaff.email);
+  }
+
   addStaff(): void {
-    if (!this.newStaff.first_name || !this.newStaff.last_name) return;
+    if (!this.isFormValid()) return;
 
     const staffData = { ...this.newStaff };
     if (!staffData.room_id) (staffData as any).room_id = null;
 
     this.staffService.addStaff(new Staff(staffData)).subscribe({
       next: () => {
-        this.newStaff = { first_name: '', last_name: '', room_id: '' };
+        this.newStaff = { first_name: '', last_name: '', room_id: '', phone: '', email: '' };
         this.loadData();
       },
       error: (err) => {

@@ -15,6 +15,7 @@ export class FloorService {
     this.roomService.getRooms().subscribe(rooms => {
       const uniqueFloors = new Map<number, Floor>();
       
+      // Ajout dynamique basé UNIQUEMENT sur les salles existantes
       rooms.forEach(room => {
         if (!uniqueFloors.has(room.floor)) {
           uniqueFloors.set(room.floor, {
@@ -24,11 +25,13 @@ export class FloorService {
         }
       });
 
+      // S'il n'y a absolument aucune salle en BDD, on affiche au moins le RDC pour ne pas avoir un menu vide
       if (uniqueFloors.size === 0) {
         uniqueFloors.set(0, { id: 'floor-0', level: 0 });
       }
 
-      this.floorsSubject.next(Array.from(uniqueFloors.values()));
+      // On trie les étages du plus bas au plus haut
+      this.floorsSubject.next(Array.from(uniqueFloors.values()).sort((a, b) => a.level - b.level));
     });
   }
 
@@ -40,7 +43,7 @@ export class FloorService {
     const current = this.floorsSubject.value;
     const id = `floor-${level}`;
     if (!current.find(f => f.level === level)) {
-      this.floorsSubject.next([...current, { level, id }]);
+      this.floorsSubject.next([...current, { level, id }].sort((a, b) => a.level - b.level));
     }
   }
 

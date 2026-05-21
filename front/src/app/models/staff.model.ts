@@ -3,12 +3,16 @@ export class Staff {
   first_name: string;
   last_name: string;
   room_id: string | null;
+  phone?: string;
+  email?: string;
 
   constructor(data: any) {
     this.id = data.id;
     this.first_name = data.first_name;
     this.last_name = data.last_name;
     this.room_id = data.room_id;
+    this.phone = data.phone;
+    this.email = data.email;
   }
 
   get fullName(): string {
