@@ -32,12 +32,16 @@ router.post('/import', async (req, res) => {
       const color = r.color || '#3498db';
 
       const result = await client.query(
-        `INSERT INTO room (name, max_capacity, room_type_id, doors, floor, coordinates, color) 
-         VALUES ($1, $2, $3, $4, $5, $6, $7) 
-         RETURNING id, name, max_capacity, room_type_id, doors, floor, coordinates, color`,
-        [r.name, r.max_capacity, room_type_id, doorsCount, floor, r.coordinates, color]
+        `INSERT INTO room (name, max_capacity, room_type_id, doors, floor, coordinates) 
+         VALUES ($1, $2, $3, $4, $5, $6) 
+         RETURNING id, name, max_capacity, room_type_id, doors, floor, coordinates`,
+        [r.name, r.max_capacity, room_type_id, doorsCount, floor, r.coordinates]
       );
-      insertedRooms.push(result.rows[0]);
+      
+      // Inject fallback color into the returned object for the frontend
+      const insertedRoom = result.rows[0];
+      insertedRoom.color = color;
+      insertedRooms.push(insertedRoom);
     }
 
     const insertedDoors = [];
