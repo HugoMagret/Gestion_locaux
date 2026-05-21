@@ -60,6 +60,7 @@ export class RoomDetailComponent implements OnInit {
   newEquipment: any = { name: '', serial_number: '', equipment_type_id: '' };
   newSocket: any = { identifier: '', socket_type_id: '' };
   selectedStaffId: string = '';
+  editingStaff: any = null;
 
   // Nouveau : Formulaire réactif pour une meilleure validation
   roomForm: FormGroup;
@@ -196,6 +197,34 @@ export class RoomDetailComponent implements OnInit {
 
   deleteSocket(id: string): void {
     this.socketService.deleteSocket(id).subscribe(() => this.loadRoom());
+  }
+
+  openEditStaffModal(person: Staff): void {
+    this.editingStaff = { ...person };
+    this.cdr.detectChanges();
+  }
+
+  closeEditStaffModal(): void {
+    this.editingStaff = null;
+    this.cdr.detectChanges();
+  }
+
+  saveStaff(): void {
+    if (!this.editingStaff) return;
+    this.staffService.updateStaff(new Staff(this.editingStaff)).subscribe({
+      next: () => {
+        this.notificationService.showSuccess('Coordonnées du personnel mises à jour !');
+        this.closeEditStaffModal();
+        this.loadRoom();
+        this.staffService.getStaff().subscribe(staff => {
+          this.allStaff = staff;
+          this.cdr.detectChanges();
+        });
+      },
+      error: (err) => {
+        this.notificationService.showError("Erreur lors de la mise à jour : " + (err.error?.error || err.message));
+      }
+    });
   }
 
   goBack(): void {
