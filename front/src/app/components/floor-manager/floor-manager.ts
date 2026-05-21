@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FloorService, Floor } from '../../services/floor.service';
 import { RoomService } from '../../services/room.service';
@@ -25,12 +25,14 @@ export class FloorManagerComponent implements OnInit {
   constructor(
     private floorService: FloorService,
     private roomService: RoomService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     this.floorService.getFloors().subscribe(data => {
       this.floors = data.sort((a, b) => a.level - b.level);
+      this.cdr.detectChanges();
     });
   }
 
