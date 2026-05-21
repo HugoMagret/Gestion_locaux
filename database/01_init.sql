@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS socket_type (
 CREATE TABLE IF NOT EXISTS room (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name VARCHAR(255) NOT NULL,
-    max_capacity INTEGER NOT NULL,
+    max_capacity INTEGER,
     room_type_id UUID REFERENCES room_type(id) ON DELETE CASCADE,
     doors INTEGER DEFAULT 1,
     floor INTEGER DEFAULT 0,
