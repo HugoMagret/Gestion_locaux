@@ -8,7 +8,11 @@
         "y": 288,
         "width": 99,
         "height": 140
-      }
+      },
+      "max_capacity": 30,
+      "doors": 1,
+      "floor": 1,
+      "color": "#3498db"
     },
     {
       "name": "G102",
@@ -17,7 +21,11 @@
         "y": 153,
         "width": 98,
         "height": 135
-      }
+      },
+      "max_capacity": 30,
+      "doors": 1,
+      "floor": 1,
+      "color": "#3498db"
     },
     {
       "name": "G103",
@@ -26,7 +34,11 @@
         "y": 1,
         "width": 99,
         "height": 152
-      }
+      },
+      "max_capacity": 30,
+      "doors": 1,
+      "floor": 1,
+      "color": "#3498db"
     },
     {
       "name": "G104",
@@ -35,7 +47,11 @@
         "y": 1,
         "width": 104,
         "height": 128
-      }
+      },
+      "max_capacity": 30,
+      "doors": 1,
+      "floor": 1,
+      "color": "#3498db"
     },
     {
       "name": "G105",
@@ -44,7 +60,11 @@
         "y": 251,
         "width": 89,
         "height": 121
-      }
+      },
+      "max_capacity": 30,
+      "doors": 1,
+      "floor": 1,
+      "color": "#3498db"
     },
     {
       "name": "G109",
@@ -53,7 +73,11 @@
         "y": 1,
         "width": 52,
         "height": 130
-      }
+      },
+      "max_capacity": 30,
+      "doors": 1,
+      "floor": 1,
+      "color": "#3498db"
     },
     {
       "name": "H103",
@@ -62,7 +86,11 @@
         "y": 43,
         "width": 61,
         "height": 101
-      }
+      },
+      "max_capacity": 30,
+      "doors": 1,
+      "floor": 1,
+      "color": "#3498db"
     },
     {
       "name": "H104",
@@ -71,7 +99,11 @@
         "y": 43,
         "width": 60,
         "height": 101
-      }
+      },
+      "max_capacity": 30,
+      "doors": 1,
+      "floor": 1,
+      "color": "#3498db"
     },
     {
       "name": "H105",
@@ -80,7 +112,11 @@
         "y": 43,
         "width": 62,
         "height": 101
-      }
+      },
+      "max_capacity": 30,
+      "doors": 1,
+      "floor": 1,
+      "color": "#3498db"
     },
     {
       "name": "H106",
@@ -89,7 +125,11 @@
         "y": 43,
         "width": 61,
         "height": 101
-      }
+      },
+      "max_capacity": 30,
+      "doors": 1,
+      "floor": 1,
+      "color": "#3498db"
     },
     {
       "name": "H107",
@@ -98,7 +138,11 @@
         "y": 43,
         "width": 60,
         "height": 101
-      }
+      },
+      "max_capacity": 30,
+      "doors": 1,
+      "floor": 1,
+      "color": "#3498db"
     },
     {
       "name": "H108",
@@ -107,7 +151,11 @@
         "y": 176,
         "width": 91,
         "height": 121
-      }
+      },
+      "max_capacity": 30,
+      "doors": 1,
+      "floor": 1,
+      "color": "#3498db"
     },
     {
       "name": "H109",
@@ -116,7 +164,11 @@
         "y": 176,
         "width": 59,
         "height": 121
-      }
+      },
+      "max_capacity": 30,
+      "doors": 1,
+      "floor": 1,
+      "color": "#3498db"
     },
     {
       "name": "H110",
@@ -125,7 +177,11 @@
         "y": 176,
         "width": 63,
         "height": 121
-      }
+      },
+      "max_capacity": 30,
+      "doors": 1,
+      "floor": 1,
+      "color": "#3498db"
     },
     {
       "name": "H111",
@@ -134,7 +190,11 @@
         "y": 176,
         "width": 121,
         "height": 121
-      }
+      },
+      "max_capacity": 30,
+      "doors": 1,
+      "floor": 1,
+      "color": "#3498db"
     },
     {
       "name": "H112",
@@ -143,7 +203,11 @@
         "y": 176,
         "width": 57,
         "height": 121
-      }
+      },
+      "max_capacity": 30,
+      "doors": 1,
+      "floor": 1,
+      "color": "#3498db"
     },
     {
       "name": "H113",
@@ -152,7 +216,11 @@
         "y": 176,
         "width": 130,
         "height": 121
-      }
+      },
+      "max_capacity": 30,
+      "doors": 1,
+      "floor": 1,
+      "color": "#3498db"
     },
     {
       "name": "H114",
@@ -161,180 +229,219 @@
         "y": 144,
         "width": 35,
         "height": 153
-      }
+      },
+      "max_capacity": 30,
+      "doors": 1,
+      "floor": 1,
+      "color": "#3498db"
     },
     {
-      "name": "",
-      "max_capacity": 5,
-      "floor": 1,
+      "name": "Local Technique (Vide)",
       "coordinates": {
-        "x": 151.09121432568548,
-        "y": 352.8031290743155,
-        "width": 87.29714605484051,
-        "height": 164.27640156453714
-      }
+        "x": 256,
+        "y": 1,
+        "width": 80,
+        "height": 130
+      },
+      "max_capacity": 5,
+      "doors": 1,
+      "floor": 1,
+      "color": "#95a5a6"
     },
     {
-      "name": "",
-      "max_capacity": 5,
-      "floor": 1,
+      "name": "Sanitaires (Vide)",
       "coordinates": {
-        "x": 151.09121432568548,
-        "y": 521.7731421121251,
-        "width": 87.29714605484051,
-        "height": 74.31551499348109
-      }
-    },
-    {
-      "name": "",
+        "x": 100,
+        "y": 251,
+        "width": 51,
+        "height": 121
+      },
       "max_capacity": 5,
+      "doors": 1,
       "floor": 1,
-      "coordinates": {
-        "x": 281.47733631785115,
-        "y": 240.9387222946545,
-        "width": 58.198097369893674,
-        "height": 21.903520208604952
-      }
-    },
-    {
-      "name": "",
-      "max_capacity": 5,
-      "floor": 1,
-      "coordinates": {
-        "x": 378.847229994404,
-        "y": 61.799217731421116,
-        "width": 122.55176273083379,
-        "height": 136.89700130378097
-      }
-    },
-    {
-      "name": "",
-      "max_capacity": 5,
-      "floor": 1,
-      "coordinates": {
-        "x": 504.7565752658086,
-        "y": 61.799217731421116,
-        "width": 118.07498601007273,
-        "height": 38.33116036505867
-      }
-    },
-    {
-      "name": "",
-      "max_capacity": 5,
-      "floor": 1,
-      "coordinates": {
-        "x": 504.7565752658086,
-        "y": 104.82398956975227,
-        "width": 118.07498601007273,
-        "height": 93.8722294654498
-      }
-    },
-    {
-      "name": "",
-      "max_capacity": 5,
-      "floor": 1,
-      "coordinates": {
-        "x": 504.7565752658086,
-        "y": 203.38983050847457,
-        "width": 421.93620593172915,
-        "height": 209.64797913950454
-      }
-    },
-    {
-      "name": "",
-      "max_capacity": 5,
-      "floor": 1,
-      "coordinates": {
-        "x": 561.2758813654169,
-        "y": 247.97913950456322,
-        "width": 117.51538891997761,
-        "height": 165.0586701434159
-      }
-    },
-    {
-      "name": "",
-      "max_capacity": 5,
-      "floor": 1,
-      "coordinates": {
-        "x": 930.0503637381086,
-        "y": 203.38983050847457,
-        "width": 67.15165081141578,
-        "height": 181.48631029986961
-      }
+      "color": "#95a5a6"
     }
   ],
   "doors": [
     {
-      "x": 184.10744264129826,
-      "y": 181.48631029986961,
-      "width": 19.02630106323447,
-      "height": 3.1290743155149934
+      "floor": 1,
+      "coordinates": {
+        "x": 100,
+        "y": 348,
+        "width": 6,
+        "height": 20
+      }
     },
     {
-      "x": 660.8841634023503,
-      "y": 244.0677966101695,
-      "width": 18.46670397313934,
-      "height": 3.1290743155149934
+      "floor": 1,
+      "coordinates": {
+        "x": 99,
+        "y": 210,
+        "width": 6,
+        "height": 20
+      }
     },
     {
-      "x": 462.2271964185786,
-      "y": 199.47848761408082,
-      "width": 14.549524342473418,
-      "height": 3.1290743155149934
+      "floor": 1,
+      "coordinates": {
+        "x": 100,
+        "y": 67,
+        "width": 6,
+        "height": 20
+      }
     },
     {
-      "x": 603.8052602126469,
-      "y": 199.47848761408082,
-      "width": 20.705092333519865,
-      "height": 3.1290743155149934
+      "floor": 1,
+      "coordinates": {
+        "x": 142,
+        "y": 129,
+        "width": 20,
+        "height": 6
+      }
     },
     {
-      "x": 662.5629546726357,
-      "y": 199.47848761408082,
-      "width": 22.38388360380526,
-      "height": 3.1290743155149934
+      "floor": 1,
+      "coordinates": {
+        "x": 185,
+        "y": 245,
+        "width": 20,
+        "height": 6
+      }
     },
     {
-      "x": 730.8337996642417,
-      "y": 199.47848761408082,
-      "width": 31.897034135422494,
-      "height": 3.1290743155149934
+      "floor": 1,
+      "coordinates": {
+        "x": 220,
+        "y": 131,
+        "width": 20,
+        "height": 6
+      }
     },
     {
-      "x": 808.6177951874649,
-      "y": 199.47848761408082,
-      "width": 15.10912143256855,
-      "height": 3.1290743155149934
+      "floor": 1,
+      "coordinates": {
+        "x": 645,
+        "y": 144,
+        "width": 20,
+        "height": 6
+      }
     },
     {
-      "x": 869.6138780078343,
-      "y": 199.47848761408082,
-      "width": 26.30106323447118,
-      "height": 3.1290743155149934
+      "floor": 1,
+      "coordinates": {
+        "x": 706,
+        "y": 144,
+        "width": 20,
+        "height": 6
+      }
     },
     {
-      "x": 555.6799104644656,
-      "y": 100.91264667535853,
-      "width": 16.228315612758813,
-      "height": 3.1290743155149934
+      "floor": 1,
+      "coordinates": {
+        "x": 766,
+        "y": 144,
+        "width": 20,
+        "height": 6
+      }
     },
     {
-      "x": 99.04868494683828,
-      "y": 182.26857887874837,
-      "width": 2.238388360380526,
-      "height": 31.290743155149933
+      "floor": 1,
+      "coordinates": {
+        "x": 827,
+        "y": 144,
+        "width": 20,
+        "height": 6
+      }
     },
     {
-      "x": 148.29322887520985,
-      "y": 481.09517601043024,
-      "width": 2.238388360380526,
-      "height": 39.895697522816164
+      "floor": 1,
+      "coordinates": {
+        "x": 888,
+        "y": 144,
+        "width": 20,
+        "height": 6
+      }
     },
     {
-      "x": 501.9585898153329,
-      "y": 202.60756192959582,
-      "width": 2.238388360380526,
-      "height": 40.67796610169491
+      "floor": 1,
+      "coordinates": {
+        "x": 837,
+        "y": 170,
+        "width": 20,
+        "height": 6
+      }
+    },
+    {
+      "floor": 1,
+      "coordinates": {
+        "x": 762,
+        "y": 170,
+        "width": 20,
+        "height": 6
+      }
+    },
+    {
+      "floor": 1,
+      "coordinates": {
+        "x": 701,
+        "y": 170,
+        "width": 20,
+        "height": 6
+      }
+    },
+    {
+      "floor": 1,
+      "coordinates": {
+        "x": 610,
+        "y": 170,
+        "width": 20,
+        "height": 6
+      }
+    },
+    {
+      "floor": 1,
+      "coordinates": {
+        "x": 521,
+        "y": 170,
+        "width": 20,
+        "height": 6
+      }
+    },
+    {
+      "floor": 1,
+      "coordinates": {
+        "x": 428,
+        "y": 170,
+        "width": 20,
+        "height": 6
+      }
+    },
+    {
+      "floor": 1,
+      "coordinates": {
+        "x": 887,
+        "y": 210,
+        "width": 6,
+        "height": 20
+      }
+    },
+    {
+      "floor": 1,
+      "coordinates": {
+        "x": 286,
+        "y": 131,
+        "width": 20,
+        "height": 6
+      }
+    },
+    {
+      "floor": 1,
+      "coordinates": {
+        "x": 151,
+        "y": 301,
+        "width": 6,
+        "height": 20
+      }
     }
   ]
 }
