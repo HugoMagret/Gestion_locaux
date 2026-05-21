@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { StaffService } from '../../services/staff.service';
 import { RoomService } from '../../services/room.service';
+import { NotificationService } from '../../services/notification.service';
 import { Room } from '../../models/room.model';
 import { Staff } from '../../models/staff.model';
 import { Observable, combineLatest, map, BehaviorSubject, switchMap } from 'rxjs';
@@ -29,7 +30,8 @@ export class StaffListComponent implements OnInit {
 
   constructor(
     private staffService: StaffService,
-    private roomService: RoomService
+    private roomService: RoomService,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -83,7 +85,7 @@ export class StaffListComponent implements OnInit {
       },
       error: (err) => {
         console.error('Erreur lors de l\'ajout du personnel:', err);
-        alert('Erreur lors de l\'ajout : ' + (err.error?.error || err.message));
+        this.notificationService.showError('Erreur lors de l\'ajout : ' + (err.error?.error || err.message));
       }
     });
   }

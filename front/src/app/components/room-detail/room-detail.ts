@@ -17,6 +17,7 @@ import { FloorService } from '../../services/floor.service';
 import { StaffService } from '../../services/staff.service';
 import { EquipmentService } from '../../services/equipment.service';
 import { SocketService } from '../../services/socket.service';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-room-detail',
@@ -39,6 +40,7 @@ export class RoomDetailComponent implements OnInit {
   private equipmentService = inject(EquipmentService);
   private socketService = inject(SocketService);
   private cdr = inject(ChangeDetectorRef);
+  private notificationService = inject(NotificationService);
 
   // Propriétés de l'interface
   room: Room | null = null;
@@ -130,13 +132,13 @@ export class RoomDetailComponent implements OnInit {
         this.roomForm.patchValue(savedRoom);
         this.isSaving = false;
         this.cdr.detectChanges();
-        alert('Salle mise à jour !');
+        this.notificationService.showSuccess('Salle mise à jour !');
       },
       error: (err) => {
         console.error(err);
         this.isSaving = false;
         this.cdr.detectChanges();
-        alert('Erreur lors de la sauvegarde');
+        this.notificationService.showError('Erreur lors de la sauvegarde');
       }
     });
   }
