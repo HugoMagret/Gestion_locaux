@@ -4,7 +4,8 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- 1. TABLES DE RÉFÉRENCE
 CREATE TABLE IF NOT EXISTS room_type (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    label VARCHAR(255) NOT NULL UNIQUE
+    label VARCHAR(255) NOT NULL UNIQUE,
+    color VARCHAR(7) DEFAULT '#3498db'
 );
 
 CREATE TABLE IF NOT EXISTS equipment_type (
@@ -21,18 +22,19 @@ CREATE TABLE IF NOT EXISTS socket_type (
 CREATE TABLE IF NOT EXISTS room (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name VARCHAR(255) NOT NULL,
-    max_capacity INTEGER NOT NULL,
+    max_capacity INTEGER,
     room_type_id UUID REFERENCES room_type(id) ON DELETE CASCADE,
     doors INTEGER DEFAULT 1,
     floor INTEGER DEFAULT 0,
-    coordinates JSONB DEFAULT '{"x": 0, "y": 0, "width": 100, "height": 100}'::jsonb,
-    color VARCHAR(7) DEFAULT '#3498db'
+    coordinates JSONB DEFAULT '{"x": 0, "y": 0, "width": 100, "height": 100}'::jsonb
 );
 
 CREATE TABLE IF NOT EXISTS staff (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     last_name VARCHAR(255) NOT NULL,
     first_name VARCHAR(255) NOT NULL,
+    email VARCHAR(255),
+    phone VARCHAR(50),
     room_id UUID REFERENCES room(id) ON DELETE SET NULL
 );
 

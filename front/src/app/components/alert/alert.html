@@ -1,9 +1,16 @@
-<div *ngIf="notification" class="alert-box" [ngClass]="notification.type">
-  <div class="alert-content">
-    <i class="fa-solid fa-triangle-exclamation icon" *ngIf="notification.type === 'error'"></i>
-    <i class="fa-solid fa-circle-check icon" *ngIf="notification.type === 'success'"></i>
-    <i class="fa-solid fa-circle-info icon" *ngIf="notification.type === 'info'"></i>
-    <p>{{ notification.message }}</p>
+<div *ngIf="notification" class="alert-toast" [ngClass]="notification.type">
+  <div class="toast-indicator"></div>
+  <div class="toast-icon">
+    <i class="fa-solid fa-triangle-exclamation" *ngIf="notification.type === 'error'"></i>
+    <i class="fa-solid fa-circle-check" *ngIf="notification.type === 'success'"></i>
+    <i class="fa-solid fa-circle-info" *ngIf="notification.type === 'info'"></i>
   </div>
-  <button class="close-btn" (click)="close()">&times;</button>
+  <div class="toast-body">
+    <div class="toast-title">{{ getTitle() }}</div>
+    <div class="toast-message">{{ notification.message }}</div>
+  </div>
+  <button class="toast-close" (click)="close()">
+    <i class="fa-solid fa-xmark"></i>
+  </button>
+  <div class="toast-progress"></div>
 </div>

@@ -34,9 +34,14 @@ export class RoomService {
   }
 
   deleteRoom(id: string): void {
-    this.http.delete(`${API_URL}/rooms/${id}`).subscribe(() => {
-      const current = this.roomsSubject.value;
-      this.roomsSubject.next(current.filter(r => r.id !== id));
+    const current = this.roomsSubject.value;
+    this.roomsSubject.next(current.filter(r => r.id !== id));
+
+    this.http.delete(`${API_URL}/rooms/${id}`).subscribe({
+      error: (err) => {
+        console.error('Erreur lors de la suppression de la salle, rétablissement de la liste:', err);
+        this.refreshRooms();
+      }
     });
   }
 
@@ -48,6 +53,21 @@ export class RoomService {
   getRoomById(id: string): Observable<Room> {
     return this.http.get<any>(`${API_URL}/rooms/${id}`).pipe(
       map(r => new Room(r))
+    );
+  }
+
+  updateRoom(roomData: any): Observable<Room> {
+    return this.http.put<any>(`${API_URL}/rooms/${roomData.id}`, roomData).pipe(
+      map(r => {
+        const updatedRoom = new Room(r);
+        const current = this.roomsSubject.value;
+        const index = current.findIndex(existing => existing.id === updatedRoom.id);
+        if (index !== -1) {
+          current[index] = updatedRoom;
+          this.roomsSubject.next([...current]);
+        }
+        return updatedRoom;
+      })
     );
   }
 }

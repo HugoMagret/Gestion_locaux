@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { StaffService } from '../../services/staff.service';
 import { RoomService } from '../../services/room.service';
+import { NotificationService } from '../../services/notification.service';
 import { Room } from '../../models/room.model';
 import { Staff } from '../../models/staff.model';
 import { Observable, combineLatest, map, BehaviorSubject, switchMap } from 'rxjs';
@@ -22,12 +23,15 @@ export class StaffListComponent implements OnInit {
   newStaff = {
     first_name: '',
     last_name: '',
-    room_id: ''
+    room_id: '',
+    phone: '',
+    email: ''
   };
 
   constructor(
     private staffService: StaffService,
-    private roomService: RoomService
+    private roomService: RoomService,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -51,20 +55,37 @@ export class StaffListComponent implements OnInit {
     this.refreshStaff$.next();
   }
 
+  isValidPhone(phone: string): boolean {
+    if (!phone) return true; // Optionnel
+    return /^[0-9\s\-\+\(\)]{10,}$/.test(phone.replace(/\s/g, ''));
+  }
+
+  isValidEmail(email: string): boolean {
+    if (!email) return true; // Optionnel
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  isFormValid(): boolean {
+    return this.newStaff.first_name.trim() !== '' &&
+           this.newStaff.last_name.trim() !== '' &&
+           this.isValidPhone(this.newStaff.phone) &&
+           this.isValidEmail(this.newStaff.email);
+  }
+
   addStaff(): void {
-    if (!this.newStaff.first_name || !this.newStaff.last_name) return;
+    if (!this.isFormValid()) return;
 
     const staffData = { ...this.newStaff };
     if (!staffData.room_id) (staffData as any).room_id = null;
 
     this.staffService.addStaff(new Staff(staffData)).subscribe({
       next: () => {
-        this.newStaff = { first_name: '', last_name: '', room_id: '' };
+        this.newStaff = { first_name: '', last_name: '', room_id: '', phone: '', email: '' };
         this.loadData();
       },
       error: (err) => {
         console.error('Erreur lors de l\'ajout du personnel:', err);
-        alert('Erreur lors de l\'ajout : ' + (err.error?.error || err.message));
+        this.notificationService.showError('Erreur lors de l\'ajout : ' + (err.error?.error || err.message));
       }
     });
   }

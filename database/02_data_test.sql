@@ -1,59 +1,75 @@
 -- Fichier de données de test (Seed) pour Gestion Locaux
 
 -- 1. DONNÉES DE RÉFÉRENCE
-INSERT INTO room_type (label) VALUES ('Bureau'), ('Salle de cours'), ('Amphithéâtre'), ('Cafétéria'), ('Réunion'), ('Labo Info'), ('Bibliothèque'), ('Stockage'), ('Sanitaires'), ('Local Technique'), ('Amphi'), ('Infirmerie'), ('Salle de sport'), ('Laboratoire de recherche'), ('Salle de conférence') ON CONFLICT DO NOTHING;
+INSERT INTO room_type (label, color) VALUES 
+('Bureau', '#3498db'), 
+('Salle de cours', '#e74c3c'), 
+('Amphithéâtre', '#2ecc71'), 
+('Cafétéria', '#f1c40f'), 
+('Réunion', '#1abc9c'), 
+('Labo Info', '#8e44ad'), 
+('Bibliothèque', '#d35400'), 
+('Stockage', '#95a5a6'), 
+('Sanitaires', '#7f8c8d'), 
+('Local Technique', '#7f8c8d'), 
+('Amphi', '#2ecc71'), 
+('Infirmerie', '#e74c3c'), 
+('Salle de sport', '#2ecc71'), 
+('Laboratoire de recherche', '#8e44ad'), 
+('Salle de conférence', '#1abc9c') 
+ON CONFLICT (label) DO UPDATE SET color = EXCLUDED.color;
 INSERT INTO equipment_type (label) VALUES ('Tableau blanc'), ('Vidéoprojecteur'), ('Ordinateur Fixe'), ('Serveur'), ('Imprimante 3D'), ('Scanner'), ('Microphone sans fil'), ('Casque VR'), ('Robotique éducative'), ('Caméra de visioconférence'), ('Oscilloscope') ON CONFLICT DO NOTHING;
 INSERT INTO socket_type (label) VALUES ('Réseau (RJ45)'), ('Prise Électrique'), ('HDMI'), ('Fibre') ON CONFLICT DO NOTHING;
 
 -- 2. SALLES (ÉTAGES 0, 1, 2, 3, 4)
-INSERT INTO room (name, max_capacity, room_type_id, doors, floor, coordinates, color) VALUES 
+INSERT INTO room (name, max_capacity, room_type_id, doors, floor, coordinates) VALUES 
 -- RDC (Floor 0)
-('Amphi A', 250, (SELECT id FROM room_type WHERE label = 'Amphithéâtre'), 4, 0, '{"x": 300, "y": 50, "width": 300, "height": 250}', '#2ecc71'),
-('Cafétéria', 120, (SELECT id FROM room_type WHERE label = 'Cafétéria'), 3, 0, '{"x": 300, "y": 350, "width": 250, "height": 150}', '#f1c40f'),
-('Accueil', 10, (SELECT id FROM room_type WHERE label = 'Bureau'), 2, 0, '{"x": 50, "y": 50, "width": 100, "height": 80}', '#95a5a6'),
+('Amphi A', 250, (SELECT id FROM room_type WHERE label = 'Amphithéâtre'), 4, 0, '{"x": 300, "y": 50, "width": 300, "height": 250}'),
+('Cafétéria', 120, (SELECT id FROM room_type WHERE label = 'Cafétéria'), 3, 0, '{"x": 300, "y": 350, "width": 250, "height": 150}'),
+('Accueil', 10, (SELECT id FROM room_type WHERE label = 'Bureau'), 2, 0, '{"x": 50, "y": 50, "width": 100, "height": 80}'),
 -- 1er Étage (Floor 1)
-('Salle B102', 35, (SELECT id FROM room_type WHERE label = 'Salle de cours'), 2, 1, '{"x": 50, "y": 50, "width": 150, "height": 100}', '#e74c3c'),
-('Labo Info 1', 20, (SELECT id FROM room_type WHERE label = 'Labo Info'), 1, 1, '{"x": 250, "y": 50, "width": 150, "height": 100}', '#8e44ad'),
-('Bibliothèque', 80, (SELECT id FROM room_type WHERE label = 'Bibliothèque'), 2, 1, '{"x": 450, "y": 50, "width": 200, "height": 300}', '#d35400'),
+('Salle B102', 35, (SELECT id FROM room_type WHERE label = 'Salle de cours'), 2, 1, '{"x": 50, "y": 50, "width": 150, "height": 100}'),
+('Labo Info 1', 20, (SELECT id FROM room_type WHERE label = 'Labo Info'), 1, 1, '{"x": 250, "y": 50, "width": 150, "height": 100}'),
+('Bibliothèque', 80, (SELECT id FROM room_type WHERE label = 'Bibliothèque'), 2, 1, '{"x": 450, "y": 50, "width": 200, "height": 300}'),
 -- 2ème Étage (Floor 2)
-('Bureau 201', 2, (SELECT id FROM room_type WHERE label = 'Bureau'), 1, 2, '{"x": 50, "y": 50, "width": 80, "height": 80}', '#3498db'),
-('Bureau 204', 4, (SELECT id FROM room_type WHERE label = 'Bureau'), 1, 2, '{"x": 150, "y": 50, "width": 80, "height": 120}', '#3498db'),
-('Salle Réunion', 15, (SELECT id FROM room_type WHERE label = 'Réunion'), 1, 2, '{"x": 250, "y": 50, "width": 120, "height": 80}', '#1abc9c'),
-('Admin Central', 10, (SELECT id FROM room_type WHERE label = 'Bureau'), 1, 2, '{"x": 400, "y": 50, "width": 150, "height": 150}', '#2c3e50'),
+('Bureau 201', 2, (SELECT id FROM room_type WHERE label = 'Bureau'), 1, 2, '{"x": 50, "y": 50, "width": 80, "height": 80}'),
+('Bureau 204', 4, (SELECT id FROM room_type WHERE label = 'Bureau'), 1, 2, '{"x": 150, "y": 50, "width": 80, "height": 120}'),
+('Salle Réunion', 15, (SELECT id FROM room_type WHERE label = 'Réunion'), 1, 2, '{"x": 250, "y": 50, "width": 120, "height": 80}'),
+('Admin Central', 10, (SELECT id FROM room_type WHERE label = 'Bureau'), 1, 2, '{"x": 400, "y": 50, "width": 150, "height": 150}'),
 -- 3ème Étage (Floor 3)
-('Salle 301', 30, (SELECT id FROM room_type WHERE label = 'Salle de cours'), 1, 3, '{"x": 50, "y": 50, "width": 120, "height": 100}', '#e67e22'),
-('Salle 302', 30, (SELECT id FROM room_type WHERE label = 'Salle de cours'), 1, 3, '{"x": 200, "y": 50, "width": 120, "height": 100}', '#e67e22'),
-('Local Serveur', 2, (SELECT id FROM room_type WHERE label = 'Local Technique'), 1, 3, '{"x": 350, "y": 50, "width": 80, "height": 80}', '#7f8c8d'),
+('Salle 301', 30, (SELECT id FROM room_type WHERE label = 'Salle de cours'), 1, 3, '{"x": 50, "y": 50, "width": 120, "height": 100}'),
+('Salle 302', 30, (SELECT id FROM room_type WHERE label = 'Salle de cours'), 1, 3, '{"x": 200, "y": 50, "width": 120, "height": 100}'),
+('Local Serveur', 2, (SELECT id FROM room_type WHERE label = 'Local Technique'), 1, 3, '{"x": 350, "y": 50, "width": 80, "height": 80}'),
 -- 4ème Étage (Floor 4)
-('Labo Réseau', 15, (SELECT id FROM room_type WHERE label = 'Labo Info'), 1, 4, '{"x": 50, "y": 50, "width": 200, "height": 150}', '#16a085'),
-('Bureau 401', 2, (SELECT id FROM room_type WHERE label = 'Bureau'), 1, 4, '{"x": 300, "y": 50, "width": 100, "height": 100}', '#3498db'),
-('Dépôt Matériel', 0, (SELECT id FROM room_type WHERE label = 'Stockage'), 1, 4, '{"x": 450, "y": 50, "width": 150, "height": 200}', '#95a5a6')
+('Labo Réseau', 15, (SELECT id FROM room_type WHERE label = 'Labo Info'), 1, 4, '{"x": 50, "y": 50, "width": 200, "height": 150}'),
+('Bureau 401', 2, (SELECT id FROM room_type WHERE label = 'Bureau'), 1, 4, '{"x": 300, "y": 50, "width": 100, "height": 100}'),
+('Dépôt Matériel', 0, (SELECT id FROM room_type WHERE label = 'Stockage'), 1, 4, '{"x": 450, "y": 50, "width": 150, "height": 200}')
 ON CONFLICT DO NOTHING;
 
 -- 3. PERSONNEL
-INSERT INTO staff (first_name, last_name, room_id) VALUES
-('Jean', 'Dupont', (SELECT id FROM room WHERE name = 'Bureau 204')),
-('Marie', 'Curie', (SELECT id FROM room WHERE name = 'Bureau 201')),
-('Albert', 'Einstein', (SELECT id FROM room WHERE name = 'Salle B102')),
-('Charles', 'Darwin', (SELECT id FROM room WHERE name = 'Labo Info 1')),
-('Ada', 'Lovelace', (SELECT id FROM room WHERE name = 'Labo Info 1')),
-('Alan', 'Turing', (SELECT id FROM room WHERE name = 'Labo Info 1')),
-('Nikola', 'Tesla', (SELECT id FROM room WHERE name = 'Admin Central')),
-('Pierre', 'Bourdieu', (SELECT id FROM room WHERE name = 'Bibliothèque')),
-('Simone', 'de Beauvoir', (SELECT id FROM room WHERE name = 'Bibliothèque')),
-('Thomas', 'Pesquet', (SELECT id FROM room WHERE name = 'Amphi A')),
-('Alice', 'Martin', (SELECT id FROM room WHERE name = 'Accueil')),
-('Bob', 'Laroche', (SELECT id FROM room WHERE name = 'Accueil')),
-('Lucie', 'Vidal', (SELECT id FROM room WHERE name = 'Admin Central')),
-('Grace', 'Hopper', (SELECT id FROM room WHERE name = 'Labo Info 1')),
-('Linus', 'Torvalds', (SELECT id FROM room WHERE name = 'Local Serveur')),
-('Margaret', 'Hamilton', (SELECT id FROM room WHERE name = 'Salle 301')),
-('Steve', 'Wozniak', (SELECT id FROM room WHERE name = 'Salle 302')),
-('Tim', 'Berners-Lee', (SELECT id FROM room WHERE name = 'Labo Réseau')),
-('Guido', 'van Rossum', (SELECT id FROM room WHERE name = 'Bureau 401')),
-('Hedy', 'Lamarr', (SELECT id FROM room WHERE name = 'Labo Réseau')),
-('Victor', 'Hugo', NULL),
-('Emile', 'Zola', NULL)
+INSERT INTO staff (first_name, last_name, email, phone, room_id) VALUES
+('Jean', 'Dupont', 'jean.dupont@univ-fac.fr', '01 23 45 67 01', (SELECT id FROM room WHERE name = 'Bureau 204')),
+('Marie', 'Curie', 'marie.curie@univ-fac.fr', '01 23 45 67 02', (SELECT id FROM room WHERE name = 'Bureau 201')),
+('Albert', 'Einstein', 'albert.einstein@univ-fac.fr', '01 23 45 67 03', (SELECT id FROM room WHERE name = 'Salle B102')),
+('Charles', 'Darwin', 'charles.darwin@univ-fac.fr', '01 23 45 67 04', (SELECT id FROM room WHERE name = 'Labo Info 1')),
+('Ada', 'Lovelace', 'ada.lovelace@univ-fac.fr', '01 23 45 67 05', (SELECT id FROM room WHERE name = 'Labo Info 1')),
+('Alan', 'Turing', 'alan.turing@univ-fac.fr', '01 23 45 67 06', (SELECT id FROM room WHERE name = 'Labo Info 1')),
+('Nikola', 'Tesla', 'nikola.tesla@univ-fac.fr', '01 23 45 67 07', (SELECT id FROM room WHERE name = 'Admin Central')),
+('Pierre', 'Bourdieu', 'pierre.bourdieu@univ-fac.fr', '01 23 45 67 08', (SELECT id FROM room WHERE name = 'Bibliothèque')),
+('Simone', 'de Beauvoir', 'simone.debeauvoir@univ-fac.fr', '01 23 45 67 09', (SELECT id FROM room WHERE name = 'Bibliothèque')),
+('Thomas', 'Pesquet', 'thomas.pesquet@univ-fac.fr', '01 23 45 67 10', (SELECT id FROM room WHERE name = 'Amphi A')),
+('Alice', 'Martin', 'alice.martin@univ-fac.fr', '01 23 45 67 11', (SELECT id FROM room WHERE name = 'Accueil')),
+('Bob', 'Laroche', 'bob.laroche@univ-fac.fr', '01 23 45 67 12', (SELECT id FROM room WHERE name = 'Accueil')),
+('Lucie', 'Vidal', 'lucie.vidal@univ-fac.fr', '01 23 45 67 13', (SELECT id FROM room WHERE name = 'Admin Central')),
+('Grace', 'Hopper', 'grace.hopper@univ-fac.fr', '01 23 45 67 14', (SELECT id FROM room WHERE name = 'Labo Info 1')),
+('Linus', 'Torvalds', 'linus.torvalds@univ-fac.fr', '01 23 45 67 15', (SELECT id FROM room WHERE name = 'Local Serveur')),
+('Margaret', 'Hamilton', 'margaret.hamilton@univ-fac.fr', '01 23 45 67 16', (SELECT id FROM room WHERE name = 'Salle 301')),
+('Steve', 'Wozniak', 'steve.wozniak@univ-fac.fr', '01 23 45 67 17', (SELECT id FROM room WHERE name = 'Salle 302')),
+('Tim', 'Berners-Lee', 'tim.berners-lee@univ-fac.fr', '01 23 45 67 18', (SELECT id FROM room WHERE name = 'Labo Réseau')),
+('Guido', 'van Rossum', 'guido.vanrossum@univ-fac.fr', '01 23 45 67 19', (SELECT id FROM room WHERE name = 'Bureau 401')),
+('Hedy', 'Lamarr', 'hedy.lamarr@univ-fac.fr', '01 23 45 67 20', (SELECT id FROM room WHERE name = 'Labo Réseau')),
+('Victor', 'Hugo', 'victor.hugo@univ-fac.fr', '01 23 45 67 21', NULL),
+('Emile', 'Zola', 'emile.zola@univ-fac.fr', '01 23 45 67 22', NULL)
 ON CONFLICT DO NOTHING;
 
 -- 4. MATÉRIEL

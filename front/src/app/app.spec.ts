@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { describe, beforeEach, it, expect } from 'vitest';
 import { App } from './app';
 
 describe('App', () => {
@@ -18,6 +19,6 @@ describe('App', () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, gestion-locaux-front');
+    expect(compiled.querySelector('h1')?.textContent).toContain('Gestion des Locaux');
   });
 });

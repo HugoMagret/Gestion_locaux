@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FloorService, Floor } from '../../services/floor.service';
 import { RoomService } from '../../services/room.service';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-floor-manager',
@@ -23,12 +24,15 @@ export class FloorManagerComponent implements OnInit {
 
   constructor(
     private floorService: FloorService,
-    private roomService: RoomService
+    private roomService: RoomService,
+    private notificationService: NotificationService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     this.floorService.getFloors().subscribe(data => {
       this.floors = data.sort((a, b) => a.level - b.level);
+      this.cdr.detectChanges();
     });
   }
 
@@ -64,7 +68,7 @@ export class FloorManagerComponent implements OnInit {
         const data = JSON.parse(e.target.result);
         this.importFloor(data);
       } catch (err) {
-        alert("Erreur lors de la lecture du fichier JSON.");
+        this.notificationService.showError("Erreur lors de la lecture du fichier JSON.");
       }
     };
     reader.readAsText(file);
@@ -72,7 +76,7 @@ export class FloorManagerComponent implements OnInit {
 
   private importFloor(data: any): void {
     if (data.level === undefined) {
-      alert("Format invalide : 'level' est requis.");
+      this.notificationService.showError("Format invalide : 'level' est requis.");
       return;
     }
 
@@ -91,7 +95,7 @@ export class FloorManagerComponent implements OnInit {
       });
     }
 
-    alert(`Étage ${data.level} importé avec succès !`);
+    this.notificationService.showSuccess(`Étage ${data.level} importé avec succès !`);
   }
 
   deleteFloor(id: string): void {
