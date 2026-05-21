@@ -91,9 +91,24 @@ export class FloorManagerComponent implements OnInit {
     });
   }
 
-  deleteFloor(id: string): void {
-    if (confirm("Supprimer cet étage supprimera toutes ses salles. Continuer ?")) {
-      this.floorService.deleteFloor(id);
+  isModalOpen = false;
+  floorToDeleteId: string | null = null;
+
+  openDeleteModal(id: string): void {
+    this.floorToDeleteId = id;
+    this.isModalOpen = true;
+  }
+
+  closeModal(): void {
+    this.isModalOpen = false;
+    this.floorToDeleteId = null;
+  }
+
+  confirmDelete(): void {
+    if (this.floorToDeleteId) {
+      this.floorService.deleteFloor(this.floorToDeleteId);
+      this.notificationService.showSuccess("L'étage a été supprimé avec succès.");
+      this.closeModal();
     }
   }
 }
