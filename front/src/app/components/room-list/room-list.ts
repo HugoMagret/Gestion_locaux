@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RoomService } from '../../services/room.service';
@@ -33,13 +33,15 @@ export class RoomListComponent implements OnInit {
 
   constructor(
     private roomService: RoomService,
-    private referenceService: ReferenceService
+    private referenceService: ReferenceService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     // Load static types once
     this.referenceService.getRoomTypes().subscribe(types => {
       this.roomTypes = types;
+      this.cdr.detectChanges();
     });
 
     // Subscribe to rooms for real-time updates
@@ -47,6 +49,7 @@ export class RoomListComponent implements OnInit {
       this.allRooms = rooms;
       this.floors = [...new Set(rooms.map(r => r.floor))].sort((a, b) => a - b);
       this.applyFilters();
+      this.cdr.detectChanges();
     });
   }
 

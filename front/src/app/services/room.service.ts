@@ -34,9 +34,14 @@ export class RoomService {
   }
 
   deleteRoom(id: string): void {
-    this.http.delete(`${API_URL}/rooms/${id}`).subscribe(() => {
-      const current = this.roomsSubject.value;
-      this.roomsSubject.next(current.filter(r => r.id !== id));
+    const current = this.roomsSubject.value;
+    this.roomsSubject.next(current.filter(r => r.id !== id));
+
+    this.http.delete(`${API_URL}/rooms/${id}`).subscribe({
+      error: (err) => {
+        console.error('Erreur lors de la suppression de la salle, rétablissement de la liste:', err);
+        this.refreshRooms();
+      }
     });
   }
 
