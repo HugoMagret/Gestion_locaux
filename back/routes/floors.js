@@ -67,4 +67,32 @@ router.post('/import', async (req, res) => {
   }
 });
 
+// DELETE /api/floors/:level
+// Supprime un étage complet (salles et portes)
+router.delete('/:level', async (req, res) => {
+  const level = parseInt(req.params.level);
+  if (isNaN(level)) {
+    return res.status(400).json({ error: "Niveau d'étage invalide" });
+  }
+
+  const client = await db.pool.connect();
+  try {
+    await client.query('BEGIN');
+    
+    // Supprimer toutes les salles de cet étage
+    await client.query('DELETE FROM room WHERE floor = $1', [level]);
+    
+    // Supprimer toutes les portes de cet étage
+    await client.query('DELETE FROM door WHERE floor = $1', [level]);
+    
+    await client.query('COMMIT');
+    res.status(204).send();
+  } catch (err) {
+    await client.query('ROLLBACK');
+    res.status(500).json({ error: err.message });
+  } finally {
+    client.release();
+  }
+});
+
 module.exports = router;

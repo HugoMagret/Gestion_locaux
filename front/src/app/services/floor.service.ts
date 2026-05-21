@@ -68,8 +68,16 @@ export class FloorService {
   deleteFloor(id: string): void {
     const floorToDelete = this.floorsSubject.value.find(f => f.id === id);
     if (floorToDelete) {
-      this.manuallyAddedLevels.delete(floorToDelete.level);
-      this.roomService.deleteRoomsByFloor(floorToDelete.level);
+      this.http.delete(`${API_URL}/floors/${floorToDelete.level}`).subscribe({
+        next: () => {
+          this.manuallyAddedLevels.delete(floorToDelete.level);
+          this.roomService.refreshRooms(); // Ceci va aussi mettre à jour les étages !
+          // On peut potentiellement appeler doorService.refreshDoors() ici
+        },
+        error: (err) => {
+          console.error("Erreur lors de la suppression de l'étage:", err);
+        }
+      });
     }
   }
 }
