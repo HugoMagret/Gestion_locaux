@@ -14,6 +14,9 @@ Bien que notre formation de 5 ans en informatique nous ait permis d'acquérir un
 \section[Base de données : PostgreSQL]{Base de données : PostgreSQL \raisebox{-0.2\height}{\includegraphics[height=0.6cm]{img/logo_postgresql.jpeg}}}
 Le système devant gérer de potentielles écritures simultanées (modification de salles, ajout de matériels), nous avons rapidement écarté SQLite. Très léger, SQLite nous semblait trop faible pour nos besoins. Notre choix final s'est donc porté sur PostgreSQL, un Système de Gestion de Base de Données Relationnelle (SGBDR) robuste et open-source. Il s'intègre également de manière fluide avec Node.js.
 
+\subsection{Rendu 3D et interactivité procédurale}
+Pour dépasser les limites des représentations planes, nous avons intégré la bibliothèque Three.js. Ce moteur permet une génération procédurale des volumes 3D à partir des coordonnées JSON 2D. Chaque mur est calculé et généré dynamiquement, offrant une immersion architecturale. L'interactivité est assurée par deux mécanismes complémentaires : les OrbitControls pour une navigation fluide (rotation, zoom) autour du modèle, et une technique de Raycasting qui projette un vecteur depuis la caméra vers le curseur pour intercepter les surfaces cliquables, permettant ainsi une sélection précise des salles dans l'espace tridimensionnel.
+
 \subsection{Schéma de fonctionnement}
 Le schéma suivant illustre le workflow principal de l'application : l'utilisateur interagit avec le frontend Angular, qui transmet des requêtes HTTP au backend Node.js. Ce backend traite la logique métier, interroge PostgreSQL pour lire ou modifier les données, puis renvoie les réponses au frontend.
 

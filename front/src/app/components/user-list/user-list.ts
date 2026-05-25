@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UserService, User } from '../../services/user.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-user-list',
@@ -17,6 +18,7 @@ export class UserListComponent implements OnInit {
 
   constructor(
     private userService: UserService,
+    private authService: AuthService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -54,9 +56,27 @@ export class UserListComponent implements OnInit {
   }
 
   onDeleteUser(id: string) {
+    const userToDelete = this.users.find(u => u.id === id);
+    if (!userToDelete) return;
+
+    const admins = this.users.filter(u => u.is_admin);
+    if (admins.length <= 1 && userToDelete.is_admin) {
+      alert('Vous ne pouvez pas supprimer le dernier administrateur.');
+      return;
+    }
+
     if (confirm('Supprimer cet utilisateur ?')) {
       this.userService.deleteUser(id).subscribe({
         next: () => {
+          const currentUserId = this.authService.currentUser?.id;
+          if (currentUserId && currentUserId === id) {
+            this.authService.logoutBackend(id).subscribe({
+              next: () => this.authService.logout(),
+              error: () => this.authService.logout()
+            });
+            return;
+          }
+
           this.loadUsers();
           this.cdr.detectChanges();
         },

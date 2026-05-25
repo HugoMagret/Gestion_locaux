@@ -23,3 +23,6 @@ La conception logicielle privilégie une séparation claire des responsabilités
 \end{itemize}
 
 Cette architecture améliore la maintenabilité du projet. Le backend reste léger et modulaire, tandis qu'Angular assure un rendu dynamique et une expérience utilisateur fluide.
+
+\subsection{Gestion d'état et réactivité (RxJS)}
+Au-delà de la structuration classique, nous avons implémenté une gestion d'état réactive basée sur RxJS. L'utilisation de BehaviorSubject dans nos services, notamment RoomService et FloorService, agit comme une source de vérité unique. Lorsqu'une donnée est modifiée par un composant, le flux de données propage instantanément la mise à jour à tous les autres composants abonnés. Ce patron de conception avancé permet une interface fluide sans rechargement de page, garantissant que la vue 2D, 3D et les listes soient toujours cohérentes avec l'état actuel de la base de données.

@@ -66,8 +66,8 @@
       <button type="button" (click)="zoomOut()" title="Dézoomer">-</button>
     </div>
 
-    <div class="zoom-wrapper" [style.transform]="'scale(' + currentZoom + ')'">
-      <svg viewBox="0 0 1800 800" (click)="onMapClick($event)">
+    <div class="zoom-wrapper">
+      <svg [attr.viewBox]="svgViewBox" (click)="onMapClick($event)">
         <g
           *ngFor="let room of filteredRooms"
           [attr.id]="room.id"

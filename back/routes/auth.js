@@ -50,4 +50,29 @@ router.post('/change-password', async (req, res) => {
   }
 });
 
+// POST verify-password
+router.post('/verify-password', async (req, res) => {
+  const { userId, password } = req.body;
+  try {
+    const result = await db.query('SELECT password FROM "user" WHERE id = $1', [userId]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ success: false, message: 'Utilisateur introuvable' });
+    }
+
+    const user = result.rows[0];
+    if (!verifyPassword(password, user.password)) {
+      return res.status(401).json({ success: false, message: 'Mot de passe actuel incorrect' });
+    }
+
+    res.json({ success: true, message: 'Mot de passe vérifié' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// POST logout
+router.post('/logout', async (req, res) => {
+  res.json({ success: true, message: 'Déconnexion côté serveur effectuée' });
+});
+
 module.exports = router;

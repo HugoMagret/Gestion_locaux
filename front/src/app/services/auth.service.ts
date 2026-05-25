@@ -63,6 +63,15 @@ export class AuthService {
     return this.http.post<any>(`${API_URL}/auth/change-password`, { userId, newPassword });
   }
 
+  verifyCurrentPassword(password: string): Observable<any> {
+    const userId = this.currentUser?.id;
+    return this.http.post<any>(`${API_URL}/auth/verify-password`, { userId, password });
+  }
+
+  logoutBackend(userId?: string): Observable<any> {
+    return this.http.post<any>(`${API_URL}/auth/logout`, { userId: userId || this.currentUser?.id });
+  }
+
   isAuthenticated(): boolean {
     return this.isAuthenticatedSubject.value;
   }
