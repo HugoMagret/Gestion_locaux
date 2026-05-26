@@ -1,69 +1,92 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../config/db');
+const prisma = require('../config/prisma');
+const { verifyAdmin } = require('../middleware/auth.middleware');
+const { validate } = require('../middleware/validate.middleware');
+const { roomTypeSchema, equipmentTypeSchema, socketTypeSchema } = require('../validators/schemas');
 
-// --- HELPER POUR CRUD GÉNÉRIQUE ---
-// Pour éviter de répéter le code, on crée une fonction qui gère les types
-const createTypeRoutes = (tableName, path) => {
-  const isRoomType = tableName === 'room_type';
+// ROOM TYPES
+router.get('/room', async (req, res) => {
+  try {
+    const types = await prisma.roomType.findMany({ orderBy: { label: 'asc' } });
+    res.json(types);
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
 
-  // GET all
-  router.get(`/${path}`, async (req, res) => {
-    try {
-      const selectFields = isRoomType ? 'id, label, color' : 'id, label';
-      const result = await db.query(`SELECT ${selectFields} FROM ${tableName} ORDER BY label`);
-      res.json(result.rows);
-    } catch (err) {
-      res.status(500).json({ error: err.message });
-    }
-  });
+router.post('/room', verifyAdmin, validate(roomTypeSchema), async (req, res) => {
+  try {
+    const type = await prisma.roomType.create({ data: req.body });
+    res.status(201).json(type);
+  } catch (err) {
+    res.status(409).json({ success: false, message: err.message });
+  }
+});
 
-  // POST new
-  router.post(`/${path}`, async (req, res) => {
-    const { label, color } = req.body;
-    try {
-      let result;
-      if (isRoomType) {
-        result = await db.query(`INSERT INTO ${tableName} (label, color) VALUES ($1, $2) RETURNING id, label, color`, [label, color || '#3498db']);
-      } else {
-        result = await db.query(`INSERT INTO ${tableName} (label) VALUES ($1) RETURNING id, label`, [label]);
-      }
-      res.status(201).json(result.rows[0]);
-    } catch (err) {
-      res.status(500).json({ error: err.message });
-    }
-  });
+router.delete('/room/:id', verifyAdmin, async (req, res) => {
+  try {
+    await prisma.roomType.delete({ where: { id: req.params.id } });
+    res.status(204).send();
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
 
-  // PUT update
-  router.put(`/${path}/:id`, async (req, res) => {
-    const { label, color } = req.body;
-    try {
-      let result;
-      if (isRoomType) {
-        result = await db.query(`UPDATE ${tableName} SET label = $1, color = $2 WHERE id = $3 RETURNING id, label, color`, [label, color, req.params.id]);
-      } else {
-        result = await db.query(`UPDATE ${tableName} SET label = $1 WHERE id = $2 RETURNING id, label`, [label, req.params.id]);
-      }
-      res.json(result.rows[0]);
-    } catch (err) {
-      res.status(500).json({ error: err.message });
-    }
-  });
+// EQUIPMENT TYPES
+router.get('/equipment', async (req, res) => {
+  try {
+    const types = await prisma.equipmentType.findMany({ orderBy: { label: 'asc' } });
+    res.json(types);
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
 
-  // DELETE
-  router.delete(`/${path}/:id`, async (req, res) => {
-    try {
-      await db.query(`DELETE FROM ${tableName} WHERE id = $1`, [req.params.id]);
-      res.status(204).send();
-    } catch (err) {
-      res.status(500).json({ error: err.message });
-    }
-  });
-};
+router.post('/equipment', verifyAdmin, validate(equipmentTypeSchema), async (req, res) => {
+  try {
+    const type = await prisma.equipmentType.create({ data: req.body });
+    res.status(201).json(type);
+  } catch (err) {
+    res.status(409).json({ success: false, message: err.message });
+  }
+});
 
-// --- GÉNÉRATION DES ROUTES ---
-createTypeRoutes('room_type', 'room');
-createTypeRoutes('equipment_type', 'equipment');
-createTypeRoutes('socket_type', 'socket');
+router.delete('/equipment/:id', verifyAdmin, async (req, res) => {
+  try {
+    await prisma.equipmentType.delete({ where: { id: req.params.id } });
+    res.status(204).send();
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// SOCKET TYPES
+router.get('/socket', async (req, res) => {
+  try {
+    const types = await prisma.socketType.findMany({ orderBy: { label: 'asc' } });
+    res.json(types);
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+router.post('/socket', verifyAdmin, validate(socketTypeSchema), async (req, res) => {
+  try {
+    const type = await prisma.socketType.create({ data: req.body });
+    res.status(201).json(type);
+  } catch (err) {
+    res.status(409).json({ success: false, message: err.message });
+  }
+});
+
+router.delete('/socket/:id', verifyAdmin, async (req, res) => {
+  try {
+    await prisma.socketType.delete({ where: { id: req.params.id } });
+    res.status(204).send();
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
 
 module.exports = router;

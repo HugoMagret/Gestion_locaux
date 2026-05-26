@@ -1,101 +1,85 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../config/db');
+const prisma = require('../config/prisma');
+const { verifyAdmin } = require('../middleware/auth.middleware');
 
-// POST /api/floors/import
-// Importe un étage complet avec toutes ses salles via une transaction SQL
-router.post('/import', async (req, res) => {
-  const { level, rooms, doors } = req.body;
-  
-  if (level === undefined || !Array.isArray(rooms)) {
-    return res.status(400).json({ error: 'Format invalide : level et rooms sont requis' });
+// POST import full floor (Monolithic JSON)
+router.post('/import', verifyAdmin, async (req, res) => {
+  const floorData = req.body;
+  if (!floorData || !floorData.level || !Array.isArray(floorData.rooms) || !Array.isArray(floorData.doors)) {
+    return res.status(400).json({ success: false, message: 'Format JSON invalide' });
   }
 
-  // On récupère un client dédié pour la transaction depuis le pool
-  const client = await db.pool.connect();
-
   try {
-    // Début de la transaction
-    await client.query('BEGIN');
-    
-    const insertedRooms = [];
-    
-    // Insertion de chaque salle
-    for (const r of rooms) {
-      let room_type_id = r.room_type_id;
-      if (room_type_id === "" || room_type_id === undefined) {
-        room_type_id = null;
+    // We use Prisma $transaction to ensure atomicity
+    await prisma.$transaction(async (tx) => {
+      // 1. Delete existing rooms and doors for this floor
+      await tx.room.deleteMany({ where: { floor: floorData.level } });
+      await tx.door.deleteMany({ where: { floor: floorData.level } });
+
+      // 2. Insert rooms
+      for (const room of floorData.rooms) {
+        // Find room type by label or create it if missing
+        let roomType = null;
+        if (room.room_type_label) {
+          roomType = await tx.roomType.findUnique({
+            where: { label: room.room_type_label }
+          });
+          if (!roomType) {
+             // Create on the fly with default color
+             roomType = await tx.roomType.create({
+               data: { 
+                 label: room.room_type_label, 
+                 color: room.color || '#3498db' 
+               }
+             });
+          }
+        }
+
+        await tx.room.create({
+          data: {
+            name: room.name,
+            floor: floorData.level,
+            max_capacity: room.max_capacity || null,
+            room_type_id: roomType ? roomType.id : null,
+            doors: room.doors_count || 1,
+            coordinates: room.coordinates
+          }
+        });
       }
-      
-      const floor = r.floor !== undefined ? r.floor : level;
-      const doorsCount = r.doors || 1;
-      const color = r.color || '#3498db';
 
-      const result = await client.query(
-        `INSERT INTO room (name, max_capacity, room_type_id, doors, floor, coordinates) 
-         VALUES ($1, $2, $3, $4, $5, $6) 
-         RETURNING id, name, max_capacity, room_type_id, doors, floor, coordinates`,
-        [r.name, r.max_capacity, room_type_id, doorsCount, floor, r.coordinates]
-      );
-      
-      // Inject fallback color into the returned object for the frontend
-      const insertedRoom = result.rows[0];
-      insertedRoom.color = color;
-      insertedRooms.push(insertedRoom);
-    }
-
-    const insertedDoors = [];
-    // Insertion de chaque porte si présent
-    if (doors && Array.isArray(doors)) {
-      for (const d of doors) {
-        const floor = d.floor !== undefined ? d.floor : level;
-        const result = await client.query(
-          `INSERT INTO door (floor, coordinates) VALUES ($1, $2) RETURNING id, floor, coordinates`,
-          [floor, d.coordinates || d]
-        );
-        insertedDoors.push(result.rows[0]);
+      // 3. Insert doors
+      for (const door of floorData.doors) {
+        await tx.door.create({
+          data: {
+            floor: floorData.level,
+            coordinates: door.coordinates
+          }
+        });
       }
-    }
+    });
 
-    // Si tout s'est bien passé, on valide la transaction
-    await client.query('COMMIT');
-    res.status(201).json({ message: `Étage ${level} importé avec succès`, rooms: insertedRooms, doors: insertedDoors });
-    
+    res.status(201).json({ success: true, message: 'Étage importé avec succès (Transaction réussie)' });
   } catch (err) {
-    // En cas d'erreur (ex: erreur de type, contrainte de bdd), on annule tout
-    await client.query('ROLLBACK');
-    res.status(500).json({ error: "Erreur lors de l'import, annulation complète : " + err.message });
-  } finally {
-    // Libération du client pour qu'il retourne dans le pool
-    client.release();
+    res.status(500).json({ success: false, message: 'Erreur lors de l\'import: ' + err.message });
   }
 });
 
-// DELETE /api/floors/:level
-// Supprime un étage complet (salles et portes)
-router.delete('/:level', async (req, res) => {
+// DELETE complete floor
+router.delete('/:level', verifyAdmin, async (req, res) => {
   const level = parseInt(req.params.level);
-  if (isNaN(level)) {
-    return res.status(400).json({ error: "Niveau d'étage invalide" });
-  }
-
-  const client = await db.pool.connect();
   try {
-    await client.query('BEGIN');
+    // Prisma will handle cascading deletes because of the @relation(onDelete: Cascade/SetNull)
+    // But since Room deletes cascade to Sockets/Equipments, and SET NULL for Staff,
+    // we just need to delete rooms and doors of that floor.
+    await prisma.$transaction(async (tx) => {
+      await tx.room.deleteMany({ where: { floor: level } });
+      await tx.door.deleteMany({ where: { floor: level } });
+    });
     
-    // Supprimer toutes les salles de cet étage
-    await client.query('DELETE FROM room WHERE floor = $1', [level]);
-    
-    // Supprimer toutes les portes de cet étage
-    await client.query('DELETE FROM door WHERE floor = $1', [level]);
-    
-    await client.query('COMMIT');
-    res.status(204).send();
+    res.json({ success: true, message: `Étage ${level} et toutes ses données associées ont été supprimés.` });
   } catch (err) {
-    await client.query('ROLLBACK');
-    res.status(500).json({ error: err.message });
-  } finally {
-    client.release();
+    res.status(500).json({ success: false, message: err.message });
   }
 });
 

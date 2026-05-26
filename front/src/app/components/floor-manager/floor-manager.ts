@@ -21,8 +21,27 @@ export class FloorManagerComponent implements OnInit {
   jsonExample = `{
   "level": 2,
   "rooms": [
-    { "name": "Salle 201", "max_capacity": 20, "coordinates": { "x": 100, "y": 100, "width": 150, "height": 120 } },
-    { "name": "Bureau 202", "max_capacity": 4, "coordinates": { "x": 300, "y": 100, "width": 100, "height": 100 } }
+    {
+      "name": "Salle Réunion",
+      "max_capacity": 15,
+      "room_type_label": "Réunion",
+      "color": "#1abc9c",
+      "doors_count": 1,
+      "coordinates": { "x": 250, "y": 50, "width": 120, "height": 80 }
+    },
+    {
+      "name": "Bureau 204",
+      "max_capacity": 4,
+      "room_type_label": "Bureau",
+      "color": "#3498db",
+      "doors_count": 2,
+      "coordinates": { "x": 150, "y": 50, "width": 80, "height": 120 }
+    }
+  ],
+  "doors": [
+    {
+      "coordinates": { "x": 230, "y": 90, "width": 10, "height": 20 }
+    }
   ]
 }`;
 
