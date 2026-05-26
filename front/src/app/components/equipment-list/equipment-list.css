@@ -21,9 +21,6 @@
 .clickable-row { cursor: pointer; }
 .clickable-row:hover td { background-color: #f8fafc !important; }
 
-.btn-icon { background: none; border: none; cursor: pointer; font-size: 18px; padding: 8px; border-radius: 8px; transition: background 0.2s; }
-.btn-icon:hover { background: #fee2e2; }
-
 .empty-state { text-align: center; padding: 48px !important; color: #94a3b8; }
 
 .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }

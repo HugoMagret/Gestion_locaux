@@ -64,10 +64,16 @@
   color: white; 
   border: none; 
   padding: 8px 16px;
-  height: 40px;
+  height: 38px;
   border-radius: 10px; 
   font-weight: 600; 
   cursor: pointer; 
+}
+.add-staff-section .btn-primary {
+  padding: 8px 16px;
+  height: 38px;
+  align-self: flex-end;
+  margin-bottom: 2px;
 }
 .btn-primary:disabled { background: #94a3b8; cursor: not-allowed; }
 

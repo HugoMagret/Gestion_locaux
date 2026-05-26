@@ -43,9 +43,9 @@
             <td>{{ item.equipment_type_label || '-' }}</td>
             <td>{{ item.serial_number || '-' }}</td>
             <td>{{ item.room?.name || 'Non assigné' }}</td>
-            <td>
-              <button class="btn-icon" (click)="deleteEquipment(item.id); $event.stopPropagation()" title="Supprimer">
-                🗑️
+            <td class="actions">
+              <button class="btn-icon-trash" (click)="deleteEquipment(item.id); $event.stopPropagation()" title="Supprimer">
+                <i class="fa-solid fa-trash"></i>
               </button>
             </td>
           </tr>

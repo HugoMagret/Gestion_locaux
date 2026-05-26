@@ -38,11 +38,10 @@ router.post('/', adminOnly, async (req, res) => {
   const hashedPassword = hashPassword(password);
   try {
     const result = await db.query(
-      'INSERT INTO "user" (login, password, is_admin) VALUES ($1, $2, $3) RETURNING id, login, is_admin',
+      'INSERT INTO "user" (login, password, is_admin, last_connection) VALUES ($1, $2, $3, NULL) RETURNING id, login, is_admin, last_connection',
       [login, hashedPassword, is_admin || false]
     );
-    const newUser = { ...result.rows[0], last_connection: null };
-    res.status(201).json(newUser);
+    res.status(201).json(result.rows[0]);
   } catch (err) {
     res.status(409).json({ success: false, message: pgErrorMessage(err) });
   }

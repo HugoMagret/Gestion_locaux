@@ -33,7 +33,10 @@ export class FloorManagerComponent implements OnInit {
   ]
 }`;
   isEditorOpen = false;
+  isCreating = false;
+  isFormBuilderOpen = false;
   editingJsonText = '';
+  manualPreviewData: any = null;
   jsonError: string | null = null;
   previewData: any = null;
   editingFloorLevel: number = 0;
@@ -52,7 +55,11 @@ export class FloorManagerComponent implements OnInit {
   formFloorLevel: number = 1;
   formRoom: any = { name: '', max_capacity: 30, doors: 1, coordinates: { x: 0, y: 0, width: 150, height: 100 }, color: '#3498db' };
   formRooms: any[] = [];
+  editingFormRoomIndex: number = -1;
   showInfoModal = false;
+  draggedRoom: any = null;
+  dragOffsetX = 0;
+  dragOffsetY = 0;
 
   constructor(
     private floorService: FloorService,
@@ -64,17 +71,54 @@ export class FloorManagerComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    try {
+      this.manualPreviewData = JSON.parse(this.manualJsonText);
+    } catch (e) {
+      this.manualPreviewData = null;
+    }
+
     this.floorService.getFloors().subscribe((data: Floor[]) => {
       this.floors = data.sort((a: Floor, b: Floor) => a.level - b.level);
       this.cdr.detectChanges();
     });
 
-    this.roomService.getRooms().subscribe(rooms => {
+    this.roomService.getRooms().subscribe((rooms: Room[]) => {
       this.allRooms = rooms;
     });
   }
 
+  openCreateJsonEditor(): void {
+    this.isFormBuilderOpen = false;
+    this.isCreating = true;
+    this.editingJsonText = this.manualJsonText || this.jsonExample;
+    try {
+      this.previewData = JSON.parse(this.editingJsonText);
+      this.jsonError = null;
+      this.editingFloorLevel = this.previewData.level ?? 99;
+    } catch (e: any) {
+      this.previewData = null;
+      this.jsonError = e.message;
+      this.editingFloorLevel = 99;
+    }
+    this.isEditorOpen = true;
+    this.cdr.detectChanges();
+  }
+
+  openFormBuilder(): void {
+    this.isCreating = false;
+    this.isEditorOpen = false;
+    this.isFormBuilderOpen = true;
+    this.cdr.detectChanges();
+  }
+
+  closeFormBuilder(): void {
+    this.isFormBuilderOpen = false;
+    this.cdr.detectChanges();
+  }
+
   openEditor(floor: Floor): void {
+    this.isCreating = false;
+    this.isFormBuilderOpen = false;
     this.editingFloorLevel = floor.level;
 
     forkJoin({
@@ -123,9 +167,49 @@ export class FloorManagerComponent implements OnInit {
     }
   }
 
+  onManualJsonInput(event: Event): void {
+    const target = event.target as HTMLTextAreaElement;
+    const text = target.value;
+    this.manualJsonText = text;
+
+    try {
+      this.manualPreviewData = JSON.parse(text);
+    } catch (e: any) {
+      this.manualPreviewData = null;
+    }
+  }
+
+  startDrag(event: MouseEvent, room: any): void {
+    this.draggedRoom = room;
+    this.dragOffsetX = event.offsetX - room.coordinates.x;
+    this.dragOffsetY = event.offsetY - room.coordinates.y;
+  }
+
+  onDrag(event: MouseEvent): void {
+    if (!this.draggedRoom) return;
+
+    this.draggedRoom.coordinates.x = Math.max(0, event.offsetX - this.dragOffsetX);
+    this.draggedRoom.coordinates.y = Math.max(0, event.offsetY - this.dragOffsetY);
+
+    if (this.isEditorOpen) {
+      this.editingJsonText = JSON.stringify(this.previewData, null, 2);
+    }
+  }
+
+  stopDrag(): void {
+    this.draggedRoom = null;
+  }
+
   saveJson(event?: Event): void {
     if (event) event.preventDefault();
     if (this.jsonError || !this.previewData) return;
+
+    if (this.isCreating) {
+      this.importFloor(this.previewData);
+      this.isEditorOpen = false;
+      this.isCreating = false;
+      return;
+    }
 
     if (this.previewData && this.previewData.level !== this.editingFloorLevel) {
       this.jsonError = "Erreur : Vous n'avez pas le droit de modifier le niveau (level) de l'étage.";
@@ -149,14 +233,50 @@ export class FloorManagerComponent implements OnInit {
 
   addRoomToForm(): void {
     if (!this.formRoom.name) return;
-    this.formRooms.push({ ...this.formRoom });
+    if (this.editingFormRoomIndex > -1) {
+      this.formRooms[this.editingFormRoomIndex] = { ...this.formRoom };
+      this.editingFormRoomIndex = -1;
+    } else {
+      this.formRooms.push({ ...this.formRoom });
+    }
     this.formRoom.name = '';
+    this.formRoom.coordinates = { x: 0, y: 0, width: 150, height: 100 };
+    this.formRoom.max_capacity = 30;
+    this.formRoom.doors = 1;
+    this.formRoom.color = '#3498db';
+  }
+
+  editPreparedRoom(index: number): void {
+    this.formRoom = { ...this.formRooms[index] };
+    this.editingFormRoomIndex = index;
+  }
+
+  removePreparedRoom(index: number): void {
+    this.formRooms.splice(index, 1);
+    if (this.editingFormRoomIndex === index) {
+      this.editingFormRoomIndex = -1;
+      this.formRoom = { name: '', max_capacity: 30, doors: 1, coordinates: { x: 0, y: 0, width: 150, height: 100 }, color: '#3498db' };
+    }
   }
 
   submitFormFloor(): void {
     const data = { level: this.formFloorLevel, rooms: this.formRooms, doors: [] };
     this.importFloor(data);
     this.formRooms = [];
+    this.editingFormRoomIndex = -1;
+  }
+
+  buildFormPreview(): any {
+    const draftRooms = [...this.formRooms];
+    if (this.formRoom.name?.trim()) {
+      draftRooms.push({ ...this.formRoom });
+    }
+
+    return {
+      level: this.formFloorLevel,
+      rooms: draftRooms,
+      doors: []
+    };
   }
 
   importManualJson(): void {
@@ -249,29 +369,28 @@ export class FloorManagerComponent implements OnInit {
     const existingFloor = this.floors.find((f: Floor) => f.level === data.level);
     if (existingFloor) {
       if (!confirm(`L'étage ${data.level} existe déjà. Voulez-vous l'écraser ?`)) return;
+
+      // Suppression de l'existant puis importation
       this.floorService.deleteFloor(existingFloor.id);
-
-      setTimeout(() => {
-        this.floorService.importFloor(data).subscribe({
-          next: () => {
-            this.notificationService.showSuccess(`Étage ${data.level} traité.`);
-            this.roomService.refreshRooms();
-          },
-          error: (err: any) => {
-            this.notificationService.showError(err.error?.error || "Une erreur est survenue lors de l'importation.");
-          }
-        });
-      }, 500);
-      return;
+      setTimeout(() => this.executeImport(data), 500);
+    } else {
+      this.executeImport(data);
     }
+  }
 
+  private executeImport(data: any): void {
     this.floorService.importFloor(data).subscribe({
-      next: () => {
-        this.notificationService.showSuccess(`Étage ${data.level} traité.`);
+      next: (res: any) => {
+        this.notificationService.showSuccess(`Étage ${data.level} traité avec succès !`);
         this.roomService.refreshRooms();
+        this.addMode = 'file';
+        this.isEditorOpen = false;
+        this.isFormBuilderOpen = false;
+        this.isCreating = false;
+        this.cdr.detectChanges();
       },
       error: (err: any) => {
-        this.notificationService.showError(err.error?.error || "Une erreur est survenue lors de l'importation.");
+        this.notificationService.showError("Erreur d'importation.");
       }
     });
   }
@@ -301,15 +420,15 @@ export class FloorManagerComponent implements OnInit {
     this.notificationService.showSuccess(`Génération du PDF pour l'étage ${level === 0 ? 'RDC' : level}...`);
 
     this.http.get<any[]>(`${API_URL}/doors?floor=${level}`).subscribe({
-      next: (doorsData) => {
-        const doors = doorsData.map(d => ({
+      next: (doorsData: any[]) => {
+        const doors = doorsData.map((d: any) => ({
           id: d.id,
           floor: d.floor,
           coordinates: typeof d.coordinates === 'string' ? JSON.parse(d.coordinates) : d.coordinates
         }));
         this.generatePDF(level, doors);
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error("Erreur lors de la récupération des portes:", err);
         this.generatePDF(level, []);
       }
