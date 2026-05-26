@@ -23,3 +23,6 @@ La conception logicielle privilégie une séparation claire des responsabilités
 \end{itemize}
 
 Cette architecture améliore la maintenabilité du projet. Le backend reste léger et modulaire, tandis qu'Angular assure un rendu dynamique et une expérience utilisateur fluide.
+
+\section{Sécurité et gestion des mots de passe}
+Le backend gère l'authentification des utilisateurs et le stockage sécurisé des mots de passe. Concrètement, les mots de passe sont hachés côté serveur (fonction `hashPassword` dans `back/config/auth.js`) à l'aide d'un dérivé sécurisé (scrypt) avant d'être persistés en base. La vérification (`verifyPassword`) compare de façon sécurisée le mot de passe fourni avec le haché stocké. Par mesure de sécurité, il est recommandé de changer le mot de passe administrateur par défaut fourni dans les scripts d'initialisation dès le premier déploiement, et d'utiliser des secrets/variables d'environnement pour les identifiants en production.

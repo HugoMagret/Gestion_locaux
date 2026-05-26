@@ -14,7 +14,12 @@ erDiagram
         INTEGER doors
         INTEGER floor
         JSONB coordinates
-        VARCHAR color
+    }
+
+    DOOR {
+        UUID id PK
+        INTEGER floor
+        JSONB coordinates
     }
 
     ROOM_TYPE {
@@ -26,6 +31,8 @@ erDiagram
         UUID id PK
         VARCHAR last_name
         VARCHAR first_name
+        VARCHAR email
+        VARCHAR phone
         UUID room_id FK
     }
 
