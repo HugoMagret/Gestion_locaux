@@ -6,6 +6,7 @@ import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRe
 import { RoomService } from '../../services/room.service';
 import { FloorService } from '../../services/floor.service';
 import { Room } from '../../models/room.model';
+import { DoorService, Door } from '../../services/door.service';
 
 @Component({
   selector: 'app-map-3d',
@@ -120,15 +121,18 @@ export class Map3dComponent implements OnInit, OnDestroy {
   selectedFloor = 0;
   selectedRoom: Room | null = null;
   expandedFloor: number | null = null;
+  allDoors: Door[] = [];
 
   private roomMeshes: THREE.Mesh[] = [];
   private roomHitMeshes: THREE.Mesh[] = [];
   private roomMeshMap = new Map<THREE.Mesh, string>();
   private roomLabels: CSS2DObject[] = [];
+  private doorMeshes: THREE.Mesh[] = [];
 
   constructor(
     private roomService: RoomService,
     private floorService: FloorService,
+    private doorService: DoorService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -185,6 +189,7 @@ export class Map3dComponent implements OnInit, OnDestroy {
       if (this.availableFloors.length > 0) {
         this.expandedFloor = this.availableFloors[0];
       }
+      this.doorService.fetchDoorsByFloor(this.selectedFloor);
       this.cdr.detectChanges();
     });
 
@@ -192,11 +197,17 @@ export class Map3dComponent implements OnInit, OnDestroy {
       this.allRooms = rooms;
       this.buildFloor();
     });
+
+    this.doorService.getDoors().subscribe(doors => {
+      this.allDoors = doors;
+      this.buildFloor();
+    });
   }
 
   selectFloor(floor: number) {
     this.selectedFloor = floor;
     this.selectedRoom = null;
+    this.doorService.fetchDoorsByFloor(floor);
     this.buildFloor();
     this.cdr.detectChanges();
   }
@@ -215,6 +226,7 @@ export class Map3dComponent implements OnInit, OnDestroy {
   selectRoom(room: Room): void {
     if (this.selectedFloor !== room.floor) {
       this.selectedFloor = room.floor;
+      this.doorService.fetchDoorsByFloor(room.floor);
       this.buildFloor();
     }
     this.selectedRoom = room;
@@ -225,9 +237,11 @@ export class Map3dComponent implements OnInit, OnDestroy {
     this.roomMeshes.forEach(mesh => this.scene.remove(mesh));
     this.roomHitMeshes.forEach(mesh => this.scene.remove(mesh));
     this.roomLabels.forEach(label => this.scene.remove(label));
+    this.doorMeshes.forEach(mesh => this.scene.remove(mesh));
     this.roomMeshes = [];
     this.roomHitMeshes = [];
     this.roomLabels = [];
+    this.doorMeshes = [];
     this.roomMeshMap.clear();
 
     const floorRooms = this.allRooms.filter(room => room.floor === this.selectedFloor);
@@ -290,7 +304,37 @@ export class Map3dComponent implements OnInit, OnDestroy {
       this.scene.add(label);
       this.roomLabels.push(label);
     });
+
+    // Doors Rendering
+    const floorDoors = this.allDoors.filter(door => door.floor === this.selectedFloor);
+    const doorHeight = 22; // Slightly lower than wallHeight (25)
+
+    floorDoors.forEach(door => {
+      // Create door material matching 2D style: fill="#d97706", stroke="#b45309"
+      const doorMaterial = new THREE.MeshLambertMaterial({
+        color: 0xd97706,
+        transparent: true,
+        opacity: 0.85
+      });
+
+      const dx = door.coordinates.x + door.coordinates.width / 2;
+      const dz = door.coordinates.y + door.coordinates.height / 2;
+
+      // In 3D, width is x-axis (width), height is y-axis (doorHeight), depth is z-axis (door.coordinates.height)
+      const geo = new THREE.BoxGeometry(door.coordinates.width, doorHeight, door.coordinates.height);
+      const mesh = new THREE.Mesh(geo, doorMaterial);
+      mesh.position.set(dx - 500, doorHeight / 2, dz - 300);
+
+      // Add border outline (stroke) matching 2D stroke: stroke="#b45309"
+      const edges = new THREE.EdgesGeometry(geo);
+      const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0xb45309 }));
+      mesh.add(line);
+
+      this.scene.add(mesh);
+      this.doorMeshes.push(mesh);
+    });
   }
+
 
   private setupEventListeners() {
     this.renderer.domElement.addEventListener('click', this.onCanvasClickHandler);
@@ -351,5 +395,7 @@ export class Map3dComponent implements OnInit, OnDestroy {
     this.roomMeshes = [];
     this.roomHitMeshes = [];
     this.roomLabels = [];
+    this.doorMeshes.forEach(mesh => this.scene.remove(mesh));
+    this.doorMeshes = [];
   }
 }
