@@ -1,0 +1,100 @@
+<div class="equipment-container">
+  <header class="equipment-header">
+    <div>
+      <h1>Liste du Matériel</h1>
+      <p>Gérez les équipements affectés aux locaux</p>
+    </div>
+    <button class="btn-refresh" (click)="loadData()">
+      🔄 Actualiser
+    </button>
+  </header>
+
+  <div class="add-equipment-section card">
+    <h3>Ajouter un équipement</h3>
+    <div class="equipment-form">
+      <input type="text" [(ngModel)]="newEquipment.name" placeholder="Nom">
+      <input type="text" [(ngModel)]="newEquipment.serial_number" placeholder="Numéro de série (optionnel)">
+      <select [(ngModel)]="newEquipment.equipment_type_id">
+        <option value="">Type de matériel</option>
+        <option *ngFor="let type of equipmentTypes" [value]="type.id">{{ type.label }}</option>
+      </select>
+      <select [(ngModel)]="newEquipment.room_id">
+        <option value="">Affecter à une salle (optionnel)</option>
+        <option *ngFor="let room of (rooms$ | async)" [value]="room.id">{{ room.name }}</option>
+      </select>
+      <button class="btn-primary" (click)="addEquipment()" [disabled]="!newEquipment.name.trim() || !newEquipment.equipment_type_id">
+        Ajouter
+      </button>
+    </div>
+  </div>
+
+  <div class="equipment-card card">
+    <div class="table-responsive">
+      <table class="equipment-table">
+        <thead>
+          <tr>
+            <th>Nom</th>
+            <th>Type</th>
+            <th>Numéro de série</th>
+            <th>Salle</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of (equipmentWithRooms$ | async)" class="clickable-row" (click)="openEditEquipmentModal(item)">
+            <td>{{ item.name }}</td>
+            <td>{{ item.equipment_type_label || '-' }}</td>
+            <td>{{ item.serial_number || '-' }}</td>
+            <td>{{ item.room?.name || 'Non assigné' }}</td>
+            <td>
+              <button class="btn-icon" (click)="deleteEquipment(item.id); $event.stopPropagation()" title="Supprimer">
+                🗑️
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="((equipmentWithRooms$ | async) || []).length === 0">
+            <td colspan="5" class="empty-state">Aucun équipement trouvé</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" *ngIf="editingEquipment" (click)="closeEditEquipmentModal()">
+  <div class="modal-card card" (click)="$event.stopPropagation()">
+    <header class="modal-header">
+      <h3>Modifier le matériel</h3>
+      <button (click)="closeEditEquipmentModal()"><i class="fa-solid fa-xmark"></i></button>
+    </header>
+
+    <div class="edit-form">
+      <div class="form-group">
+        <label>Nom</label>
+        <input type="text" [(ngModel)]="editingEquipment.name">
+      </div>
+      <div class="form-group">
+        <label>Numéro de série</label>
+        <input type="text" [(ngModel)]="editingEquipment.serial_number">
+      </div>
+      <div class="form-group">
+        <label>Type</label>
+        <select [(ngModel)]="editingEquipment.equipment_type_id">
+          <option *ngFor="let type of equipmentTypes" [value]="type.id">{{ type.label }}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Salle</label>
+        <select [(ngModel)]="editingEquipment.room_id">
+          <option value="">Non assigné</option>
+          <option *ngFor="let room of (rooms$ | async)" [value]="room.id">{{ room.name }}</option>
+        </select>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-outline" (click)="closeEditEquipmentModal()">Annuler</button>
+        <button class="btn-primary" (click)="saveEquipment()">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+</div>

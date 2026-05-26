@@ -13,6 +13,7 @@ import { AuthService } from '../../services/auth.service';
 export class ProfileComponent {
   newPassword = '';
   confirmPassword = '';
+  currentPassword = '';
   message = '';
   error = '';
 
@@ -23,6 +24,9 @@ export class ProfileComponent {
   }
 
   onChangePassword() {
+    this.error = '';
+    this.message = '';
+
     if (this.newPassword !== this.confirmPassword) {
       this.error = 'Les mots de passe ne correspondent pas';
       return;
@@ -33,15 +37,30 @@ export class ProfileComponent {
       return;
     }
 
-    this.authService.changePassword(this.newPassword).subscribe({
+    if (!this.currentPassword) {
+      this.error = 'Veuillez saisir votre mot de passe actuel';
+      return;
+    }
+
+    this.authService.verifyCurrentPassword(this.currentPassword).subscribe({
       next: () => {
-        this.message = 'Mot de passe mis à jour avec succès';
-        this.error = '';
-        this.newPassword = '';
-        this.confirmPassword = '';
+        this.authService.changePassword(this.newPassword).subscribe({
+          next: () => {
+            this.message = 'Mot de passe mis à jour avec succès';
+            this.error = '';
+            this.currentPassword = '';
+            this.newPassword = '';
+            this.confirmPassword = '';
+            return;
+          },
+          error: (err) => {
+            this.error = 'Erreur lors de la mise à jour';
+            this.message = '';
+          }
+        });
       },
       error: (err) => {
-        this.error = 'Erreur lors de la mise à jour';
+        this.error = 'Mot de passe actuel incorrect';
         this.message = '';
       }
     });

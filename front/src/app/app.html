@@ -11,6 +11,7 @@
       <button [class.active]="view === 'staff'" (click)="view = 'staff'"><i class="fa-solid fa-users"></i> Personnel</button>
       <button [class.active]="view === 'types'" (click)="view = 'types'"><i class="fa-solid fa-tags"></i> Types de Salles</button>
       <button [class.active]="view === 'equipment-types'" (click)="view = 'equipment-types'"><i class="fa-solid fa-toolbox"></i> Types de Matériels</button>
+      <button [class.active]="view === 'equipment'" (click)="view = 'equipment'"><i class="fa-solid fa-boxes-stacked"></i> Matériels</button>
       <button *ngIf="isAdmin" [class.active]="view === 'users'" (click)="view = 'users'"><i class="fa-solid fa-user-shield"></i> Utilisateurs</button>
       <button [class.active]="view === 'profile'" (click)="view = 'profile'"><i class="fa-solid fa-user"></i> Mon Profil</button>
       <button class="logout-btn" (click)="logout()"><i class="fa-solid fa-right-from-bracket"></i> Déconnexion</button>
@@ -26,6 +27,7 @@
     <app-staff-list *ngIf="view === 'staff'"></app-staff-list>
     <app-room-type-manager *ngIf="view === 'types'"></app-room-type-manager>
     <app-equipment-type-manager *ngIf="view === 'equipment-types'"></app-equipment-type-manager>
+    <app-equipment-list *ngIf="view === 'equipment'"></app-equipment-list>
     <app-user-list *ngIf="view === 'users'"></app-user-list>
     <app-profile *ngIf="view === 'profile'"></app-profile>
   </main>

@@ -231,7 +231,6 @@ export class RoomDetailComponent implements OnInit {
   }
 
   goBack(): void {
-    this.roomService.refreshRooms();
     this.back.emit();
   }
 }
