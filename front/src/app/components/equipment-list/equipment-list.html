@@ -4,9 +4,6 @@
       <h1>Liste du Matériel</h1>
       <p>Gérez les équipements affectés aux locaux</p>
     </div>
-    <button class="btn-refresh" (click)="loadData()">
-      🔄 Actualiser
-    </button>
   </header>
 
   <div class="add-equipment-section card">
@@ -92,7 +89,7 @@
       </div>
 
       <div class="modal-actions">
-        <button class="btn-outline" (click)="closeEditEquipmentModal()">Annuler</button>
+        <button class="btn-outline" style="flex: none; width: auto; padding: 10px 24px;" (click)="closeEditEquipmentModal()">Annuler</button>
         <button class="btn-primary" (click)="saveEquipment()">Enregistrer</button>
       </div>
     </div>

@@ -133,6 +133,8 @@ export class Map3dComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    this.selectedFloor = this.floorService.currentSelectedFloor;
+    this.expandedFloor = this.selectedFloor;
     this.initThreeJs();
     this.loadData();
     this.setupEventListeners();
@@ -180,10 +182,11 @@ export class Map3dComponent implements OnInit, OnDestroy {
       this.availableFloors = [...new Set(floors.map(f => f.level))].sort((a, b) => a - b);
       if (this.availableFloors.length && !this.availableFloors.includes(this.selectedFloor)) {
         this.selectedFloor = this.availableFloors[0];
+        this.floorService.currentSelectedFloor = this.selectedFloor;
       }
       // Initialize expandedFloor to show first floor by default
-      if (this.availableFloors.length > 0) {
-        this.expandedFloor = this.availableFloors[0];
+      if (this.availableFloors.length > 0 && (this.expandedFloor === null || !this.availableFloors.includes(this.expandedFloor))) {
+        this.expandedFloor = this.selectedFloor;
       }
       this.cdr.detectChanges();
     });
@@ -196,6 +199,7 @@ export class Map3dComponent implements OnInit, OnDestroy {
 
   selectFloor(floor: number) {
     this.selectedFloor = floor;
+    this.floorService.currentSelectedFloor = floor;
     this.selectedRoom = null;
     this.buildFloor();
     this.cdr.detectChanges();

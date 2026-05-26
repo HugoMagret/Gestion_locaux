@@ -40,6 +40,34 @@ export const appConfig: ApplicationConfig = {
   display: flex;
   gap: 16px;
 }
+.nav-dropdown {
+  position: relative;
+  display: inline-block;
+}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #1e293b;
+  min-width: 200px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1000;
+  border-radius: 8px;
+  top: 100%;
+  left: 0;
+  overflow: hidden;
+}
+.nav-dropdown:hover .dropdown-content {
+  display: flex;
+  flex-direction: column;
+}
+.dropdown-content button {
+  padding: 12px 16px;
+  text-align: left;
+  border-radius: 0;
+}
+.dropdown-content button:hover {
+  background-color: #334155;
+}
 .nav-links button {
   background: transparent;
   border: none;
@@ -83,11 +111,24 @@ main {
     <div class="nav-links">
       <button [class.active]="view === 'map'" (click)="view = 'map'"><i class="fa-solid fa-map"></i> Plan 2D</button>
       <button [class.active]="view === 'map3d'" (click)="view = 'map3d'"><i class="fa-solid fa-cube"></i> Plan 3D</button>
-      <button [class.active]="view === 'rooms'" (click)="view = 'rooms'"><i class="fa-solid fa-door-open"></i> Liste Salles</button>
       <button [class.active]="view === 'floors'" (click)="view = 'floors'"><i class="fa-solid fa-layer-group"></i> Gestion Étages</button>
-      <button [class.active]="view === 'staff'" (click)="view = 'staff'"><i class="fa-solid fa-users"></i> Personnel</button>
-      <button [class.active]="view === 'types'" (click)="view = 'types'"><i class="fa-solid fa-tags"></i> Types de Salles</button>
-      <button [class.active]="view === 'equipment-types'" (click)="view = 'equipment-types'"><i class="fa-solid fa-toolbox"></i> Types de Matériels</button>
+      <div class="nav-dropdown">
+        <button [class.active]="view === 'rooms' || view === 'staff' || view === 'equipments' || view === 'sockets'"><i class="fa-solid fa-list"></i> Listes Données</button>
+        <div class="dropdown-content">
+          <button (click)="view = 'rooms'"><i class="fa-solid fa-door-open"></i> Salles</button>
+          <button (click)="view = 'staff'"><i class="fa-solid fa-users"></i> Personnel</button>
+          <button (click)="view = 'equipments'"><i class="fa-solid fa-box-open"></i> Matériel</button>
+          <button (click)="view = 'sockets'"><i class="fa-solid fa-plug"></i> Connectique</button>
+        </div>
+      </div>
+      <div class="nav-dropdown">
+        <button [class.active]="view.startsWith('types')"><i class="fa-solid fa-tags"></i> Paramètres Types</button>
+        <div class="dropdown-content">
+          <button (click)="view = 'types-rooms'">Types de Salles</button>
+          <button (click)="view = 'types-equipment'">Types de Matériels</button>
+          <button (click)="view = 'types-sockets'">Types de Connectiques</button>
+        </div>
+      </div>
       <button *ngIf="isAdmin" [class.active]="view === 'users'" (click)="view = 'users'"><i class="fa-solid fa-user-shield"></i> Utilisateurs</button>
       <button [class.active]="view === 'profile'" (click)="view = 'profile'"><i class="fa-solid fa-user"></i> Mon Profil</button>
       <button class="logout-btn" (click)="logout()"><i class="fa-solid fa-right-from-bracket"></i> Déconnexion</button>
@@ -101,8 +142,11 @@ main {
     <app-room-detail *ngIf="view === 'room-detail' && selectedRoomId" [roomId]="selectedRoomId" (back)="closeRoomDetail()"></app-room-detail>
     <app-floor-manager *ngIf="view === 'floors'"></app-floor-manager>
     <app-staff-list *ngIf="view === 'staff'"></app-staff-list>
-    <app-room-type-manager *ngIf="view === 'types'"></app-room-type-manager>
-    <app-equipment-type-manager *ngIf="view === 'equipment-types'"></app-equipment-type-manager>
+    <app-room-type-manager *ngIf="view === 'types-rooms'"></app-room-type-manager>
+    <app-equipment-type-manager *ngIf="view === 'types-equipment'"></app-equipment-type-manager>
+    <app-socket-type-manager *ngIf="view === 'types-sockets'"></app-socket-type-manager>
+    <app-equipment-list *ngIf="view === 'equipments'"></app-equipment-list>
+    <app-socket-list *ngIf="view === 'sockets'"></app-socket-list>
     <app-user-list *ngIf="view === 'users'"></app-user-list>
     <app-profile *ngIf="view === 'profile'"></app-profile>
   </main>
@@ -145,7 +189,23 @@ describe('App', () => {
 
 ===== FILE: front/src/app/app.ts =====
 import { Component, OnInit, inject } from '@angular/core';
-/* Lines 2-16 omitted */
+import { CommonModule } from '@angular/common';
+import { MapComponent } from './components/map/map';
+import { Map3dComponent } from './components/map3d/map3d';
+import { FloorManagerComponent } from './components/floor-manager/floor-manager';
+import { StaffListComponent } from './components/staff-list/staff-list';
+import { RoomTypeManagerComponent } from './components/room-type-manager/room-type-manager';
+import { EquipmentTypeManagerComponent } from './components/equipment-type-manager/equipment-type-manager';
+import { SocketTypeManagerComponent } from './components/socket-type-manager/socket-type-manager';
+import { RoomListComponent } from './components/room-list/room-list';
+import { EquipmentListComponent } from './components/equipment-list/equipment-list';
+import { SocketListComponent } from './components/socket-list/socket-list';
+import { UserListComponent } from './components/user-list/user-list';
+import { ProfileComponent } from './components/profile/profile';
+import { AlertComponent } from './components/alert/alert';
+import { LoginComponent } from './components/login/login';
+import { RoomDetailComponent } from './components/room-detail/room-detail';
+import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -158,7 +218,10 @@ import { Component, OnInit, inject } from '@angular/core';
     StaffListComponent, 
     RoomTypeManagerComponent, 
     EquipmentTypeManagerComponent, 
+    SocketTypeManagerComponent,
     RoomListComponent,
+    EquipmentListComponent,
+    SocketListComponent,
     UserListComponent,
     ProfileComponent,
     AlertComponent,
@@ -171,12 +234,13 @@ import { Component, OnInit, inject } from '@angular/core';
 export class App implements OnInit {
   private authService = inject(AuthService);
   
-  view: 'map' | 'map3d' | 'floors' | 'staff' | 'types' | 'equipment-types' | 'rooms' | 'users' | 'profile' | 'room-detail' = 'map';
+  view: 'map' | 'map3d' | 'floors' | 'staff' | 'types-rooms' | 'types-equipment' | 'types-sockets' | 'equipments' | 'sockets' | 'rooms' | 'users' | 'profile' | 'room-detail' = 'map';
+  previousView: 'map' | 'map3d' | 'rooms' | 'equipments' | 'sockets' = 'map';
   selectedRoomId: string | null = null;
   isAuthenticated$ = this.authService.isAuthenticated$;
 
   ngOnInit() {
-    this.isAuthenticated$.subscribe(status => {
+    this.isAuthenticated$.subscribe((status: boolean) => {
       if (status) {
         this.view = 'map';
       }
@@ -184,12 +248,13 @@ export class App implements OnInit {
   }
 
   onRoomSelected(roomId: string) {
+    this.previousView = this.view as 'map' | 'map3d' | 'rooms' | 'equipments' | 'sockets';
     this.selectedRoomId = roomId;
     this.view = 'room-detail';
   }
 
   closeRoomDetail() {
-    this.view = 'rooms';
+    this.view = this.previousView;
     this.selectedRoomId = null;
   }
 
@@ -198,7 +263,9 @@ export class App implements OnInit {
   }
 
   logout() {
+    this.previousView = 'map';
     this.view = 'map';
+    this.selectedRoomId = null;
     this.authService.logout();
   }
 }
@@ -267,60 +334,261 @@ export class App implements OnInit {
   <div class="toast-progress"></div>
 </div>
 
-===== FILE: front/src/app/components/alert/alert.ts =====
-import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy, OnDestroy, NgZone } from '@angular/core';
+===== FILE: front/src/app/components/socket-type-manager/socket-type-manager.css =====
+.manager-container { padding: 40px; max-width: 700px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px; }
+.manager-header h1 { font-size: 32px; font-weight: 800; margin-bottom: 8px; color: #0f172a; }
+.manager-header p { color: #64748b; }
+
+.card { background: white; border-radius: 16px; padding: 24px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+
+.add-section h3 { font-size: 18px; font-weight: 700; margin-bottom: 16px; color: #1e293b; }
+.form-group { display: flex; gap: 12px; }
+input {
+  flex: 1;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+input:focus { outline: none; border-color: #3b82f6; }
+
+.btn-primary {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-primary:hover { background: #2563eb; }
+.btn-primary:disabled { background: #94a3b8; cursor: not-allowed; }
+
+.type-table { width: 100%; border-collapse: collapse; }
+.type-table th { text-align: left; padding: 12px 16px; font-size: 13px; font-weight: 700; color: #64748b; text-transform: uppercase; border-bottom: 1px solid #e2e8f0; }
+.type-table td { padding: 16px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+
+.actions { text-align: right; width: 80px; }
+.btn-icon { background: none; border: none; cursor: pointer; font-size: 18px; padding: 8px; border-radius: 8px; transition: background 0.2s; }
+.btn-icon:hover { background: #fee2e2; }
+
+.empty-state { text-align: center; padding: 32px !important; color: #94a3b8; }
+
+===== FILE: front/src/app/components/socket-type-manager/socket-type-manager.html =====
+<div class="manager-container">
+  <header class="manager-header">
+    <h1>Types de Connectiques</h1>
+    <p>Gérez les différentes catégories de prises et connexions</p>
+  </header>
+
+  <div class="add-section card">
+    <h3>Ajouter un nouveau type</h3>
+    <div class="form-group">
+      <input 
+        type="text" 
+        [(ngModel)]="newTypeLabel" 
+        placeholder="Ex: RJ45, HDMI, Fibre..."
+        (keyup.enter)="addType()"
+      >
+      <button class="btn-primary" (click)="addType()" [disabled]="!newTypeLabel.trim()">
+        Ajouter
+      </button>
+    </div>
+  </div>
+
+  <div class="list-section card">
+    <div class="table-responsive">
+      <table class="type-table">
+        <thead>
+          <tr>
+            <th>Libellé</th>
+            <th class="actions">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let type of socketTypes">
+            <td>{{ type.label }}</td>
+            <td class="actions">
+              <button class="btn-icon" (click)="deleteType(type.id)" title="Supprimer">
+                🗑️
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="socketTypes.length === 0">
+            <td colspan="2" class="empty-state">Aucun type de connectique défini</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+===== FILE: front/src/app/components/socket-type-manager/socket-type-manager.ts =====
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-/* Lines 3-5 omitted */
+import { FormsModule } from '@angular/forms';
+import { ReferenceService } from '../../services/reference.service';
+import { SocketType } from '../../models/socket-type.model';
 
 @Component({
-  selector: 'app-alert',
+  selector: 'app-socket-type-manager',
   standalone: true,
-  imports: [CommonModule],
-  templateUrl: './alert.html',
-  styleUrls: ['./alert.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  imports: [CommonModule, FormsModule],
+  templateUrl: './socket-type-manager.html',
+  styleUrls: ['./socket-type-manager.css']
 })
-export class AlertComponent implements OnInit, OnDestroy {
-  notification: Notification | null = null;
-  private sub!: Subscription;
+export class SocketTypeManagerComponent implements OnInit {
+  socketTypes: SocketType[] = [];
+  newTypeLabel: string = '';
 
   constructor(
-    private notificationService: NotificationService,
-    private cdr: ChangeDetectorRef,
-    private zone: NgZone
+    private referenceService: ReferenceService,
+    private cdr: ChangeDetectorRef
   ) {}
 
-  ngOnInit() {
-    this.sub = this.notificationService.notification$.subscribe(notif => {
-      // Force run inside Angular zone and trigger change detection immediately
-      this.zone.run(() => {
-        this.notification = notif;
+  ngOnInit(): void {
+    this.loadTypes();
+  }
+
+  loadTypes(): void {
+    this.referenceService.getSocketTypes().subscribe({
+      next: (types) => {
+        this.socketTypes = types;
         this.cdr.detectChanges();
-      });
+      },
+      error: (err) => console.error('Erreur lors du chargement des types de connectiques:', err)
     });
   }
 
-  ngOnDestroy() {
-    this.sub?.unsubscribe();
+  addType(): void {
+    if (!this.newTypeLabel.trim()) return;
+
+    this.referenceService.addSocketType(this.newTypeLabel).subscribe({
+      next: () => {
+        this.newTypeLabel = '';
+        this.loadTypes();
+      },
+      error: (err) => console.error('Erreur lors de l\'ajout du type:', err)
+    });
   }
 
-  close() {
-    this.notificationService.clear();
-  }
-
-  getTitle(): string {
-    if (!this.notification) return '';
-    switch (this.notification.type) {
-      case 'success': return 'Succès';
-      case 'error': return 'Erreur';
-      case 'info': return 'Information';
-      default: return '';
+  deleteType(id: string): void {
+    if (confirm('Supprimer ce type de connectique ?')) {
+      this.referenceService.deleteSocketType(id).subscribe({
+        next: () => this.loadTypes(),
+        error: (err) => console.error('Erreur lors de la suppression:', err)
+      });
     }
   }
 }
 
-===== FILE: front/src/app/components/equipment-type-manager/equipment-type-manager.css =====
-.manager-container { padding: 40px; max-width: 700px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px; }
+===== FILE: front/src/app/components/socket-list/socket-list.css =====
+.socket-container { padding: 40px; max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px; }
+.socket-header { display: flex; justify-content: space-between; align-items: flex-end; }
+.socket-header h1 { font-size: 32px; font-weight: 800; margin-bottom: 8px; color: #0f172a; }
+.socket-header p { color: #64748b; }
+
+.add-socket-section h3 { font-size: 18px; font-weight: 700; margin-bottom: 16px; color: #1e293b; }
+.socket-form { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.socket-form input, .socket-form select { padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 14px; }
+
+.socket-table { width: 100%; border-collapse: collapse; }
+.socket-table td, .socket-table th { padding: 14px 16px; border-bottom: 1px solid #e2e8f0; }
+.modal-actions { display: flex; gap: 12px; margin-top: 16px; }
+
+===== FILE: front/src/app/components/socket-list/socket-list.html =====
+<div class="socket-container">
+  <header class="socket-header">
+    <div>
+      <h1>Liste des Connectiques</h1>
+      <p>Gérez les prises et connexions affectées aux locaux</p>
+    </div>
+  </header>
+
+  <div class="add-socket-section card">
+    <h3>Ajouter une connectique</h3>
+    <div class="socket-form">
+      <input type="text" [(ngModel)]="newSocket.identifier" placeholder="Identifiant">
+      <select [(ngModel)]="newSocket.socket_type_id">
+        <option value="">Type de connectique</option>
+        <option *ngFor="let type of socketTypes" [value]="type.id">{{ type.label }}</option>
+      </select>
+      <select [(ngModel)]="newSocket.room_id">
+        <option value="">Affecter à une salle (optionnel)</option>
+        <option *ngFor="let room of (rooms$ | async)" [value]="room.id">{{ room.name }}</option>
+      </select>
+      <button class="btn-primary" (click)="addSocket()" [disabled]="!newSocket.identifier.trim() || !newSocket.socket_type_id">
+        Ajouter
+      </button>
+    </div>
+  </div>
+
+  <div class="socket-card card">
+    <div class="table-responsive">
+      <table class="socket-table">
+        <thead>
+          <tr>
+            <th>Identifiant</th>
+            <th>Type</th>
+            <th>Salle</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of (socketsWithRooms$ | async)" class="clickable-row" (click)="openEditSocketModal(item)">
+            <td>{{ item.identifier }}</td>
+            <td>{{ item.socket_type_label || '-' }}</td>
+            <td>{{ item.room?.name || 'Non assigné' }}</td>
+            <td>
+              <button class="btn-icon" (click)="deleteSocket(item.id); $event.stopPropagation()" title="Supprimer">
+                🗑️
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="((socketsWithRooms$ | async) || []).length === 0">
+            <td colspan="4" class="empty-state">Aucune connectique trouvée</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" *ngIf="editingSocket" (click)="closeEditSocketModal()">
+  <div class="modal-card card" (click)="$event.stopPropagation()">
+    <header class="modal-header">
+      <h3>Modifier la connectique</h3>
+      <button (click)="closeEditSocketModal()"><i class="fa-solid fa-xmark"></i></button>
+    </header>
+
+    <div class="edit-form">
+      <div class="form-group">
+        <label>Identifiant</label>
+        <input type="text" [(ngModel)]="editingSocket.identifier">
+      </div>
+      <div class="form-group">
+        <label>Type</label>
+        <select [(ngModel)]="editingSocket.socket_type_id">
+          <option *ngFor="let type of socketTypes" [value]="type.id">{{ type.label }}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Salle</label>
+        <select [(ngModel)]="editingSocket.room_id">
+          <option value="">Non assigné</option>
+          <option *ngFor="let room of (rooms$ | async)" [value]="room.id">{{ room.name }}</option>
+        </select>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-outline" style="flex: none; width: auto; padding: 10px 24px;" (click)="closeEditSocketModal()">Annuler</button>
+        <button class="btn-primary" (click)="saveSocket()">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+</div>
 .manager-header h1 { font-size: 32px; font-weight: 800; margin-bottom: 8px; color: #0f172a; }
 .manager-header p { color: #64748b; }
 

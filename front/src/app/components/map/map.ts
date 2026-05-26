@@ -42,6 +42,7 @@ export class MapComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.selectedFloor = this.floorService.currentSelectedFloor;
     this.expandedFloor = this.selectedFloor;
     this.updateSvgViewBox();
     this.loadRooms();
@@ -96,6 +97,7 @@ export class MapComponent implements OnInit {
 
   selectFloor(floor: number): void {
     this.selectedFloor = floor;
+    this.floorService.currentSelectedFloor = floor;
     this.selectedRoom = null;
     this.applyFilters();
     this.doorService.fetchDoorsByFloor(floor); // Refresh doors when floor changes

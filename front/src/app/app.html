@@ -6,12 +6,24 @@
     <div class="nav-links">
       <button [class.active]="view === 'map'" (click)="view = 'map'"><i class="fa-solid fa-map"></i> Plan 2D</button>
       <button [class.active]="view === 'map3d'" (click)="view = 'map3d'"><i class="fa-solid fa-cube"></i> Plan 3D</button>
-      <button [class.active]="view === 'rooms'" (click)="view = 'rooms'"><i class="fa-solid fa-door-open"></i> Liste Salles</button>
       <button [class.active]="view === 'floors'" (click)="view = 'floors'"><i class="fa-solid fa-layer-group"></i> Gestion Étages</button>
-      <button [class.active]="view === 'staff'" (click)="view = 'staff'"><i class="fa-solid fa-users"></i> Personnel</button>
-      <button [class.active]="view === 'types'" (click)="view = 'types'"><i class="fa-solid fa-tags"></i> Types de Salles</button>
-      <button [class.active]="view === 'equipment-types'" (click)="view = 'equipment-types'"><i class="fa-solid fa-toolbox"></i> Types de Matériels</button>
-      <button [class.active]="view === 'equipment'" (click)="view = 'equipment'"><i class="fa-solid fa-boxes-stacked"></i> Matériels</button>
+      <div class="nav-dropdown">
+        <button [class.active]="view === 'rooms' || view === 'staff' || view === 'equipments' || view === 'sockets'"><i class="fa-solid fa-list"></i> Listes Données</button>
+        <div class="dropdown-content">
+          <button (click)="view = 'rooms'"><i class="fa-solid fa-door-open"></i> Salles</button>
+          <button (click)="view = 'staff'"><i class="fa-solid fa-users"></i> Personnel</button>
+          <button (click)="view = 'equipments'"><i class="fa-solid fa-box-open"></i> Matériel</button>
+          <button (click)="view = 'sockets'"><i class="fa-solid fa-plug"></i> Connectique</button>
+        </div>
+      </div>
+      <div class="nav-dropdown">
+        <button [class.active]="view.startsWith('types')"><i class="fa-solid fa-tags"></i> Paramètres Types</button>
+        <div class="dropdown-content">
+          <button (click)="view = 'types-rooms'">Types de Salles</button>
+          <button (click)="view = 'types-equipment'">Types de Matériels</button>
+          <button (click)="view = 'types-sockets'">Types de Connectiques</button>
+        </div>
+      </div>
       <button *ngIf="isAdmin" [class.active]="view === 'users'" (click)="view = 'users'"><i class="fa-solid fa-user-shield"></i> Utilisateurs</button>
       <button [class.active]="view === 'profile'" (click)="view = 'profile'"><i class="fa-solid fa-user"></i> Mon Profil</button>
       <button class="logout-btn" (click)="logout()"><i class="fa-solid fa-right-from-bracket"></i> Déconnexion</button>
@@ -25,9 +37,11 @@
     <app-room-detail *ngIf="view === 'room-detail' && selectedRoomId" [roomId]="selectedRoomId" (back)="closeRoomDetail()"></app-room-detail>
     <app-floor-manager *ngIf="view === 'floors'"></app-floor-manager>
     <app-staff-list *ngIf="view === 'staff'"></app-staff-list>
-    <app-room-type-manager *ngIf="view === 'types'"></app-room-type-manager>
-    <app-equipment-type-manager *ngIf="view === 'equipment-types'"></app-equipment-type-manager>
-    <app-equipment-list *ngIf="view === 'equipment'"></app-equipment-list>
+    <app-room-type-manager *ngIf="view === 'types-rooms'"></app-room-type-manager>
+    <app-equipment-type-manager *ngIf="view === 'types-equipment'"></app-equipment-type-manager>
+    <app-socket-type-manager *ngIf="view === 'types-sockets'"></app-socket-type-manager>
+    <app-equipment-list *ngIf="view === 'equipments'"></app-equipment-list>
+    <app-socket-list *ngIf="view === 'sockets'"></app-socket-list>
     <app-user-list *ngIf="view === 'users'"></app-user-list>
     <app-profile *ngIf="view === 'profile'"></app-profile>
   </main>

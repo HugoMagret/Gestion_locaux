@@ -61,6 +61,7 @@ export class RoomDetailComponent implements OnInit {
   newSocket: any = { identifier: '', socket_type_id: '' };
   selectedStaffId: string = '';
   editingStaff: any = null;
+  editingSocket: any = null;
 
   // Nouveau : Formulaire réactif pour une meilleure validation
   roomForm: FormGroup;
@@ -197,6 +198,31 @@ export class RoomDetailComponent implements OnInit {
 
   deleteSocket(id: string): void {
     this.socketService.deleteSocket(id).subscribe(() => this.loadRoom());
+  }
+
+  openEditSocket(socket: Socket): void {
+    this.editingSocket = { ...socket };
+    this.cdr.detectChanges();
+  }
+
+  closeEditSocketModal(): void {
+    this.editingSocket = null;
+    this.cdr.detectChanges();
+  }
+
+  saveSocketUpdate(): void {
+    if (!this.editingSocket) return;
+
+    this.socketService.updateSocket(new Socket(this.editingSocket)).subscribe({
+      next: () => {
+        this.notificationService.showSuccess('Connectique mise à jour !');
+        this.closeEditSocketModal();
+        this.loadRoom();
+      },
+      error: (err: any) => {
+        this.notificationService.showError('Erreur lors de la mise à jour : ' + (err.error?.error || err.message));
+      }
+    });
   }
 
   openEditStaffModal(person: Staff): void {

@@ -1,0 +1,90 @@
+<div class="socket-container">
+  <header class="socket-header">
+    <div>
+      <h1>Liste des Connectiques</h1>
+      <p>Gérez les prises et connexions affectées aux locaux</p>
+    </div>
+  </header>
+
+  <div class="add-socket-section card">
+    <h3>Ajouter une connectique</h3>
+    <div class="socket-form">
+      <input type="text" [(ngModel)]="newSocket.identifier" placeholder="Identifiant">
+      <select [(ngModel)]="newSocket.socket_type_id">
+        <option value="">Type de connectique</option>
+        <option *ngFor="let type of socketTypes" [value]="type.id">{{ type.label }}</option>
+      </select>
+      <select [(ngModel)]="newSocket.room_id">
+        <option value="">Affecter à une salle (optionnel)</option>
+        <option *ngFor="let room of (rooms$ | async)" [value]="room.id">{{ room.name }}</option>
+      </select>
+      <button class="btn-primary" (click)="addSocket()" [disabled]="!newSocket.identifier.trim() || !newSocket.socket_type_id">
+        Ajouter
+      </button>
+    </div>
+  </div>
+
+  <div class="socket-card card">
+    <div class="table-responsive">
+      <table class="socket-table">
+        <thead>
+          <tr>
+            <th>Identifiant</th>
+            <th>Type</th>
+            <th>Salle</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of (socketsWithRooms$ | async)" class="clickable-row" (click)="openEditSocketModal(item)">
+            <td>{{ item.identifier }}</td>
+            <td>{{ item.socket_type_label || '-' }}</td>
+            <td>{{ item.room?.name || 'Non assigné' }}</td>
+            <td>
+              <button class="btn-icon-trash" (click)="deleteSocket(item.id); $event.stopPropagation()" title="Supprimer">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="((socketsWithRooms$ | async) || []).length === 0">
+            <td colspan="4" class="empty-state">Aucune connectique trouvée</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" *ngIf="editingSocket" (click)="closeEditSocketModal()">
+  <div class="modal-card card" (click)="$event.stopPropagation()">
+    <header class="modal-header">
+      <h3>Modifier la connectique</h3>
+      <button (click)="closeEditSocketModal()"><i class="fa-solid fa-xmark"></i></button>
+    </header>
+
+    <div class="edit-form">
+      <div class="form-group">
+        <label>Identifiant</label>
+        <input type="text" [(ngModel)]="editingSocket.identifier">
+      </div>
+      <div class="form-group">
+        <label>Type</label>
+        <select [(ngModel)]="editingSocket.socket_type_id">
+          <option *ngFor="let type of socketTypes" [value]="type.id">{{ type.label }}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Salle</label>
+        <select [(ngModel)]="editingSocket.room_id">
+          <option value="">Non assigné</option>
+          <option *ngFor="let room of (rooms$ | async)" [value]="room.id">{{ room.name }}</option>
+        </select>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-outline" style="flex: none; width: auto; padding: 10px 24px;" (click)="closeEditSocketModal()">Annuler</button>
+        <button class="btn-primary" (click)="saveSocket()">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -13,6 +13,7 @@ export interface Floor {
 export class FloorService {
   private floorsSubject = new BehaviorSubject<Floor[]>([]);
   private manuallyAddedLevels = new Set<number>();
+  public currentSelectedFloor: number = 0;
 
   constructor(private roomService: RoomService, private http: HttpClient) {
     this.roomService.getRooms().subscribe(rooms => {
@@ -63,6 +64,10 @@ export class FloorService {
 
   importFloor(data: any): Observable<any> {
     return this.http.post<any>(`${API_URL}/floors/import`, data);
+  }
+
+  updateFloorJson(level: number, data: any): Observable<any> {
+    return this.http.put<any>(`${API_URL}/floors/${level}`, data);
   }
 
   deleteFloor(id: string): void {

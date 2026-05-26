@@ -31,6 +31,25 @@ router.post('/', async (req, res) => {
   }
 });
 
+// PUT update socket
+router.put('/:id', async (req, res) => {
+  let { identifier, socket_type_id, room_id } = req.body;
+  if (room_id === '') room_id = null;
+
+  try {
+    const result = await db.query(
+      'UPDATE socket SET identifier = $1, socket_type_id = $2, room_id = $3 WHERE id = $4 RETURNING id, identifier, socket_type_id, room_id',
+      [identifier, socket_type_id, room_id, req.params.id]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Connectique non trouvée' });
+    }
+    res.json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // DELETE socket
 router.delete('/:id', async (req, res) => {
   try {

@@ -178,6 +178,9 @@
             <strong>{{ s.identifier }}</strong>
             <span>{{ s.socket_type_label || 'Prise' }}</span>
           </div>
+          <button class="btn-icon" (click)="openEditSocket(s)" title="Modifier">
+            <i class="fa-solid fa-pen"></i>
+          </button>
           <button class="btn-remove" (click)="deleteSocket(s.id)" title="Supprimer">
             <i class="fa-solid fa-trash-can"></i>
           </button>
@@ -224,6 +227,35 @@
       <div style="display: flex; gap: 12px; margin-top: 10px;">
         <button class="btn-outline" (click)="closeEditStaffModal()" style="flex: 1; padding: 12px; border-radius: 10px;">Annuler</button>
         <button class="btn-primary" (click)="saveStaff()" [disabled]="!editingStaff.first_name?.trim() || !editingStaff.last_name?.trim()" style="flex: 1; padding: 12px; border-radius: 10px; margin: 0;">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal d'édition de la connectique -->
+<div class="modal-overlay" *ngIf="editingSocket" (click)="closeEditSocketModal()">
+  <div class="modal-card card" (click)="$event.stopPropagation()" style="animation: scaleUp 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); width: 100%; max-width: 450px; padding: 24px;">
+    <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <h3 style="margin: 0; font-size: 18px; font-weight: 700; color: #0f172a;">Modifier la connectique</h3>
+      <button (click)="closeEditSocketModal()" style="background: transparent; border: none; font-size: 20px; color: #94a3b8; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
+    </header>
+
+    <div class="edit-form" style="display: flex; flex-direction: column; gap: 16px;">
+      <div class="form-group">
+        <label style="font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase;">Identifiant</label>
+        <input type="text" [(ngModel)]="editingSocket.identifier" style="width: 100%;" placeholder="Identifiant">
+      </div>
+      <div class="form-group">
+        <label style="font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase;">Type</label>
+        <select [(ngModel)]="editingSocket.socket_type_id" style="width: 100%;">
+          <option value="">Sélectionner un type</option>
+          <option *ngFor="let t of socketTypes" [value]="t.id">{{ t.label }}</option>
+        </select>
+      </div>
+
+      <div style="display: flex; gap: 12px; margin-top: 10px;">
+        <button class="btn-outline" (click)="closeEditSocketModal()" style="flex: 1; padding: 12px; border-radius: 10px;">Annuler</button>
+        <button class="btn-primary" (click)="saveSocketUpdate()" [disabled]="!editingSocket.identifier?.trim()" style="flex: 1; padding: 12px; border-radius: 10px; margin: 0;">Enregistrer</button>
       </div>
     </div>
   </div>

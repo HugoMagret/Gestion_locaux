@@ -23,6 +23,30 @@ pre { font-size: 12px; font-family: 'Courier New', Courier, monospace; overflow-
 .floor-card { display: flex; flex-direction: column; gap: 16px; }
 .building-badge { font-size: 11px; font-weight: 700; color: #64748b; background: #f1f5f9; padding: 4px 10px; border-radius: 20px; }
 .level-text { display: block; font-size: 18px; font-weight: 700; margin-top: 8px; }
+.btn-outline { background: #ffffff; border: 1px solid #e2e8f0; color: #475569; font-weight: 700; cursor: pointer; padding: 10px 14px; border-radius: 10px; }
+.btn-outline:hover { background: #f1f5f9; }
+.btn-delete { background: #fee2e2; color: #991b1b; border: none; padding: 10px 14px; border-radius: 10px; font-weight: 700; cursor: pointer; }
+.btn-delete:hover { background: #fecaca; }
+.btn-icon-trash {
+  background: transparent;
+  border: none;
+  color: #ef4444;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+.btn-icon-trash:hover { background: #fee2e2; }
+.btn-info {
+  background: transparent;
+  color: #3b82f6;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  font-size: 16px;
+}
+.btn-info:hover { color: #2563eb; }
+.modal-backdrop { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.45); backdrop-filter: blur(6px); }
 .btn-delete { background: #fee2e2; color: #ef4444; border: none; padding: 8px; border-radius: 8px; font-weight: 600; cursor: pointer; }
 .btn-primary { background: #0f172a; color: white; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 600; cursor: pointer; }
 .section-title { font-size: 14px; font-weight: 700; color: #94a3b8; text-transform: uppercase; }

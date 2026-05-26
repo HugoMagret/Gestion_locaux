@@ -63,7 +63,8 @@
   background: #3b82f6; 
   color: white; 
   border: none; 
-  padding: 12px 24px; 
+  padding: 8px 16px;
+  height: 40px;
   border-radius: 10px; 
   font-weight: 600; 
   cursor: pointer; 
@@ -88,8 +89,16 @@
 .room-tag { background: #f1f5f9; color: #475569; padding: 4px 10px; border-radius: 20px; font-size: 13px; font-weight: 600; }
 .no-room { color: #94a3b8; font-style: italic; font-size: 13px; }
 
-.btn-icon { background: none; border: none; cursor: pointer; font-size: 18px; padding: 8px; border-radius: 8px; transition: background 0.2s; }
-.btn-icon:hover { background: #fee2e2; }
+.btn-icon-trash {
+  background: transparent;
+  border: none;
+  color: #ef4444;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+.btn-icon-trash:hover { background: #fee2e2; }
 
 .empty-state { text-align: center; padding: 48px !important; color: #94a3b8; }
 
