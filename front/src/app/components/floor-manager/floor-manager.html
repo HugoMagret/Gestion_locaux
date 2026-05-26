@@ -32,6 +32,9 @@
         <div class="floor-info">
           <span class="level-text">{{ floor.level === 0 ? 'RDC' : 'Étage ' + floor.level }}</span>
         </div>
+        <button class="btn-export" (click)="exportFloorPDF(floor.level)">
+          <i class="fa-solid fa-file-pdf"></i> Exporter en PDF
+        </button>
         <button class="btn-delete" (click)="openDeleteModal(floor.id)">
           Supprimer l'étage
         </button>
