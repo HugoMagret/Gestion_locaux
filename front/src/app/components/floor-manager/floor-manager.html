@@ -16,11 +16,12 @@
         <div class="floor-info">
           <span class="level-text">{{ floor.level === 0 ? 'RDC' : 'Étage ' + floor.level }}</span>
         </div>
-        <div style="display: flex; gap: 8px;">
-          <button class="btn-primary" style="flex:1; font-size: 12px; padding: 8px;" (click)="openEditor(floor)">Éditer JSON</button>
-          <button class="btn-outline" style="padding: 8px;" (click)="downloadJson(floor)"><i class="fa-solid fa-download"></i></button>
-        </div>
-        <button class="btn-delete mt-2" (click)="openDeleteModal(floor.id)">Supprimer l'étage</button>
+        <button class="btn-export" (click)="exportFloorPDF(floor.level)">
+          <i class="fa-solid fa-file-pdf"></i> Exporter en PDF
+        </button>
+        <button class="btn-delete" (click)="openDeleteModal(floor.id)">
+          Supprimer l'étage
+        </button>
       </div>
     </div>
   </div>
