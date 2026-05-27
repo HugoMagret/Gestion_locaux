@@ -1,0 +1,39 @@
+%%{init: {'gantt': {'chartWidth': 1600}}}%%
+gantt
+    title Planification Réelle & Itérative - Gestion des Locaux (27 avril - 29 mai 2026)
+    dateFormat  YYYY-MM-DD
+    axisFormat  %d/%m
+
+    section Jalons & Réunions
+    Lancement du projet (Cadrage)            :milestone, m1, 2026-04-27, 0d
+    Réunion 1 (Enseignants)                  :milestone, m2, 2026-04-29, 0d
+    Réunion 2 (Enseignants)                  :milestone, m2, 2026-05-18, 0d
+    Gel du code (Code Freeze)                :milestone, m3, 2026-05-26, 0d
+    Soutenance finale                        :milestone, m4, 2026-05-29, 0d
+
+    section Architecture & Spécs (Antonin)
+    Conteneurisation (Docker, BDD)           :d1, 2026-04-28, 2d
+    Rédaction initiale du rapport            :d2, 2026-04-30, 18d
+    Mise à jour continue du rapport          :d3, 2026-05-18, 9d
+
+    section Backend Node.js (Firmin)
+    Modélisation PostgreSQL & Init API       :b1, 2026-04-28, 8d
+    Développement des routes standards       :b2, 2026-05-06, 12d
+    Correction BDD suite à la réunion        :crit, b3, 2026-05-18, 1d
+    Intégration de l'export PDF              :b4, 2026-05-19, 3d
+    Optimisation de l'architecture           :b5, 2026-05-22, 4d
+
+    section Frontend Angular (Hugo & Clément)
+    Maquettage & Composants de base          :f1, 2026-04-28, 10d
+    Intégration du plan interactif 2D        :f2, 2026-05-08, 3d
+    Intégration du plan interactif 3D        :f2, 2026-05-11, 7d
+    Correction UX suite à la réunion         :crit, f3, 2026-05-18, 1d
+    Liaison API & Stabilisation globale      :f4, 2026-05-17, 9d
+
+    section QA & Tests (Antonin)
+    Scénarios de tests fonctionnels          :q1, 2026-05-10, 5d
+    Remontée de bugs et retours ergonomie    :q2, 2026-05-15, 10d
+    Validation finale avant rendu            :q3, 2026-05-25, 2d
+
+
+    
