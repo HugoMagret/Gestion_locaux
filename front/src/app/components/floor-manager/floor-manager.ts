@@ -190,9 +190,7 @@ export class FloorManagerComponent implements OnInit {
     }
 
     if (this.isCreating) {
-      this.importFloor(this.previewData);
-      this.isEditorOpen = false;
-      this.isCreating = false;
+      this.importFloor(this.previewData, 'editor');
       return;
     }
 
@@ -270,9 +268,7 @@ export class FloorManagerComponent implements OnInit {
       room.max_capacity = room.doors >= 2 ? 50 : 19;
     });
     const data = { level: this.formFloorLevel, rooms: this.formRooms, doors: [] };
-    this.importFloor(data);
-    this.formRooms = [];
-    this.editingFormRoomIndex = -1;
+    this.importFloor(data, 'form');
   }
 
   importManualJson(): void {
@@ -338,7 +334,7 @@ export class FloorManagerComponent implements OnInit {
     reader.readAsText(file);
   }
 
-  private importFloor(data: any): void {
+  private importFloor(data: any, mode: 'file' | 'form' | 'editor' = 'file'): void {
     if (data.level === undefined) {
       this.notificationService.showError("Format invalide : 'level' est requis.");
       return;
@@ -350,21 +346,27 @@ export class FloorManagerComponent implements OnInit {
 
       // Suppression de l'existant puis importation
       this.floorService.deleteFloor(existingFloor.id);
-      setTimeout(() => this.executeImport(data), 500);
+      setTimeout(() => this.executeImport(data, mode), 500);
     } else {
-      this.executeImport(data);
+      this.executeImport(data, mode);
     }
   }
 
-  private executeImport(data: any): void {
+  private executeImport(data: any, mode: 'file' | 'form' | 'editor'): void {
     this.floorService.importFloor(data).subscribe({
       next: (res: any) => {
         this.notificationService.showSuccess(`Étage ${data.level} traité avec succès !`);
         this.roomService.refreshRooms();
-        this.addMode = 'form';
-        this.isEditorOpen = false;
-        this.isFormBuilderOpen = false;
-        this.isCreating = false;
+
+        if (mode === 'form') {
+          this.formRooms = [];
+          this.editingFormRoomIndex = -1;
+          this.closeFormBuilder();
+        } else if (mode === 'editor') {
+          this.isEditorOpen = false;
+          this.isCreating = false;
+        }
+
         this.cdr.detectChanges();
       },
       error: (err: any) => {
@@ -508,26 +510,6 @@ export class FloorManagerComponent implements OnInit {
         doc.rect(dx, dy, dw, dh, 'D');
       });
 
-      // Draw Legend at the bottom of Page 1
-      const legendY = 175;
-      doc.setDrawColor(226, 232, 240);
-      doc.line(startX, legendY - 5, 297 - startX, legendY - 5);
-
-      doc.setFontSize(9);
-      doc.setFont("helvetica", "bold");
-      doc.setTextColor(71, 85, 105);
-      doc.text("Légende :", startX, legendY);
-
-      // Room legend item
-      doc.setFillColor(52, 152, 219);
-      doc.rect(startX + 20, legendY - 3, 5, 4, 'F');
-      doc.setFont("helvetica", "normal");
-      doc.text("Salles / Locaux", startX + 27, legendY);
-
-      // Door legend item
-      doc.setFillColor(217, 119, 6);
-      doc.rect(startX + 65, legendY - 3, 5, 4, 'F');
-      doc.text("Portes d'accès", startX + 72, legendY);
     }
 
     // PAGE 2 AND ONWARDS: DETAILED REPORT

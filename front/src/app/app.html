@@ -2,7 +2,7 @@
 
 <ng-container *ngIf="isAuthenticated$ | async; else loginTemplate">
   <nav class="top-nav">
-    <div class="nav-brand">LocauxAdmin</div>
+    <div class="nav-brand">GestionLocaux</div>
     <div class="nav-links">
       <button [class.active]="view === 'map'" (click)="view = 'map'"><i class="fa-solid fa-map"></i> Plan 2D</button>
       <button [class.active]="view === 'map3d'" (click)="view = 'map3d'"><i class="fa-solid fa-cube"></i> Plan 3D</button>

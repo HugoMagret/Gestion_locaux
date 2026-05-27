@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Room } from '../../models/room.model';
 import { RoomService } from '../../services/room.service';
-import { FloorService } from '../../services/floor.service';
+import { FloorService, Floor } from '../../services/floor.service';
 import { DoorService, Door } from '../../services/door.service';
 
 @Component({
@@ -24,8 +24,11 @@ export class MapComponent implements OnInit {
   selectedFloor = 0;
   expandedFloor: number | null = null;
   currentZoom = 1;
-  svgViewBox = '0 0 1800 800';
-  private readonly baseViewBox = { x: 0, y: 0, width: 1800, height: 800 };
+  isPanning = false;
+  panStartX = 0;
+  panStartY = 0;
+  panOffsetX = 0;
+  panOffsetY = 0;
   private readonly minZoom = 0.5;
   private readonly maxZoom = 3;
 
@@ -44,7 +47,6 @@ export class MapComponent implements OnInit {
   ngOnInit(): void {
     this.selectedFloor = this.floorService.currentSelectedFloor;
     this.expandedFloor = this.selectedFloor;
-    this.updateSvgViewBox();
     this.loadRooms();
     this.loadFloors();
     this.loadDoors();
@@ -52,7 +54,7 @@ export class MapComponent implements OnInit {
 
   loadDoors(): void {
     this.doorService.getDoors().subscribe({
-      next: (data) => {
+      next: (data: Door[]) => {
         this.allDoors = data;
         this.applyFilters();
         this.cdr.detectChanges();
@@ -64,7 +66,7 @@ export class MapComponent implements OnInit {
 
   loadRooms(): void {
     this.roomService.getRooms().subscribe({
-      next: (data) => {
+      next: (data: Room[]) => {
         this.allRooms = data;
         this.applyFilters();
         this.cdr.detectChanges(); // Forcer la mise à jour UI
@@ -73,8 +75,8 @@ export class MapComponent implements OnInit {
   }
 
   loadFloors(): void {
-    this.floorService.getFloors().subscribe(floors => {
-      this.availableFloors = [...new Set(floors.map(f => f.level))].sort((a, b) => a - b);
+    this.floorService.getFloors().subscribe((floors: Floor[]) => {
+      this.availableFloors = [...new Set(floors.map((f: Floor) => f.level))].sort((a: number, b: number) => a - b);
       
       if (!this.availableFloors.includes(this.selectedFloor) && this.availableFloors.length > 0) {
         this.selectedFloor = this.availableFloors[0];
@@ -138,23 +140,48 @@ export class MapComponent implements OnInit {
     if (layer === 'sockets') this.showSockets = !this.showSockets;
   }
 
+  onWheel(event: WheelEvent): void {
+    event.preventDefault();
+    const zoomIntensity = 0.1;
+
+    if (event.deltaY < 0) {
+      this.currentZoom = Math.min(this.currentZoom + zoomIntensity, this.maxZoom);
+    } else {
+      this.currentZoom = Math.max(this.currentZoom - zoomIntensity, this.minZoom);
+    }
+  }
+
+  onMouseDown(event: MouseEvent): void {
+    if (event.button === 2) {
+      event.preventDefault();
+      this.isPanning = true;
+      this.panStartX = event.clientX - this.panOffsetX;
+      this.panStartY = event.clientY - this.panOffsetY;
+    }
+  }
+
+  onMouseMove(event: MouseEvent): void {
+    if (!this.isPanning) return;
+    this.panOffsetX = event.clientX - this.panStartX;
+    this.panOffsetY = event.clientY - this.panStartY;
+  }
+
+  onMouseUp(event: MouseEvent): void {
+    if (event.button === 2) {
+      this.isPanning = false;
+    }
+  }
+
+  onContextMenu(event: MouseEvent): void {
+    event.preventDefault();
+  }
+
   zoomIn(): void {
     this.currentZoom = Math.min(this.maxZoom, this.currentZoom + 0.15);
-    this.updateSvgViewBox();
   }
 
   zoomOut(): void {
     this.currentZoom = Math.max(this.minZoom, this.currentZoom - 0.15);
-    this.updateSvgViewBox();
-  }
-
-  private updateSvgViewBox(): void {
-    const zoom = this.currentZoom || 1;
-    const width = this.baseViewBox.width / zoom;
-    const height = this.baseViewBox.height / zoom;
-    const x = this.baseViewBox.x + (this.baseViewBox.width - width) / 2;
-    const y = this.baseViewBox.y + (this.baseViewBox.height - height) / 2;
-    this.svgViewBox = `${x} ${y} ${width} ${height}`;
   }
 
   goToDetail(): void {

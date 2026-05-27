@@ -58,7 +58,15 @@
   </nav>
 
   <!-- Central Map Viewport -->
-  <div class="map-viewport">
+  <div class="map-viewport"
+       style="overflow: hidden; cursor: grab;"
+       [style.cursor]="isPanning ? 'grabbing' : 'grab'"
+       (wheel)="onWheel($event)"
+       (mousedown)="onMouseDown($event)"
+       (mousemove)="onMouseMove($event)"
+       (mouseup)="onMouseUp($event)"
+       (mouseleave)="onMouseUp($event)"
+       (contextmenu)="onContextMenu($event)">
     
     <div class="zoom-controls">
       <button type="button" (click)="zoomIn()" title="Zoomer">+</button>
@@ -66,8 +74,8 @@
       <button type="button" (click)="zoomOut()" title="Dézoomer">-</button>
     </div>
 
-    <div class="zoom-wrapper">
-      <svg [attr.viewBox]="svgViewBox" (click)="onMapClick($event)">
+    <div class="zoom-wrapper" [style.transform]="'translate(' + panOffsetX + 'px, ' + panOffsetY + 'px) scale(' + currentZoom + ')'" style="transition: transform 0.1s ease-out; transform-origin: center center;">
+      <svg viewBox="0 0 1800 800" (click)="onMapClick($event)">
         <g
           *ngFor="let room of filteredRooms"
           [attr.id]="room.id"
