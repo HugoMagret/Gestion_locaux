@@ -14,18 +14,29 @@ erDiagram
         INTEGER doors
         INTEGER floor
         JSONB coordinates
-        VARCHAR color
     }
+
+    DOOR {
+        UUID id PK
+        INTEGER floor
+        JSONB coordinates
+    }
+
+    %% Remarque : la colonne `floor` dans `DOOR` est un entier indiquant l'étage
+    %% (pas de table `floor` séparée). Les portes sont regroupées par étage côté application.
 
     ROOM_TYPE {
         UUID id PK
         VARCHAR label
+        VARCHAR color
     }
 
     STAFF {
         UUID id PK
         VARCHAR last_name
         VARCHAR first_name
+        VARCHAR email
+        VARCHAR phone
         UUID room_id FK
     }
 

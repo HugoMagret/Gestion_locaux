@@ -26,10 +26,27 @@ export class FloorManagerComponent implements OnInit {
   jsonExample = `{
   "level": 1,
   "rooms": [
-    { "name": "G103", "coordinates": { "x": 2, "y": 2, "width": 177, "height": 231 }, "max_capacity": 30, "doors": 1, "floor": 1, "color": "#3498db" }
+    {
+      "name": "Salle Réunion",
+      "max_capacity": 15,
+      "room_type_label": "Réunion",
+      "color": "#1abc9c",
+      "doors_count": 1,
+      "coordinates": { "x": 250, "y": 50, "width": 120, "height": 80 }
+    },
+    {
+      "name": "Bureau 204",
+      "max_capacity": 4,
+      "room_type_label": "Bureau",
+      "color": "#3498db",
+      "doors_count": 2,
+      "coordinates": { "x": 150, "y": 50, "width": 80, "height": 120 }
+    }
   ],
   "doors": [
-    { "floor": 1, "coordinates": { "x": 179, "y": 100, "width": 6, "height": 50 } }
+    {
+      "coordinates": { "x": 230, "y": 90, "width": 10, "height": 20 }
+    }
   ]
 }`;
   isEditorOpen = false;

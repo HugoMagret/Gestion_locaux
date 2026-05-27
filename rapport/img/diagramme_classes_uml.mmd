@@ -1,4 +1,4 @@
-flowchart TB
+flowchart LR
   classDef app fill:#e8f0ff,stroke:#2f4b91,stroke-width:2px,color:#000
   classDef service fill:#f0faf0,stroke:#2f7d32,stroke-width:2px,color:#000
   classDef component fill:#fff7e8,stroke:#a65a00,stroke-width:2px,color:#000
@@ -12,6 +12,15 @@ flowchart TB
     ProfileComponent[ProfileComponent]:::component
     RoomListComponent[RoomListComponent]:::component
     RoomDetailComponent[RoomDetailComponent]:::component
+    MapComponent[MapComponent]:::component
+    Map3dComponent[Map3dComponent]:::component
+    FloorManagerComponent[FloorManagerComponent]:::component
+    RoomTypeManagerComponent[RoomTypeManagerComponent]:::component
+    EquipmentManagerComponent[EquipmentManagerComponent]:::component
+    StaffManagerComponent[StaffManagerComponent]:::component
+    SocketManagerComponent[SocketManagerComponent]:::component
+    UserManagerComponent[UserManagerComponent]:::component
+    AlertComponent[AlertComponent]:::component
   end
 
   subgraph Services[Services Angular]
@@ -21,6 +30,11 @@ flowchart TB
     ReferenceService[ReferenceService]:::service
     NotificationService[NotificationService]:::service
     UserService[UserService]:::service
+    FloorService[FloorService]:::service
+    EquipmentService[EquipmentService]:::service
+    StaffService[StaffService]:::service
+    SocketService[SocketService]:::service
+    DoorService[DoorService]:::service
   end
 
   subgraph Modeles[Modèles métiers]
@@ -39,6 +53,15 @@ flowchart TB
   App --> ProfileComponent
   App --> RoomListComponent
   App --> RoomDetailComponent
+  App --> MapComponent
+  App --> Map3dComponent
+  App --> FloorManagerComponent
+  App --> RoomTypeManagerComponent
+  App --> EquipmentManagerComponent
+  App --> StaffManagerComponent
+  App --> SocketManagerComponent
+  App --> UserManagerComponent
+  App --> AlertComponent
   App --> AuthService
   App --> RoomService
   App --> UserService
@@ -49,6 +72,15 @@ flowchart TB
   RoomListComponent --> RoomService
   RoomDetailComponent --> RoomService
   RoomDetailComponent --> ReferenceService
+  RoomDetailComponent --> MapComponent
+  MapComponent --> RoomService
+  Map3dComponent --> RoomService
+  FloorManagerComponent --> FloorService
+  RoomTypeManagerComponent --> ReferenceService
+  EquipmentManagerComponent --> EquipmentService
+  StaffManagerComponent --> StaffService
+  SocketManagerComponent --> SocketService
+  UserManagerComponent --> UserService
 
   AuthService --> User
   RoomService --> Room
@@ -56,6 +88,11 @@ flowchart TB
   Room --> Equipment
   Room --> Staff
   Room --> Socket
+  FloorService --> Room
+  EquipmentService --> Equipment
+  StaffService --> Staff
+  SocketService --> Socket
+  DoorService --> Room
   Equipment --> EquipmentType
   Socket --> SocketType
   ReferenceService --> RoomType

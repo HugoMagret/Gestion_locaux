@@ -1,74 +1,81 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../config/db');
+const prisma = require('../config/prisma');
+const { verifyAdmin } = require('../middleware/auth.middleware');
+const { validate } = require('../middleware/validate.middleware');
+const { equipmentSchema } = require('../validators/schemas');
 
 // GET all equipment
 router.get('/', async (req, res) => {
   try {
-    const result = await db.query(`
-      SELECT equipment.id, equipment.name, equipment.serial_number, equipment.equipment_type_id, equipment.room_id, equipment_type.label as equipment_type_label, room.name as room_name 
-      FROM equipment 
-      LEFT JOIN equipment_type ON equipment.equipment_type_id = equipment_type.id
-      LEFT JOIN room ON equipment.room_id = room.id
-    `);
-    res.json(result.rows);
+    const equipment = await prisma.equipment.findMany({
+      include: {
+        room: { select: { name: true, room_type_id: true } },
+        equipmentType: { select: { label: true } }
+      },
+      orderBy: { name: 'asc' }
+    });
+    
+    // Flatten info for frontend
+    const formattedEq = equipment.map(e => ({
+      ...e,
+      room_name: e.room?.name || null,
+      equipment_type_label: e.equipmentType?.label || null
+    }));
+    res.json(formattedEq);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ success: false, message: err.message });
   }
 });
 
 // POST new equipment
-router.post('/', async (req, res) => {
-  let { name, serial_number, equipment_type_id, room_id } = req.body;
-  
-  if (!name || !serial_number || !equipment_type_id) {
-    return res.status(400).json({ error: "Missing mandatory fields: name, serial_number and equipment_type_id are required." });
-  }
-
-  if (room_id === "") room_id = null;
+router.post('/', verifyAdmin, validate(equipmentSchema), async (req, res) => {
   try {
-    const result = await db.query(
-      `INSERT INTO equipment (name, serial_number, equipment_type_id, room_id) 
-       VALUES ($1, $2, $3, $4) 
-       RETURNING id, name, serial_number, equipment_type_id, room_id,
-       (SELECT label FROM equipment_type WHERE id = equipment_type_id) as equipment_type_label`,
-      [name, serial_number, equipment_type_id, room_id]
-    );
-    res.status(201).json(result.rows[0]);
+    const equipment = await prisma.equipment.create({
+      data: req.body,
+      include: { 
+        room: { select: { name: true } },
+        equipmentType: { select: { label: true } }
+      }
+    });
+    res.status(201).json({ 
+      ...equipment, 
+      room_name: equipment.room?.name || null,
+      equipment_type_label: equipment.equipmentType?.label || null
+    });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(409).json({ success: false, message: err.message });
   }
 });
 
 // PUT update equipment
-router.put('/:id', async (req, res) => {
-  const { name, serial_number, equipment_type_id, room_id } = req.body;
-
-  if (!name || !serial_number || !equipment_type_id) {
-    return res.status(400).json({ error: "Name, serial_number and equipment_type_id are required for update." });
-  }
-
+router.put('/:id', verifyAdmin, validate(equipmentSchema), async (req, res) => {
   try {
-    const result = await db.query(
-      `UPDATE equipment SET name = $1, serial_number = $2, equipment_type_id = $3, room_id = $4 
-       WHERE id = $5 
-       RETURNING id, name, serial_number, equipment_type_id, room_id,
-       (SELECT label FROM equipment_type WHERE id = equipment_type_id) as equipment_type_label`,
-      [name, serial_number, equipment_type_id, room_id, req.params.id]
-    );
-    res.json(result.rows[0]);
+    const equipment = await prisma.equipment.update({
+      where: { id: req.params.id },
+      data: req.body,
+      include: { 
+        room: { select: { name: true } },
+        equipmentType: { select: { label: true } }
+      }
+    });
+    res.json({ 
+      ...equipment, 
+      room_name: equipment.room?.name || null,
+      equipment_type_label: equipment.equipmentType?.label || null
+    });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(409).json({ success: false, message: err.message });
   }
 });
 
 // DELETE equipment
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', verifyAdmin, async (req, res) => {
   try {
-    await db.query('DELETE FROM equipment WHERE id = $1', [req.params.id]);
+    await prisma.equipment.delete({ where: { id: req.params.id } });
     res.status(204).send();
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ success: false, message: err.message });
   }
 });
 

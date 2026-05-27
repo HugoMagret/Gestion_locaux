@@ -2,13 +2,13 @@
 
 Après avoir défini la persistance, nous avons structuré l'application en deux couches principales : le backend Node.js, qui fournit l'API REST, et le frontend Angular, qui orchestre l'interface et la manipulation des données côté client.
 
-\section{Diagramme de Classes UML}
-Le diagramme ci-dessous illustre la structure objet de l'application Angular et les principaux services métiers. Il montre comment les composants, les modèles et les services collaborent pour gérer les locaux, le personnel, le matériel et les prises.
+\section{Schéma d'architecture applicative}
+Le schéma ci-dessous illustre l'architecture applicative de l'application Angular et les principaux services métiers. Il montre comment les composants, les modèles et les services collaborent pour gérer les locaux, le personnel, le matériel et les prises. Bien que présenté sous forme de diagramme synthétique, il ne s'agit pas d'un diagramme de classes UML strict mais d'une représentation opérationnelle des composants et de leurs interactions.
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=\linewidth,keepaspectratio]{img/diagramme_classes_uml.png}
-    \caption{Diagramme de classes UML - Architecture applicative Angular}
+    \caption{Schéma d'architecture applicative - Angular}
     \label{fig:uml_logiciel}
 \end{figure}
 
@@ -24,5 +24,16 @@ La conception logicielle privilégie une séparation claire des responsabilités
 
 Cette architecture améliore la maintenabilité du projet. Le backend reste léger et modulaire, tandis qu'Angular assure un rendu dynamique et une expérience utilisateur fluide.
 
+\subsection{Services métiers complémentaires}
+\paragraph{FloorService et import transactionnel} Le service \texttt{FloorService} orchestre la gestion des étages côté client et appelle l'API d'import. Côté backend l'import des plans est effectué dans une transaction (\texttt{prisma.\$transaction()}) afin d'assurer l'atomicité et d'éviter des états partiels en cas d'erreur.
+
+\paragraph{NotificationService et \texttt{AlertComponent}} Le \texttt{NotificationService} fournit une API de notifications centralisée (toasts) utilisée par tous les composants pour afficher les succès, erreurs et avertissements. Le composant \texttt{AlertComponent} consomme ce service et affiche des messages persistants ou temporaires selon le cas d'utilisation.
+
+\subsection{Authentification JWT et intercepteur Angular}
+L'authentification utilise un mécanisme token-based : après connexion, le backend émet un JWT signé qui est renvoyé au client. Le token est stocké côté client (par exemple \texttt{localStorage} sous la clé \texttt{auth\_token}) et un intercepteur HTTP Angular (\texttt{auth.interceptor.ts}) ajoute automatiquement l'en-tête \texttt{Authorization: Bearer <token>} aux requêtes sortantes. Le backend vérifie le token via un middleware (\texttt{verifyToken}) et applique des contrôles supplémentaires (\texttt{verifyAdmin}) pour les routes réservées aux administrateurs.
+
 \subsection{Gestion d'état et réactivité (RxJS)}
 Au-delà de la structuration classique, nous avons implémenté une gestion d'état réactive basée sur RxJS. L'utilisation de BehaviorSubject dans nos services, notamment RoomService et FloorService, agit comme une source de vérité unique. Lorsqu'une donnée est modifiée par un composant, le flux de données propage instantanément la mise à jour à tous les autres composants abonnés. Ce patron de conception avancé permet une interface fluide sans rechargement de page, garantissant que la vue 2D, 3D et les listes soient toujours cohérentes avec l'état actuel de la base de données.
+
+\section{Sécurité et gestion des mots de passe}
+Le backend gère l'authentification des utilisateurs et le stockage sécurisé des mots de passe. Concrètement, les mots de passe sont hachés côté serveur (fonction \texttt{hashPassword} dans \texttt{back/config/auth.js}) à l'aide d'un dérivé sécurisé (scrypt) avant d'être persistés en base. La vérification (\texttt{verifyPassword}) compare de façon sécurisée le mot de passe fourni avec le haché stocké. Par mesure de sécurité, il est recommandé de changer le mot de passe administrateur par défaut fourni dans les scripts d'initialisation dès le premier déploiement, et d'utiliser des secrets/variables d'environnement pour les identifiants en production.
