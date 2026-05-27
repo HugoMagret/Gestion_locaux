@@ -21,8 +21,8 @@ import { jsPDF } from 'jspdf';
 export class FloorManagerComponent implements OnInit {
   floors: Floor[] = [];
   allRooms: any[] = [];
+  addMode: 'text' | 'form' = 'form';
   isDragging = false;
-  addMode: 'file' | 'text' | 'form' = 'file';
   jsonExample = `{
   "level": 1,
   "rooms": [
@@ -53,13 +53,10 @@ export class FloorManagerComponent implements OnInit {
   ]
 }`;
   formFloorLevel: number = 1;
-  formRoom: any = { name: '', max_capacity: 30, doors: 1, coordinates: { x: 0, y: 0, width: 150, height: 100 }, color: '#3498db' };
+  formRoom: any = { name: '', doors: 1, coordinates: { x: 0, y: 0, width: 150, height: 100 }, color: '#3498db' };
   formRooms: any[] = [];
   editingFormRoomIndex: number = -1;
   showInfoModal = false;
-  draggedRoom: any = null;
-  dragOffsetX = 0;
-  dragOffsetY = 0;
 
   constructor(
     private floorService: FloorService,
@@ -88,6 +85,7 @@ export class FloorManagerComponent implements OnInit {
   }
 
   openCreateJsonEditor(): void {
+    this.addMode = 'text';
     this.isFormBuilderOpen = false;
     this.isCreating = true;
     this.editingJsonText = this.manualJsonText || this.jsonExample;
@@ -107,6 +105,7 @@ export class FloorManagerComponent implements OnInit {
   openFormBuilder(): void {
     this.isCreating = false;
     this.isEditorOpen = false;
+    this.addMode = 'form';
     this.isFormBuilderOpen = true;
     this.cdr.detectChanges();
   }
@@ -179,30 +178,16 @@ export class FloorManagerComponent implements OnInit {
     }
   }
 
-  startDrag(event: MouseEvent, room: any): void {
-    this.draggedRoom = room;
-    this.dragOffsetX = event.offsetX - room.coordinates.x;
-    this.dragOffsetY = event.offsetY - room.coordinates.y;
-  }
-
-  onDrag(event: MouseEvent): void {
-    if (!this.draggedRoom) return;
-
-    this.draggedRoom.coordinates.x = Math.max(0, event.offsetX - this.dragOffsetX);
-    this.draggedRoom.coordinates.y = Math.max(0, event.offsetY - this.dragOffsetY);
-
-    if (this.isEditorOpen) {
-      this.editingJsonText = JSON.stringify(this.previewData, null, 2);
-    }
-  }
-
-  stopDrag(): void {
-    this.draggedRoom = null;
-  }
-
   saveJson(event?: Event): void {
     if (event) event.preventDefault();
     if (this.jsonError || !this.previewData) return;
+
+    if (this.previewData.rooms) {
+      this.previewData.rooms.forEach((room: any) => {
+        room.max_capacity = room.doors >= 2 ? 50 : 19;
+      });
+      this.editingJsonText = JSON.stringify(this.previewData, null, 2);
+    }
 
     if (this.isCreating) {
       this.importFloor(this.previewData);
@@ -233,6 +218,9 @@ export class FloorManagerComponent implements OnInit {
 
   addRoomToForm(): void {
     if (!this.formRoom.name) return;
+
+    this.formRoom.max_capacity = this.formRoom.doors >= 2 ? 50 : 19;
+
     if (this.editingFormRoomIndex > -1) {
       this.formRooms[this.editingFormRoomIndex] = { ...this.formRoom };
       this.editingFormRoomIndex = -1;
@@ -241,7 +229,6 @@ export class FloorManagerComponent implements OnInit {
     }
     this.formRoom.name = '';
     this.formRoom.coordinates = { x: 0, y: 0, width: 150, height: 100 };
-    this.formRoom.max_capacity = 30;
     this.formRoom.doors = 1;
     this.formRoom.color = '#3498db';
   }
@@ -251,32 +238,41 @@ export class FloorManagerComponent implements OnInit {
     this.editingFormRoomIndex = index;
   }
 
+  onDragOver(event: DragEvent): void {
+    event.preventDefault();
+    this.isDragging = true;
+  }
+
+  onDragLeave(): void {
+    this.isDragging = false;
+  }
+
+  onDrop(event: DragEvent): void {
+    event.preventDefault();
+    this.isDragging = false;
+
+    const file = event.dataTransfer?.files?.[0];
+    if (file) {
+      this.handleFile(file);
+    }
+  }
+
   removePreparedRoom(index: number): void {
     this.formRooms.splice(index, 1);
     if (this.editingFormRoomIndex === index) {
       this.editingFormRoomIndex = -1;
-      this.formRoom = { name: '', max_capacity: 30, doors: 1, coordinates: { x: 0, y: 0, width: 150, height: 100 }, color: '#3498db' };
+      this.formRoom = { name: '', doors: 1, coordinates: { x: 0, y: 0, width: 150, height: 100 }, color: '#3498db' };
     }
   }
 
   submitFormFloor(): void {
+    this.formRooms.forEach((room: any) => {
+      room.max_capacity = room.doors >= 2 ? 50 : 19;
+    });
     const data = { level: this.formFloorLevel, rooms: this.formRooms, doors: [] };
     this.importFloor(data);
     this.formRooms = [];
     this.editingFormRoomIndex = -1;
-  }
-
-  buildFormPreview(): any {
-    const draftRooms = [...this.formRooms];
-    if (this.formRoom.name?.trim()) {
-      draftRooms.push({ ...this.formRoom });
-    }
-
-    return {
-      level: this.formFloorLevel,
-      rooms: draftRooms,
-      doors: []
-    };
   }
 
   importManualJson(): void {
@@ -322,24 +318,6 @@ export class FloorManagerComponent implements OnInit {
     });
   }
 
-  onDragOver(event: DragEvent): void {
-    event.preventDefault();
-    this.isDragging = true;
-  }
-
-  onDragLeave(): void {
-    this.isDragging = false;
-  }
-
-  onDrop(event: DragEvent): void {
-    event.preventDefault();
-    this.isDragging = false;
-    const files = event.dataTransfer?.files;
-    if (files && files.length > 0) {
-      this.handleFile(files[0]);
-    }
-  }
-
   onFileSelected(event: any): void {
     const file = event.target.files[0];
     if (file) {
@@ -383,7 +361,7 @@ export class FloorManagerComponent implements OnInit {
       next: (res: any) => {
         this.notificationService.showSuccess(`Étage ${data.level} traité avec succès !`);
         this.roomService.refreshRooms();
-        this.addMode = 'file';
+        this.addMode = 'form';
         this.isEditorOpen = false;
         this.isFormBuilderOpen = false;
         this.isCreating = false;

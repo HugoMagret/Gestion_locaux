@@ -16,7 +16,8 @@
         </div>
         <div style="display: flex; gap: 8px;">
           <button class="btn-primary" style="flex:1; font-size: 12px; padding: 8px;" (click)="openEditor(floor)">Éditer JSON</button>
-          <button class="btn-outline" style="padding: 8px;" (click)="downloadJson(floor)"><i class="fa-solid fa-download"></i></button>
+          <button class="btn-outline" style="padding: 8px;" (click)="downloadJson(floor)" title="Télécharger JSON"><i class="fa-solid fa-file-code"></i></button>
+          <button class="btn-outline" style="padding: 8px;" (click)="exportFloorPDF(floor.level)" title="Télécharger PDF"><i class="fa-solid fa-file-pdf"></i></button>
         </div>
         <button class="btn-delete mt-2" (click)="openDeleteModal(floor.id)">Supprimer l'étage</button>
       </div>
@@ -28,24 +29,32 @@
       <h3 style="margin: 0;">Ajouter un étage</h3>
       <button class="btn-info" (click)="showInfoModal = true"><i class="fa-solid fa-circle-info"></i></button>
     </div>
-    <nav class="detail-tabs">
-      <button [class.active]="addMode === 'file'" (click)="addMode = 'file'">Importer un Fichier JSON</button>
-      <button (click)="openFormBuilder()">Générateur Visuel (Formulaire)</button>
-      <button (click)="openCreateJsonEditor()"><i class="fa-solid fa-code"></i> Écrire un JSON</button>
-    </nav>
 
-    <div *ngIf="addMode === 'file'" style="margin-top: 16px;">
-      <div class="upload-zone card" [class.dragging]="isDragging" style="border: 2px dashed #cbd5e1; background: #f8fafc; padding: 48px; text-align: center; cursor: pointer;">
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+      <button class="btn-primary" (click)="openFormBuilder()">Générateur Visuel (Formulaire)</button>
+      <button class="btn-primary" (click)="openCreateJsonEditor()"><i class="fa-solid fa-code"></i> Écrire un JSON</button>
+    </div>
+
+    <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid #e2e8f0;">
+      <h4 style="margin-bottom: 12px;">Importer un étage</h4>
+      <div class="upload-zone"
+           (click)="fileInput.click()"
+           [class.dragging]="isDragging"
+           (dragover)="onDragOver($event)"
+           (dragleave)="onDragLeave()"
+           (drop)="onDrop($event)">
+        <input type="file" #fileInput (change)="onFileSelected($event)" accept=".json" hidden>
         <div class="upload-content">
-          <span class="upload-icon" style="font-size: 48px;">📁</span>
-          <h3 style="margin-top: 16px;">Glissez-déposez votre fichier ici</h3>
-          <p style="color: #94a3b8; margin: 12px 0;">ou</p>
-          <input type="file" #fileInput (change)="onFileSelected($event)" accept=".json" hidden>
-          <button class="btn-primary" (click)="fileInput.click()">Parcourir mon PC</button>
+          <div class="upload-icon-wrap">
+            <i class="fa-solid fa-folder-open upload-icon"></i>
+          </div>
+          <div>
+            <p class="upload-title">Glissez-déposez votre fichier JSON ici</p>
+            <p class="upload-hint">ou cliquez pour ouvrir le sélecteur de fichiers</p>
+          </div>
         </div>
       </div>
     </div>
-
   </div>
 </div>
 
@@ -85,6 +94,7 @@
                 fill="#ffffff"
                 font-size="14"
                 font-weight="700"
+                style="pointer-events: none;"
               >{{ room.name }}</text>
               <text
                 [attr.x]="(room.coordinates?.x || 0) + ((room.coordinates?.width || 0) / 2)"
@@ -92,6 +102,7 @@
                 text-anchor="middle"
                 fill="#f8fafc"
                 font-size="11"
+                style="pointer-events: none;"
               >Portes: {{ room.doors || 0 }}</text>
             </ng-container>
           </g>
@@ -114,10 +125,10 @@
 
 <div class="modal-backdrop" *ngIf="isFormBuilderOpen" style="z-index: 10000; padding: 24px; display: flex;">
   <div class="card" style="width: 100%; height: 100%; display: flex; flex-direction: column;">
-    <header style="display: flex; justify-content: space-between; margin-bottom: 16px;">
-      <h3>Générateur Visuel d'Étage</h3>
+    <header style="display: flex; justify-content: space-between; margin-bottom: 16px; gap: 16px; align-items: center;">
+      <h3 style="margin: 0;">Générateur Visuel (Formulaire)</h3>
       <div>
-        <button class="btn-primary" (click)="submitFormFloor()">Sauvegarder l'étage</button>
+        <button class="btn-primary" (click)="submitFormFloor()" [disabled]="formRooms.length === 0">Sauvegarder l'étage</button>
         <button class="btn-outline" (click)="closeFormBuilder()">Annuler</button>
       </div>
     </header>
@@ -129,10 +140,10 @@
         </div>
 
         <div style="border-left: 4px solid #3b82f6; padding-left: 20px;">
-          <h4 style="margin-bottom: 12px; color: #0f172a;">Ajouter une salle</h4>
+          <h4 style="margin-bottom: 12px; color: #0f172a;">{{ editingFormRoomIndex > -1 ? 'Modifier la salle' : 'Ajouter une salle' }}</h4>
           <div class="form-row">
             <div class="form-group"><label>Nom</label><input type="text" [(ngModel)]="formRoom.name"></div>
-            <div class="form-group"><label>Capacité Max</label><input type="number" [(ngModel)]="formRoom.max_capacity"></div>
+            <div class="form-group"><label>Capacité Max (Auto)</label><input type="number" [value]="formRoom.doors >= 2 ? 50 : 19" disabled style="background: #e2e8f0; cursor: not-allowed; border-color: #cbd5e1;"></div>
           </div>
           <div class="form-row mt-2">
             <div class="form-group"><label>X</label><input type="number" [(ngModel)]="formRoom.coordinates.x"></div>
@@ -141,23 +152,27 @@
             <div class="form-group"><label>Hauteur</label><input type="number" [(ngModel)]="formRoom.coordinates.height"></div>
           </div>
           <div class="form-row mt-2">
-            <div class="form-group"><label>Portes</label><input type="number" [(ngModel)]="formRoom.doors"></div>
+            <div class="form-group"><label>Portes</label><input type="number" [(ngModel)]="formRoom.doors" min="1"></div>
             <div class="form-group"><label>Couleur</label><input type="color" [(ngModel)]="formRoom.color" style="height: 40px; padding: 2px;"></div>
           </div>
-          <button class="btn-outline mt-4" (click)="addRoomToForm()"><i class="fa-solid fa-plus"></i> Ajouter au brouillon</button>
+          <button class="btn-outline mt-4" (click)="addRoomToForm()"><i class="fa-solid fa-plus"></i> {{ editingFormRoomIndex > -1 ? 'Mettre à jour le brouillon' : 'Ajouter au brouillon' }}</button>
         </div>
 
         <div *ngIf="formRooms.length > 0" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-top: 16px;">
           <h4 style="margin-bottom: 12px;">Salles préparées ({{formRooms.length}})</h4>
           <ul style="list-style: none; padding: 0; display: flex; gap: 8px; flex-wrap: wrap;">
-            <li *ngFor="let r of formRooms" class="badge" [style.border-left]="'4px solid ' + r.color">{{r.name}}</li>
+            <li *ngFor="let r of formRooms; let i = index" class="badge-room" [style.border-left]="'4px solid ' + r.color">
+              {{r.name}} ({{ r.doors >= 2 ? 50 : 19 }} pl.)
+              <i class="fa-solid fa-pen action-icon" (click)="editPreparedRoom(i)" title="Modifier"></i>
+              <i class="fa-solid fa-trash-can action-icon trash" (click)="removePreparedRoom(i)" title="Supprimer"></i>
+            </li>
           </ul>
         </div>
       </div>
 
-      <div style="flex: 1; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+      <div style="flex: 1; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative;">
         <svg viewBox="0 0 1000 600" style="width: 100%; height: 100%;">
-          <ng-container *ngFor="let room of buildFormPreview().rooms">
+          <ng-container *ngFor="let room of formRooms">
             <rect
               [attr.x]="room.coordinates?.x"
               [attr.y]="room.coordinates?.y"
@@ -173,14 +188,8 @@
               fill="#ffffff"
               font-size="14"
               font-weight="700"
+              style="pointer-events: none;"
             >{{ room.name }}</text>
-            <text
-              [attr.x]="(room.coordinates?.x || 0) + ((room.coordinates?.width || 0) / 2)"
-              [attr.y]="(room.coordinates?.y || 0) + ((room.coordinates?.height || 0) / 2) + 12"
-              text-anchor="middle"
-              fill="#f8fafc"
-              font-size="11"
-            >Portes: {{ room.doors || 0 }}</text>
           </ng-container>
         </svg>
       </div>
@@ -188,27 +197,27 @@
   </div>
 </div>
 
-<div class="modal-backdrop" *ngIf="showInfoModal">
-  <div class="modal-content card" style="max-width: 600px;">
-    <div class="modal-header">
-      <h2>Format JSON attendu</h2>
-      <button class="btn-icon" (click)="showInfoModal = false" title="Fermer"><i class="fa-solid fa-xmark"></i></button>
+<div class="modal-backdrop" *ngIf="showInfoModal" (click)="showInfoModal = false">
+  <div class="modal-content card" style="max-width: 600px;" (click)="$event.stopPropagation()">
+    <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+      <h2 style="margin: 0;">Format JSON attendu</h2>
+      <button (click)="showInfoModal = false" style="background: transparent; border: none; font-size: 24px; cursor: pointer; color: #64748b;" title="Fermer"><i class="fa-solid fa-xmark"></i></button>
     </div>
     <div class="modal-body">
-      <pre style="background: #1e293b; color: #e2e8f0; padding: 16px; border-radius: 8px; font-size: 12px;">{{ jsonExample }}</pre>
+      <pre style="background: #1e293b; color: #e2e8f0; padding: 16px; border-radius: 8px; font-size: 12px; margin: 0;">{{ jsonExample }}</pre>
     </div>
   </div>
 </div>
 
 <!-- Modal de confirmation de suppression -->
-<div class="modal-backdrop" *ngIf="isModalOpen">
-  <div class="modal-content card">
+<div class="modal-backdrop" *ngIf="isModalOpen" (click)="closeModal()">
+  <div class="modal-content card" (click)="$event.stopPropagation()">
     <div class="modal-header">
       <span class="warning-icon">⚠️</span>
-      <h3>Confirmer la suppression</h3>
+      <h3 style="margin:0;">Confirmer la suppression</h3>
     </div>
     <div class="modal-body">
-      <p>Êtes-vous sûr de vouloir supprimer cet étage ?</p>
+      <p style="margin-top:16px;">Êtes-vous sûr de vouloir supprimer cet étage ?</p>
       <p class="warning-text"><strong>Attention :</strong> Toutes les salles, portes, matériels et personnels associés à cet étage seront définitivement supprimés.</p>
     </div>
     <div class="modal-footer">
