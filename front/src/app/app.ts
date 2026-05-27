@@ -6,8 +6,10 @@ import { FloorManagerComponent } from './components/floor-manager/floor-manager'
 import { StaffListComponent } from './components/staff-list/staff-list';
 import { RoomTypeManagerComponent } from './components/room-type-manager/room-type-manager';
 import { EquipmentTypeManagerComponent } from './components/equipment-type-manager/equipment-type-manager';
+import { SocketTypeManagerComponent } from './components/socket-type-manager/socket-type-manager';
 import { RoomListComponent } from './components/room-list/room-list';
 import { EquipmentListComponent } from './components/equipment-list/equipment-list';
+import { SocketListComponent } from './components/socket-list/socket-list';
 import { UserListComponent } from './components/user-list/user-list';
 import { ProfileComponent } from './components/profile/profile';
 import { AlertComponent } from './components/alert/alert';
@@ -26,8 +28,10 @@ import { AuthService } from './services/auth.service';
     StaffListComponent, 
     RoomTypeManagerComponent, 
     EquipmentTypeManagerComponent, 
+    SocketTypeManagerComponent,
     RoomListComponent,
     EquipmentListComponent,
+    SocketListComponent,
     UserListComponent,
     ProfileComponent,
     AlertComponent,
@@ -40,8 +44,8 @@ import { AuthService } from './services/auth.service';
 export class App implements OnInit {
   private authService = inject(AuthService);
   
-  view: 'map' | 'map3d' | 'floors' | 'staff' | 'types' | 'equipment-types' | 'equipment' | 'rooms' | 'users' | 'profile' | 'room-detail' = 'map';
-  previousView: 'map' | 'map3d' | 'floors' | 'staff' | 'types' | 'equipment-types' | 'equipment' | 'rooms' | 'users' | 'profile' = 'map';
+  view: 'map' | 'map3d' | 'floors' | 'staff' | 'types-rooms' | 'types-equipment' | 'types-sockets' | 'equipments' | 'sockets' | 'rooms' | 'users' | 'profile' | 'room-detail' = 'map';
+  previousView: 'map' | 'map3d' | 'rooms' | 'equipments' | 'sockets' = 'map';
   selectedRoomId: string | null = null;
   isAuthenticated$ = this.authService.isAuthenticated$;
 
@@ -54,7 +58,7 @@ export class App implements OnInit {
   }
 
   onRoomSelected(roomId: string) {
-    this.previousView = this.view === 'room-detail' ? this.previousView : this.view;
+    this.previousView = this.view as 'map' | 'map3d' | 'rooms' | 'equipments' | 'sockets';
     this.selectedRoomId = roomId;
     this.view = 'room-detail';
   }
@@ -71,6 +75,7 @@ export class App implements OnInit {
   logout() {
     this.previousView = 'map';
     this.view = 'map';
+    this.selectedRoomId = null;
     this.authService.logout();
   }
 }

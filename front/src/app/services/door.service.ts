@@ -20,14 +20,18 @@ export class DoorService {
 
   constructor(private http: HttpClient) {}
 
-  fetchDoorsByFloor(floor: number): void {
-    this.http.get<any[]>(`${API_URL}/doors?floor=${floor}`).pipe(
+  getDoorsByFloor(floor: number): Observable<Door[]> {
+    return this.http.get<any[]>(`${API_URL}/doors?floor=${floor}`).pipe(
       map(doors => doors.map(d => ({
         id: d.id,
         floor: d.floor,
         coordinates: typeof d.coordinates === 'string' ? JSON.parse(d.coordinates) : d.coordinates
       })))
-    ).subscribe({
+    );
+  }
+
+  fetchDoorsByFloor(floor: number): void {
+    this.getDoorsByFloor(floor).subscribe({
       next: (doors) => this.doorsSubject.next(doors)
     });
   }

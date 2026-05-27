@@ -24,15 +24,11 @@ router.post('/', verifyAdmin, validate(userSchema), async (req, res) => {
   const { login, password, is_admin } = req.body;
   const hashedPassword = hashPassword(password);
   try {
-    const user = await prisma.user.create({
-      data: {
-        login,
-        password: hashedPassword,
-        is_admin: is_admin || false
-      },
-      select: { id: true, login: true, is_admin: true, last_connection: true }
-    });
-    res.status(201).json(user);
+    const result = await db.query(
+      'INSERT INTO "user" (login, password, is_admin, last_connection) VALUES ($1, $2, $3, NULL) RETURNING id, login, is_admin, last_connection',
+      [login, hashedPassword, is_admin || false]
+    );
+    res.status(201).json(result.rows[0]);
   } catch (err) {
     if (err.code === 'P2002') {
       res.status(409).json({ success: false, message: 'Un utilisateur avec ce login existe déjà.' });

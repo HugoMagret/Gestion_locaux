@@ -73,8 +73,8 @@ export class ProfileComponent {
           }
         });
       },
-      error: (err) => {
-        this.error = 'Mot de passe actuel incorrect';
+      error: () => {
+        this.error = 'Erreur lors de la mise à jour.';
         this.message = '';
         this.notificationService.showError(this.error);
         this.cdr.detectChanges();

@@ -36,11 +36,11 @@
           <th>Salle</th>
           <th>Type</th>
           <th>Étage</th>
-          <th class="center"><i class="fa-solid fa-people-group" title="Capacité"></i> Capacité</th>
-          <th class="center"><i class="fa-solid fa-users" title="Personnel"></i> Personnel</th>
-          <th class="center"><i class="fa-solid fa-box-open" title="Équipements"></i> Équip.</th>
-          <th class="center"><i class="fa-solid fa-plug" title="Prises"></i> Prises</th>
-          <th class="center"><i class="fa-solid fa-door-closed" title="Portes"></i> Portes</th>
+          <th class="center">Capacité</th>
+          <th class="center">Personnel</th>
+          <th class="center">Équip.</th>
+          <th class="center">Prises</th>
+          <th class="center">Portes</th>
           <th></th>
         </tr>
       </thead>
@@ -72,8 +72,8 @@
           </td>
           <td class="center">{{ room.doors }}</td>
           <td class="actions">
-            <button class="btn-delete" (click)="deleteRoom(room.id); $event.stopPropagation()" title="Supprimer">
-              <i class="fa-solid fa-trash-can"></i>
+            <button class="btn-icon-trash" (click)="deleteRoom(room.id); $event.stopPropagation()" title="Supprimer">
+              <i class="fa-solid fa-trash"></i>
             </button>
           </td>
         </tr>
