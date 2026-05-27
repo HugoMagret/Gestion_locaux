@@ -7,7 +7,7 @@ Le schéma ci-dessous présente l'organisation des tables et les relations entre
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.8\textwidth]{img/schema_db.png}
+    \includegraphics[width=0.7\textwidth]{img/schema_db.png}
     \caption{Schéma relationnel de la base de données PostgreSQL}
     \label{fig:mld_db}
 \end{figure}
@@ -18,6 +18,7 @@ Le schéma ci-dessous présente l'organisation des tables et les relations entre
     \item \textbf{Table \texttt{staff}} : Elle contient le personnel affecté aux locaux. La relation \texttt{room\_id} permet de savoir où chaque employé est positionné.
     \item \textbf{Table \texttt{user}} : Cette table stocke les comptes d'accès à l'application, ainsi que les informations de profil. Le champ \texttt{is\_admin} distingue les utilisateurs avec droits d'administration des utilisateurs standards.
     \item \textbf{Tables de référence} : \texttt{room\_type}, \texttt{equipment\_type} et \texttt{socket\_type} garantissent la cohérence des catégories utilisées dans les salles, le matériel et les prises.
+    \item \textbf{Table \texttt{room\_type}} : contient le label et un champ \texttt{color} (couleur hexadécimale) utilisé par le frontend pour coloriser les salles dans les listes.
     \item \textbf{Table \texttt{equipment}} : Elle représente l'inventaire matériel d'une salle. Chaque équipement est lié à un type et peut être rattaché à une salle.
     \item \textbf{Table \texttt{socket}} : Elle répertorie les prises présentes dans chaque salle et les associe à un type de connectique.
     \item \textbf{Table \texttt{door}} : Elle modélise les points d'accès (portes) sur les plans, avec leur étage et leurs coordonnées stockées en \texttt{JSONB}.

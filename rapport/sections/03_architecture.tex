@@ -14,6 +14,9 @@ Pour dépasser les limites des représentations planes, nous avons intégré la 
 \section[Backend : Node.js]{Backend : Node.js \raisebox{-0.2\height}{\includegraphics[height=0.6cm]{img/logo_nodejs.png}}}
 Bien que notre formation de 5 ans en informatique nous ait permis d'acquérir une grande expertise sur le langage comme Java, nous avons décidé d'implémenter notre API Backend en Node.js. Ce choix est doublement stratégique. D'une part, Node.js est extrêmement populaire dans l'industrie actuelle pour le développement de micro-services et d'API REST. D'autre part, cela nous permettait de sortir de notre zone de confort académique (Java) pour relever un défi technique pertinent pour notre future insertion professionnelle.
 
+\subsection{Prisma ORM}
+Le backend utilise Prisma comme ORM pour interagir avec PostgreSQL. Prisma fournit un client typé généré à partir du schéma de données, facilite la rédaction de requêtes et la gestion des migrations. Nous utilisons également \texttt{prisma.\$transaction()} pour réaliser des opérations atomiques (par exemple l'import transactionnel des plans d'étage), et un singleton de connexion (\texttt{back/config/prisma.js}) pour centraliser l'initialisation du client Prisma et éviter les dépassements de connexions en environnement serveur.
+
 \section[Base de données : PostgreSQL]{Base de données : PostgreSQL \raisebox{-0.2\height}{\includegraphics[height=0.6cm]{img/logo_postgresql.jpeg}}}
 Le système devant gérer de potentielles écritures simultanées (modification de salles, ajout de matériels), nous avons rapidement écarté SQLite. Très léger, SQLite nous semblait trop faible pour nos besoins. Notre choix final s'est donc porté sur PostgreSQL, un Système de Gestion de Base de Données Relationnelle (SGBDR) robuste et open-source. Il s'intègre également de manière fluide avec Node.js.
 

@@ -29,3 +29,10 @@ La figure ci-dessous illustre l'interface principale de l'application, montrant 
     \caption{Interface de visualisation des plans JSON avec options d'export PDF}
     \label{fig:screenshot-interface}
 \end{figure}
+
+\subsection{Vue 3D et rendu procédural}
+
+L'application propose également une vue 3D (Three.js) générée de façon procédurale à partir des coordonnées 2D contenues dans les plans JSON. Les murs et volumes sont construits à l'aide de primitives (par exemple \texttt{BoxGeometry}) et texturés de manière simple pour conserver une lisibilité optimale. La sélection d'éléments en 3D repose sur le raycasting (projection d'un vecteur depuis la caméra vers le curseur) et la navigation utilise \texttt{OrbitControls} pour rotation et zoom.
+
+\subsection{Import JSON des étages}
+Les plans sont importés au format JSON via une API dédiée. Le format attendu contient les métadonnées de l'étage et des listes structurées : \texttt{rooms[]}, \texttt{doors[]}, \texttt{equipments[]}, \texttt{sockets[]}. L'import côté backend est transactionnel : lors d'un import massif nous utilisons \texttt{prisma.\$transaction()} pour garantir que l'opération est atomique (soit tout est appliqué, soit rien en cas d'erreur). Le backend valide également le format et normalise les types (création automatique des \texttt{room\_type} ou \texttt{equipment\_type} si nécessaire).

@@ -22,9 +22,13 @@ erDiagram
         JSONB coordinates
     }
 
+    %% Remarque : la colonne `floor` dans `DOOR` est un entier indiquant l'étage
+    %% (pas de table `floor` séparée). Les portes sont regroupées par étage côté application.
+
     ROOM_TYPE {
         UUID id PK
         VARCHAR label
+        VARCHAR color
     }
 
     STAFF {
