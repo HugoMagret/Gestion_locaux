@@ -1,0 +1,103 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model RoomType {
+  id    String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  label String @unique @db.VarChar(255)
+  color String @default("#3498db") @db.VarChar(7)
+  rooms Room[]
+
+  @@map("room_type")
+}
+
+model EquipmentType {
+  id         String      @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  label      String      @unique @db.VarChar(255)
+  equipments Equipment[]
+
+  @@map("equipment_type")
+}
+
+model SocketType {
+  id      String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  label   String   @unique @db.VarChar(255)
+  sockets Socket[]
+
+  @@map("socket_type")
+}
+
+model Room {
+  id           String     @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name         String     @db.VarChar(255)
+  max_capacity Int?
+  room_type_id String?    @db.Uuid
+  roomType     RoomType?  @relation(fields: [room_type_id], references: [id], onDelete: Cascade)
+  doors        Int?       @default(1)
+  floor        Int?       @default(0)
+  coordinates  Json?      @default("{\"x\": 0, \"y\": 0, \"width\": 100, \"height\": 100}")
+  
+  staff      Staff[]
+  equipments Equipment[]
+  sockets    Socket[]
+
+  @@map("room")
+}
+
+model Door {
+  id          String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  floor       Int?   @default(0)
+  coordinates Json
+
+  @@map("door")
+}
+
+model Staff {
+  id         String  @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  last_name  String  @db.VarChar(255)
+  first_name String  @db.VarChar(255)
+  email      String? @db.VarChar(255)
+  phone      String? @db.VarChar(50)
+  room_id    String? @db.Uuid
+  room       Room?   @relation(fields: [room_id], references: [id], onDelete: SetNull)
+
+  @@map("staff")
+}
+
+model Equipment {
+  id                String         @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name              String         @db.VarChar(255)
+  serial_number     String?        @db.VarChar(255)
+  equipment_type_id String?        @db.Uuid
+  equipmentType     EquipmentType? @relation(fields: [equipment_type_id], references: [id], onDelete: Cascade)
+  room_id           String?        @db.Uuid
+  room              Room?          @relation(fields: [room_id], references: [id], onDelete: SetNull)
+
+  @@map("equipment")
+}
+
+model Socket {
+  id             String      @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  identifier     String      @db.VarChar(255)
+  socket_type_id String?     @db.Uuid
+  socketType     SocketType? @relation(fields: [socket_type_id], references: [id], onDelete: Cascade)
+  room_id        String?     @db.Uuid
+  room           Room?       @relation(fields: [room_id], references: [id], onDelete: Cascade)
+
+  @@map("socket")
+}
+
+model User {
+  id              String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  login           String    @unique @db.VarChar(255)
+  password        String    @db.VarChar(255)
+  is_admin        Boolean?  @default(false)
+  last_connection DateTime? @default(now()) @db.Timestamp(6)
+
+  @@map("user")
+}

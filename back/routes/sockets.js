@@ -1,43 +1,81 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../config/db');
+const prisma = require('../config/prisma');
+const { verifyAdmin } = require('../middleware/auth.middleware');
+const { validate } = require('../middleware/validate.middleware');
+const { socketSchema } = require('../validators/schemas');
 
 // GET all sockets
 router.get('/', async (req, res) => {
   try {
-    const result = await db.query(`
-      SELECT socket.id, socket.identifier, socket.socket_type_id, socket.room_id, socket_type.label as socket_type_label, room.name as room_name 
-      FROM socket 
-      LEFT JOIN socket_type ON socket.socket_type_id = socket_type.id
-      LEFT JOIN room ON socket.room_id = room.id
-    `);
-    res.json(result.rows);
+    const sockets = await prisma.socket.findMany({
+      include: {
+        room: { select: { name: true, room_type_id: true } },
+        socketType: { select: { label: true } }
+      },
+      orderBy: { identifier: 'asc' }
+    });
+    
+    // Flatten info for frontend
+    const formattedSockets = sockets.map(s => ({
+      ...s,
+      room_name: s.room?.name || null,
+      socket_type_label: s.socketType?.label || null
+    }));
+    res.json(formattedSockets);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ success: false, message: err.message });
   }
 });
 
 // POST new socket
-router.post('/', async (req, res) => {
-  const { identifier, socket_type_id, room_id } = req.body;
+router.post('/', verifyAdmin, validate(socketSchema), async (req, res) => {
   try {
-    const result = await db.query(
-      'INSERT INTO socket (identifier, socket_type_id, room_id) VALUES ($1, $2, $3) RETURNING id, identifier, socket_type_id, room_id',
-      [identifier, socket_type_id, room_id]
-    );
-    res.status(201).json(result.rows[0]);
+    const socket = await prisma.socket.create({
+      data: req.body,
+      include: { 
+        room: { select: { name: true } },
+        socketType: { select: { label: true } }
+      }
+    });
+    res.status(201).json({ 
+      ...socket, 
+      room_name: socket.room?.name || null,
+      socket_type_label: socket.socketType?.label || null
+    });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(409).json({ success: false, message: err.message });
+  }
+});
+
+// PUT update socket
+router.put('/:id', verifyAdmin, validate(socketSchema), async (req, res) => {
+  try {
+    const socket = await prisma.socket.update({
+      where: { id: req.params.id },
+      data: req.body,
+      include: { 
+        room: { select: { name: true } },
+        socketType: { select: { label: true } }
+      }
+    });
+    res.json({ 
+      ...socket, 
+      room_name: socket.room?.name || null,
+      socket_type_label: socket.socketType?.label || null
+    });
+  } catch (err) {
+    res.status(409).json({ success: false, message: err.message });
   }
 });
 
 // DELETE socket
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', verifyAdmin, async (req, res) => {
   try {
-    await db.query('DELETE FROM socket WHERE id = $1', [req.params.id]);
+    await prisma.socket.delete({ where: { id: req.params.id } });
     res.status(204).send();
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ success: false, message: err.message });
   }
 });
 
