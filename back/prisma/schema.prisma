@@ -97,7 +97,7 @@ model User {
   login           String    @unique @db.VarChar(255)
   password        String    @db.VarChar(255)
   is_admin        Boolean?  @default(false)
-  last_connection DateTime? @default(now()) @db.Timestamp(6)
+  last_connection DateTime? @db.Timestamp(6)
 
   @@map("user")
 }
