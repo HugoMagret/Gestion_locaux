@@ -17,6 +17,11 @@ Bien que notre formation de 5 ans en informatique nous ait permis d'acquérir un
 \subsection{Prisma ORM}
 Le backend utilise Prisma comme ORM pour interagir avec PostgreSQL. Prisma fournit un client typé généré à partir du schéma de données, facilite la rédaction de requêtes et la gestion des migrations. Nous utilisons également \texttt{prisma.\$transaction()} pour réaliser des opérations atomiques (par exemple l'import transactionnel des plans d'étage), et un singleton de connexion (\texttt{back/config/prisma.js}) pour centraliser l'initialisation du client Prisma et éviter les dépassements de connexions en environnement serveur.
 
+\subsection{Validation et Traitement des Plans JSON}
+Peu importe la méthode de création utilisée côté client (éditeur en temps réel, formulaire ou upload de fichier), les plans sont importés et traités au format JSON via une route API dédiée. Le format attendu contient les métadonnées de l'étage et des listes structurées : \texttt{rooms[]}, \texttt{doors[]}, \texttt{equipments[]}, \texttt{sockets[]}.
+
+La sécurité et la cohérence des données sont assurées par l'ORM. L'import côté backend est entièrement transactionnel : lors d'un import massif, nous utilisons la méthode \texttt{prisma.\$transaction()} pour garantir que l'opération est atomique (soit tout l'étage est enregistré, soit la transaction est annulée en cas d'erreur de format). Le backend valide également le payload et normalise les entités en base, par exemple via la création automatique des références \texttt{room\_type} ou \texttt{equipment\_type} si elles n'existent pas encore.
+
 \section[Base de données : PostgreSQL]{Base de données : PostgreSQL \raisebox{-0.2\height}{\includegraphics[height=0.6cm]{img/logo_postgresql.jpeg}}}
 Le système devant gérer de potentielles écritures simultanées (modification de salles, ajout de matériels), nous avons rapidement écarté SQLite. Très léger, SQLite nous semblait trop faible pour nos besoins. Notre choix final s'est donc porté sur PostgreSQL, un Système de Gestion de Base de Données Relationnelle (SGBDR) robuste et open-source. Il s'intègre également de manière fluide avec Node.js.
 
