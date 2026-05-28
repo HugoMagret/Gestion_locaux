@@ -11,6 +11,9 @@ Pour l'interface utilisateur, notre choix s'est porté sur le framework Angular.
 \subsection{Rendu 3D et interactivité procédurale}
 Pour dépasser les limites des représentations planes, nous avons intégré la bibliothèque Three.js. Ce moteur permet une génération procédurale des volumes 3D à partir des coordonnées JSON 2D. Chaque mur est calculé et généré dynamiquement, offrant une immersion architecturale. L'interactivité est assurée par deux mécanismes complémentaires : les OrbitControls pour une navigation fluide (rotation, zoom) autour du modèle, et une technique de Raycasting qui projette un vecteur depuis la caméra vers le curseur pour intercepter les surfaces cliquables, permettant ainsi une sélection précise des salles dans l'espace tridimensionnel.
 
+\subsection{Génération PDF côté client}
+Afin de limiter la charge sur le serveur Node.js, la génération des documents PDF est déléguée au navigateur client. L'utilisation de la bibliothèque \texttt{jspdf} au sein des composants Angular permet de convertir les plans et l'état des données en documents imprimables localement. Ce déport de charge optimise les performances de l'application tout en garantissant un export immédiat.
+
 \section[Backend : Node.js]{Backend : Node.js \raisebox{-0.2\height}{\includegraphics[height=0.6cm]{img/logo_nodejs.png}}}
 Bien que notre formation de 5 ans en informatique nous ait permis d'acquérir une grande expertise sur le langage comme Java, nous avons décidé d'implémenter notre API Backend en Node.js. Ce choix est doublement stratégique. D'une part, Node.js est extrêmement populaire dans l'industrie actuelle pour le développement de micro-services et d'API REST. D'autre part, cela nous permettait de sortir de notre zone de confort académique (Java) pour relever un défi technique pertinent pour notre future insertion professionnelle.
 
