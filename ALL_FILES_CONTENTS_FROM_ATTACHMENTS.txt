@@ -1,0 +1,936 @@
+Generated from user attachments on: 2026-05-26
+
+--- Attachment: front/src/app/components/equipment-type-manager/equipment-type-manager.css ---
+
+(attachment summarized; content omitted)
+
+--- Attachment: front/src/app/components/equipment-type-manager/equipment-type-manager.html ---
+<div class="manager-container">
+  <header class="manager-header">
+    <h1>Types de Matériels</h1>
+    <p>Gérez les différentes catégories d'équipements et fournitures</p>
+  </header>
+
+  <div class="add-section card">
+    <h3>Ajouter un nouveau type</h3>
+    <div class="form-group">
+      /* Lines 10-19 omitted */
+    </div>
+  </div>
+
+  <div class="list-section card">
+    <div class="table-responsive">
+      /* Lines 24-45 omitted */
+    </div>
+  </div>
+</div>
+
+--- Attachment: front/src/app/components/equipment-type-manager/equipment-type-manager.ts ---
+@Component({
+  selector: 'app-equipment-type-manager',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  templateUrl: './equipment-type-manager.html',
+  styleUrls: ['./equipment-type-manager.css']
+})
+export class EquipmentTypeManagerComponent implements OnInit {
+  equipmentTypes: EquipmentType[] = [];
+  newTypeLabel: string = '';
+
+  constructor(
+    private referenceService: ReferenceService,
+    private cdr: ChangeDetectorRef
+  ) {}
+  /* Lines 22-57 omitted */
+}
+
+--- Attachment: front/src/app/components/floor-manager/floor-manager.css ---
+.manager-container { padding: 40px; max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px; }
+.manager-header h1 { font-size: 32px; font-weight: 800; margin-bottom: 8px; }
+.manager-header p { color: #64748b; }
+.card { background: white; border-radius: 16px; padding: 24px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+
+.upload-zone {/* Lines 7-13 omitted */}
+.upload-zone.dragging { border-color: #3b82f6; background: #eff6ff; transform: scale(1.01); }
+
+--- Attachment: front/src/app/components/floor-manager/floor-manager.html ---
+<div class="manager-container">
+  <header class="manager-header">
+    /* Lines 3-4 omitted */
+  </header>
+
+  <div class="floor-list-section">
+    /* Lines 7-27 omitted */
+  </div>
+
+  <div class="card mt-4">
+    /* Lines 30-83 omitted */
+  </div>
+</div>
+
+<div class="modal-backdrop" *ngIf="showInfoModal">
+  /* Lines 87-96 omitted */
+</div>
+
+<!-- Modal de confirmation de suppression -->
+<div class="modal-backdrop" *ngIf="isModalOpen">
+  /* Lines 100-114 omitted */
+</div>
+
+--- Attachment: front/src/app/components/floor-manager/floor-manager.ts ---
+@Component({
+  selector: 'app-floor-manager',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  templateUrl: './floor-manager.html',
+  styleUrls: ['./floor-manager.css']
+})
+export class FloorManagerComponent implements OnInit {
+  floors: Floor[] = [];
+  allRooms: any[] = [];
+  isDragging = false;
+  addMode: 'file' | 'text' | 'form' = 'file';
+  /* Lines 26-573 omitted */
+}
+
+--- Attachment: front/src/app/components/login/login.css ---
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* Lines 5-8 omitted */
+}
+.login-card {/* Lines 10-17 omitted */}
+h1 {/* Lines 19-22 omitted */}
+p {/* Lines 24-26 omitted */}
+.form-group {/* Lines 28-30 omitted */}
+label {/* Lines 32-36 omitted */}
+input {/* Lines 38-44 omitted */}
+input:focus {/* Lines 46-49 omitted */}
+.login-button {/* Lines 51-61 omitted */}
+.login-button:hover {/* Lines 63-64 omitted */}
+.error-message {/* Lines 66-72 omitted */}
+
+--- Attachment: front/src/app/components/login/login.html ---
+<div class="login-container">
+  <div class="login-card">
+    <h1>Gestion des Locaux</h1>
+    <p>Veuillez vous connecter pour accéder à l'application</p>
+    
+    <form (ngSubmit)="onLogin()">
+      <div class="form-group">
+        /* Lines 8-17 omitted */
+      </div>
+      
+      <div class="form-group">
+        /* Lines 20-29 omitted */
+      </div>
+      
+      <button type="submit" class="login-button">Se connecter</button>
+    </form>
+  </div>
+</div>
+
+--- Attachment: front/src/app/components/login/login.ts ---
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+/* Lines 3-5 omitted */
+
+@Component({
+  selector: 'app-login',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  templateUrl: './login.html',
+  styleUrls: ['./login.css']
+})
+export class LoginComponent {
+  username = 'admin';
+  password = '';
+
+  constructor(private authService: AuthService) {}
+
+  onLogin() {
+    this.authService.login(this.username, this.password).subscribe();
+  }
+}
+
+--- Attachment: front/src/app/components/map/map.css ---
+.map-container {/* Lines 2-6 omitted */}
+
+/* Left Sidebar Styles */
+.left-sidebar {/* Lines 10-19 omitted */}
+
+.logo {/* Lines 22-26 omitted */}
+
+.menu-section {/* Lines 29-32 omitted */}
+
+.section-title {/* Lines 35-40 omitted */}
+
+/* Segmented Control for Buildings */
+.segmented-control {/* Lines 44-48 omitted */}
+
+.segmented-control button {/* Lines 51-61 omitted */}
+
+.segmented-control button.active {/* Lines 64-67 omitted */}
+
+/* Floor Selector */
+.floor-selector {/* Lines 71-74 omitted */}
+
+--- Attachment: front/src/app/components/map/map.html ---
+<div class="map-container">
+  <!-- Left Sidebar (Menu) -->
+  <nav class="left-sidebar">
+    /* Lines 4-58 omitted */
+  </nav>
+
+  <!-- Central Map Viewport -->
+  <div class="map-viewport">
+/* Lines 62-116 omitted */
+  </div>
+
+  <!-- Right Sidebar (Details) -->
+  <aside class="side-panel" *ngIf="selectedRoom; else noSelection">
+    /* Lines 120-189 omitted */
+  </aside>
+
+  <ng-template #noSelection>
+    /* Lines 192-199 omitted */
+  </ng-template>
+</div>
+
+--- Attachment: front/src/app/components/map/map.ts ---
+@Component({
+  selector: 'app-map',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  templateUrl: './map.html',
+  styleUrls: ['./map.css'],
+})
+export class MapComponent implements OnInit {
+  @Output() roomSelected = new EventEmitter<string>();
+  allRooms: Room[] = [];
+  filteredRooms: Room[] = [];
+  allDoors: Door[] = [];
+  filteredDoors: Door[] = [];
+  selectedRoom: Room | null = null;
+
+  selectedFloor = 0;
+  expandedFloor: number | null = null;
+  /* Lines 26-165 omitted */
+}
+
+--- Attachment: front/src/app/components/map3d/map3d.css ---
+.map-3d-container {
+  width: 100%;
+  height: 100vh;
+  background-color: var(--primary-bg);
+  overflow: hidden;
+}
+
+.map-3d-container canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+--- Attachment: front/src/app/components/map3d/map3d.html ---
+<div #rendererContainer class="map-3d-container"></div>
+
+--- Attachment: front/src/app/components/map3d/map3d.ts ---
+
+(attachment empty)
+
+--- Attachment: front/src/app/components/profile/profile.css ---
+.profile-container {/* Lines 2-5 omitted */}
+
+.profile-card {/* Lines 8-12 omitted */}
+
+h2 {/* Lines 15-17 omitted */}
+
+.user-info {/* Lines 20-22 omitted */}
+
+hr {/* Lines 25-28 omitted */}
+
+h3 {/* Lines 31-34 omitted */}
+
+.form-group {/* Lines 37-41 omitted */}
+
+.form-group label {/* Lines 44-47 omitted */}
+
+input {/* Lines 50-54 omitted */}
+
+.btn-save {/* Lines 57-66 omitted */}
+
+.btn-save:disabled {/* Lines 69-71 omitted */}
+
+.success-message {/* Lines 74-80 omitted */}
+
+--- Attachment: front/src/app/components/profile/profile.html ---
+<div class="profile-container">
+  <div class="profile-card">
+    <h2><i class="fa-solid fa-circle-user"></i> Mon Profil</h2>
+    <div class="user-info">
+      <p><strong>Login :</strong> {{ currentUser?.login }}</p>
+      /* Lines 6-7 omitted */
+    </div>
+
+    <hr>
+
+    <h3><i class="fa-solid fa-key"></i> Modifier mon mot de passe</h3>
+    <form (ngSubmit)="onChangePassword()">
+      /* Lines 13-32 omitted */
+    </form>
+  </div>
+</div>
+
+--- Attachment: front/src/app/components/profile/profile.ts ---
+@Component({
+  selector: 'app-profile',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  templateUrl: './profile.html',
+  styleUrls: ['./profile.css']
+})
+export class ProfileComponent {
+  newPassword = '';
+  confirmPassword = '';
+  currentPassword = '';
+  message = '';
+  error = '';
+
+  constructor(private authService: AuthService, private cdr: ChangeDetectorRef) {}
+
+  get currentUser() {/* Lines 23-24 omitted */}
+
+  onChangePassword() {/* Lines 27-57 omitted */}
+}
+
+--- Attachment: front/src/app/components/room-detail/room-detail.css ---
+.detail-container {/* Lines 2-6 omitted */}
+
+.detail-header {/* Lines 9-13 omitted */}
+
+.btn-back {/* Lines 16-27 omitted */}
+
+.btn-back:hover {/* Lines 30-31 omitted */}
+
+.header-title h1 {/* Lines 34-38 omitted */}
+
+.header-title p {/* Lines 41-44 omitted */}
+
+/* Tabs */
+.detail-tabs {/* Lines 48-55 omitted */}
+
+.detail-tabs button {/* Lines 58-70 omitted */}
+
+.detail-tabs button.active {/* Lines 73-76 omitted */}
+
+detail-tabs button:hover:not(.active) {/* Lines 79-80 omitted */}
+
+--- Attachment: front/src/app/components/room-detail/room-detail.html ---
+<div class="detail-container">
+  <header class="detail-header">
+    /* Lines 3-10 omitted */
+  </header>
+
+  /* Lines 12-199 omitted */
+</div>
+
+<!-- Modal d'édition du membre du personnel -->
+<div class="modal-overlay" *ngIf="editingStaff" (click)="closeEditStaffModal()">
+  /* Lines 203-233 omitted */
+</div>
+
+<!-- Modal d'édition de la connectique -->
+<div class="modal-overlay" *ngIf="editingSocket" (click)="closeEditSocketModal()">
+  /* Lines 237-262 omitted */
+</div>
+
+--- Attachment: front/src/app/components/room-detail/room-detail.ts ---
+// Importation des deux types de modules de formulaires pour éviter les erreurs NG8002
+/* Lines 4-21 omitted */
+
+@Component({
+  selector: 'app-room-detail',
+  standalone: true,
+  // Ajout de FormsModule pour [ngModel] et ReactiveFormsModule pour [formGroup]
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  templateUrl: './room-detail.html',
+  styleUrls: ['./room-detail.css']
+})
+export class RoomDetailComponent implements OnInit {
+  @Input() roomId!: string;
+  /* Lines 32-262 omitted */
+}
+
+--- Attachment: front/src/app/components/room-list/room-list.css ---
+:host {/* Lines 2-5 omitted */}
+
+.room-container {/* Lines 8-15 omitted */}
+
+/* Header */
+.page-header {/* Lines 19-22 omitted */}
+
+.header-left {/* Lines 25-28 omitted */}
+
+.header-left h1 {/* Lines 31-35 omitted */}
+
+.header-left h1 i {/* Lines 38-40 omitted */}
+
+.result-count {/* Lines 43-46 omitted */}
+
+/* Toolbar */
+.toolbar {/* Lines 50-57 omitted */}
+
+.search-wrapper {/* Lines 60-65 omitted */}
+
+search-wrapper input {/* Lines 68-75 omitted */}
+
+--- Attachment: front/src/app/components/room-list/room-list.html ---
+<div class="room-container">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-left">
+      /* Lines 5-7 omitted */
+    </div>
+  </div>
+
+  <!-- Filters toolbar -->
+  <div class="toolbar">
+    /* Lines 12-29 omitted */
+  </div>
+
+  <!-- Table -->
+  <div class="table-wrapper" *ngIf="filteredRooms.length > 0; else emptyState">
+    /* Lines 33-82 omitted */
+  </div>
+
+  <!-- Empty state -->
+  <ng-template #emptyState>
+    /* Lines 86-92 omitted */
+  </ng-template>
+</div>
+
+--- Attachment: front/src/app/components/room-list/room-list.ts ---
+@Component({
+  selector: 'app-room-list',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  templateUrl: './room-list.html',
+  styleUrls: ['./room-list.css']
+})
+export class RoomListComponent implements OnInit {
+  @Output() roomSelected = new EventEmitter<string>();
+  allRooms: Room[] = [];
+  filteredRooms: Room[] = [];
+  roomTypes: RoomType[] = [];
+  
+  // Filter options
+  buildings: string[] = [];
+  floors: number[] = [];
+  
+  // Current filters
+  /* Lines 28-98 omitted */
+}
+
+--- Attachment: front/src/app/components/room-type-manager/room-type-manager.css ---
+.manager-container { padding: 40px; max-width: 700px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px; }
+.manager-header h1 { font-size: 32px; font-weight: 800; margin-bottom: 8px; color: #0f172a; }
+.manager-header p { color: #64748b; }
+
+.card { background: white; border-radius: 16px; padding: 24px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+
+.add-section h3 { font-size: 18px; font-weight: 700; margin-bottom: 16px; color: #1e293b; }
+
+--- Attachment: front/src/app/components/room-type-manager/room-type-manager.html ---
+<div class="manager-container">
+  <header class="manager-header">
+    <h1>Types de Salles</h1>
+    <p>Gérez les différentes catégories de locaux</p>
+  </header>
+
+  <div class="add-section card">
+    <h3>Ajouter un nouveau type</h3>
+    <div class="form-group" style="display: flex; gap: 12px; align-items: center;">
+      /* Lines 10-28 omitted */
+    </div>
+  </div>
+
+  <div class="list-section card">
+    <div class="table-responsive">
+      /* Lines 33-60 omitted */
+    </div>
+  </div>
+</div>
+
+--- Attachment: front/src/app/components/room-type-manager/room-type-manager.ts ---
+@Component({
+  selector: 'app-room-type-manager',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  templateUrl: './room-type-manager.html',
+  styleUrls: ['./room-type-manager.css']
+})
+export class RoomTypeManagerComponent implements OnInit {
+  roomTypes: RoomType[] = [];
+  newTypeLabel: string = '';
+  newTypeColor: string = '#3498db';
+
+  constructor(
+    private referenceService: ReferenceService,
+    private cdr: ChangeDetectorRef
+  ) {}
+  /* Lines 23-59 omitted */
+}
+
+--- Attachment: front/src/app/components/socket-list/socket-list.css ---
+.socket-container { padding: 40px; max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px; }
+.socket-header { display: flex; justify-content: space-between; align-items: flex-end; }
+.socket-header h1 { font-size: 32px; font-weight: 800; margin-bottom: 8px; color: #0f172a; }
+.socket-header p { color: #64748b; }
+
+.add-socket-section h3 { font-size: 18px; font-weight: 700; margin-bottom: 16px; color: #1e293b; }
+
+--- Attachment: front/src/app/components/socket-list/socket-list.html ---
+<div class="socket-container">
+  <header class="socket-header">
+    <div>
+      /* Lines 4-6 omitted */
+    </div>
+  </header>
+
+  <div class="add-socket-section card">
+    /* Lines 10-25 omitted */
+  </div>
+
+  <div class="socket-card card">
+    /* Lines 28-55 omitted */
+  </div>
+</div>
+
+<div class="modal-overlay" *ngIf="editingSocket" (click)="closeEditSocketModal()">
+  <div class="modal-card card" (click)="$event.stopPropagation()">
+    /* Lines 60-89 omitted */
+  </div>
+</div>
+
+--- Attachment: front/src/app/components/socket-list/socket-list.ts ---
+@Component({
+  selector: 'app-socket-list',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  templateUrl: './socket-list.html',
+  styleUrls: ['./socket-list.css']
+})
+export class SocketListComponent implements OnInit {
+  /* Lines 21-22 omitted */
+  socketsWithRooms$!: Observable<any[]>;
+  rooms$!: Observable<Room[]>;
+  socketTypes: SocketType[] = [];
+
+  newSocket = {
+    identifier: '',
+    socket_type_id: '',
+    room_id: ''
+  };
+  /* Lines 31-125 omitted */
+}
+
+--- Attachment: front/src/app/components/socket-type-manager/socket-type-manager.css ---
+.manager-container { padding: 40px; max-width: 700px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px; }
+.manager-header h1 { font-size: 32px; font-weight: 800; margin-bottom: 8px; color: #0f172a; }
+.manager-header p { color: #64748b; }
+
+.card { background: white; border-radius: 16px; padding: 24px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+
+/* Lines 7-40 omitted */
+.empty-state { text-align: center; padding: 32px !important; color: #94a3b8; }
+
+--- Attachment: front/src/app/components/socket-type-manager/socket-type-manager.html ---
+<div class="manager-container">
+  <header class="manager-header">
+    <h1>Types de Connectiques</h1>
+    <p>Gérez les différentes catégories de prises et connexions</p>
+  </header>
+
+  <div class="add-section card">
+    <h3>Ajouter un nouveau type</h3>
+    <div class="form-group">
+      /* Lines 10-19 omitted */
+    </div>
+  </div>
+
+  <div class="list-section card">
+    <div class="table-responsive">
+      /* Lines 24-45 omitted */
+    </div>
+  </div>
+</div>
+
+--- Attachment: front/src/app/components/socket-type-manager/socket-type-manager.ts ---
+@Component({
+  selector: 'app-socket-type-manager',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  templateUrl: './socket-type-manager.html',
+  styleUrls: ['./socket-type-manager.css']
+})
+export class SocketTypeManagerComponent implements OnInit {
+  socketTypes: SocketType[] = [];
+  newTypeLabel: string = '';
+
+  constructor(
+    private referenceService: ReferenceService,
+    private cdr: ChangeDetectorRef
+  ) {}
+  /* Lines 22-57 omitted */
+}
+
+--- Attachment: front/src/app/components/staff-list/staff-list.css ---
+.staff-container { padding: 40px; max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px; }
+.staff-header { display: flex; justify-content: space-between; align-items: flex-end; }
+.staff-header h1 { font-size: 32px; font-weight: 800; margin-bottom: 8px; color: #0f172a; }
+.staff-header p { color: #64748b; }
+
+.btn-refresh {/* Lines 7-15 omitted */}
+
+--- Attachment: front/src/app/components/staff-list/staff-list.html ---
+<div class="staff-container">
+  <header class="staff-header">
+    /* Lines 3-7 omitted */
+  </header>
+
+  <div class="add-staff-section card">
+    /* Lines 10-30 omitted */
+  </div>
+
+  <div class="staff-card card">
+    /* Lines 33-80 omitted */
+  </div>
+</div>
+
+<!-- Modal d'édition du membre du personnel -->
+<div class="modal-overlay" *ngIf="editingStaff" (click)="closeEditStaffModal()">
+  /* Lines 85-122 omitted */
+</div>
+
+--- Attachment: front/src/app/components/staff-list/staff-list.ts ---
+@Component({
+  selector: 'app-staff-list',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  templateUrl: './staff-list.html',
+  styleUrls: ['./staff-list.css']
+})
+export class StaffListComponent implements OnInit {
+  /* Lines 19-20 omitted */
+  staffWithRooms$!: Observable<any[]>;
+  rooms$!: Observable<Room[]>;
+  
+  newStaff = {
+    first_name: '',
+    last_name: '',
+    room_id: '',
+    phone: '',
+    email: ''
+  };
+  editingStaff: any = null;
+  /* Lines 31-130 omitted */
+}
+
+--- Attachment: front/src/app/components/user-list/user-list.css ---
+.user-manager {/* Lines 2-5 omitted */}
+
+--- Attachment: front/src/app/components/user-list/user-list.html ---
+<div class="user-manager">
+  <div class="header">
+    <h2>Gestion des Utilisateurs</h2>
+  </div>
+
+  <div class="add-user-card">
+    <h3>Ajouter un utilisateur</h3>
+    <form (ngSubmit)="onAddUser()" class="user-form">
+      <div class="form-row">
+        /* Lines 10-27 omitted */
+      </div>
+    </form>
+  </div>
+
+  <div class="user-list-card">
+    <div *ngIf="loading" class="loader">Chargement...</div>
+    
+    <table *ngIf="!loading">
+      /* Lines 35-60 omitted */
+    </table>
+  </div>
+</div>
+
+--- Attachment: front/src/app/components/user-list/user-list.ts ---
+@Component({
+  selector: 'app-user-list',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  templateUrl: './user-list.html',
+  styleUrls: ['./user-list.css']
+})
+export class UserListComponent implements OnInit {
+  users: User[] = [];
+  newUser: User = { login: '', password: '', is_admin: false };
+  loading = false;
+
+  constructor(
+    private userService: UserService,
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef
+  ) {}
+  /* Lines 24-87 omitted */
+}
+
+--- Attachment: front/src/app/interceptors/error.interceptor.ts ---
+(attachment summarized; content omitted)
+
+--- Attachment: front/src/app/models/equipment-type.model.ts ---
+export class EquipmentType {
+  id: string;
+  label: string;
+
+  constructor(data: any) {
+    this.id = data.id;
+    this.label = data.label;
+  }
+}
+
+--- Attachment: front/src/app/models/equipment.model.ts ---
+(attachment summarized; content omitted)
+
+--- Attachment: front/src/app/models/room-type.model.ts ---
+export class RoomType {
+  id: string;
+  label: string;
+  color: string;
+
+  constructor(data: any) {
+    this.id = data.id;
+    this.label = data.label;
+    this.color = data.color || '#3498db';
+  }
+}
+
+--- Attachment: front/src/app/models/room.model.ts ---
+(attachment summarized; content omitted)
+
+--- Attachment: front/src/app/models/socket-type.model.ts ---
+export class SocketType {
+  id: string;
+  label: string;
+
+  constructor(data: any) {
+    this.id = data.id;
+    this.label = data.label;
+  }
+}
+
+--- Attachment: front/src/app/models/socket.model.ts ---
+export class Socket {
+  id: string;
+  identifier: string;
+  socket_type_id: string;
+  room_id: string;
+  
+  // Joined field
+  socket_type_label?: string;
+
+  constructor(data: any) {
+    this.id = data.id;
+    this.identifier = data.identifier;
+    this.socket_type_id = data.socket_type_id;
+    this.room_id = data.room_id;
+    this.socket_type_label = data.socket_type_label;
+  }
+}
+
+--- Attachment: front/src/app/models/staff.model.ts ---
+export class Staff {
+  id: string;
+  first_name: string;
+  last_name: string;
+  room_id: string | null;
+  phone?: string;
+  email?: string;
+
+  constructor(data: any) {
+    this.id = data.id;
+    this.first_name = data.first_name;
+    this.last_name = data.last_name;
+    this.room_id = data.room_id;
+    this.phone = data.phone;
+    this.email = data.email;
+  }
+
+  get fullName(): string {
+    return `${this.first_name} ${this.last_name}`;
+  }
+}
+
+--- Attachment: front/src/app/services/auth.service.ts ---
+(attachment summarized; content omitted)
+
+--- Attachment: front/src/app/services/door.service.ts ---
+(attachment summarized; content omitted)
+
+--- Attachment: front/src/app/services/equipment.service.ts ---
+(attachment summarized; content omitted)
+
+--- Attachment: front/src/app/services/floor.service.ts ---
+(attachment summarized; content omitted)
+
+--- Attachment: front/src/app/services/notification.service.ts ---
+(attachment summarized; content omitted)
+
+--- Attachment: front/src/app/services/reference.service.ts ---
+(attachment summarized; content omitted)
+
+--- Attachment: front/src/app/services/room.service.ts ---
+(attachment summarized; content omitted)
+
+--- Attachment: front/src/app/services/socket.service.ts ---
+(attachment summarized; content omitted)
+
+--- Attachment: front/src/app/services/staff.service.ts ---
+(attachment summarized; content omitted)
+
+--- Attachment: front/src/app/services/user.service.ts ---
+(attachment summarized; content omitted)
+
+--- Attachment: front/src/app/api.config.ts ---
+export const API_URL = 'http://localhost:3000/api';
+
+--- Attachment: front/src/app/app.config.ts ---
+(attachment summarized; content omitted)
+
+--- Attachment: front/src/app/app.css ---
+(attachment summarized; content omitted)
+
+--- Attachment: front/src/app/app.html ---
+(attachment summarized; content omitted)
+
+--- Attachment: front/src/app/app.routes.ts ---
+import { Routes } from '@angular/router';
+
+export const routes: Routes = [];
+
+--- Attachment: front/src/app/app.spec.ts ---
+(attachment summarized; content omitted)
+
+--- Attachment: front/src/app/app.ts ---
+(attachment summarized; content omitted)
+
+--- Attachment: front/src/index.html ---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>GestionLocauxFront</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+  <app-root></app-root>
+</body>
+</html>
+
+--- Attachment: front/src/main.ts ---
+import { bootstrapApplication } from '@angular/platform-browser';
+import { appConfig } from './app/app.config';
+import { App } from './app/app';
+
+bootstrapApplication(App, appConfig)
+  .catch((err) => console.error(err));
+
+--- Attachment: front/src/styles.css ---
+(attachment summarized; content omitted)
+
+--- Attachment: back/ (folder) ---
+Dockerfile
+package.json
+server.js
+config/
+  auth.js
+  db.js
+routes/
+  auth.js
+  doors.js
+  equipment.js
+  floors.js
+  rooms.js
+  sockets.js
+  staff.js
+  types.js
+  users.js
+
+--- Attachment: back/config/db.js ---
+const { Pool } = require('pg');
+require('dotenv').config();
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL || 'postgres://user:password@db:5432/gestion_locaux',
+});
+
+// Test de connexion
+pool.query('SELECT NOW()', (err, res) => {
+  if (err) {
+    console.error('Erreur de connexion à la base de données :', err);
+  } else {
+    console.log('Base de données connectée avec succès.');
+  }
+});
+
+module.exports = {
+  query: (text, params) => pool.query(text, params),
+  pool: pool
+};
+
+--- Attachment: back/config/auth.js ---
+const crypto = require('crypto');
+
+/**
+ * Hash a password using Node.js built-in crypto module (scrypt)
+ */
+const hashPassword = (password) => {
+  const salt = crypto.randomBytes(16).toString('hex');
+  const hash = crypto.scryptSync(password, salt, 64).toString('hex');
+  return `${salt}:${hash}`;
+};
+
+/**
+ * Verify a password against a hash
+ */
+const verifyPassword = (password, storedHash) => {
+  const [salt, hash] = storedHash.split(':');
+  const derivedHash = crypto.scryptSync(password, salt, 64).toString('hex');
+  return derivedHash === hash;
+};
+
+module.exports = {
+  hashPassword,
+  verifyPassword
+};
+
+--- Attachment: docker-compose.yml ---
+(attachment summarized; content omitted)
+
+--- Attachment: package.json (root) ---
+(attachment summarized; content omitted)
+
+--- Attachment: database/01_init.sql ---
+(attachment summarized; content omitted)
+
+--- Attachment: database/02_data_test.sql ---
+(attachment summarized; content omitted)
+
+--- Attachment: database/pgadmin/servers.json ---
+{ "Servers": { "1": { "Name": "Gestion Locaux DB", "Group": "Servers", "Host": "db", "Port": 5432, "MaintenanceDB": "gestion_locaux", "Username": "user", "SSLMode": "prefer", "PassFile": "/var/lib/pgadmin/pgpass" } } }
+
+--- End of generated aggregation ---

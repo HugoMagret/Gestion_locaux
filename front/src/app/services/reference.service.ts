@@ -42,6 +42,16 @@ export class ReferenceService {
     return this.http.delete<void>(`${API_URL}/types/equipment/${id}`);
   }
 
+  addSocketType(label: string): Observable<SocketType> {
+    return this.http.post<any>(`${API_URL}/types/socket`, { label }).pipe(
+      map(t => new SocketType(t))
+    );
+  }
+
+  deleteSocketType(id: string): Observable<void> {
+    return this.http.delete<void>(`${API_URL}/types/socket/${id}`);
+  }
+
   getSocketTypes(): Observable<SocketType[]> {
     return this.http.get<any[]>(`${API_URL}/types/socket`).pipe(
       map(types => types.map(t => new SocketType(t)))

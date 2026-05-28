@@ -26,6 +26,12 @@ export class SocketService {
     );
   }
 
+  updateSocket(socket: Socket): Observable<Socket> {
+    return this.http.put<any>(`${API_URL}/sockets/${socket.id}`, socket).pipe(
+      map(s => new Socket(s))
+    );
+  }
+
   deleteSocket(id: string): Observable<boolean> {
     return this.http.delete(`${API_URL}/sockets/${id}`).pipe(
       map(() => true)

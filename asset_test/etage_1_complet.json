@@ -275,32 +275,6 @@
       "color": "#95a5a6"
     },
     {
-      "name": "Corridor Central (Vide)",
-      "coordinates": {
-        "x": 674,
-        "y": 259,
-        "width": 1111,
-        "height": 56
-      },
-      "max_capacity": 30,
-      "doors": 1,
-      "floor": 1,
-      "color": "#95a5a6"
-    },
-    {
-      "name": "Couloir G (Vide)",
-      "coordinates": {
-        "x": 179,
-        "y": 234,
-        "width": 88,
-        "height": 531
-      },
-      "max_capacity": 30,
-      "doors": 1,
-      "floor": 1,
-      "color": "#95a5a6"
-    },
-    {
       "name": "Hall (Vide)",
       "coordinates": {
         "x": 267,
