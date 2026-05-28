@@ -79,59 +79,71 @@ router.put('/:level', async (req, res) => {
     return res.status(400).json({ error: 'Format invalide : rooms doit être un tableau' });
   }
 
-  const client = await db.pool.connect();
-
   try {
-    await client.query('BEGIN');
+    await prisma.$transaction(async (tx) => {
+      for (const r of rooms) {
+        let roomTypeId = r.room_type_id;
+        if (roomTypeId === '' || roomTypeId === undefined) {
+          roomTypeId = null;
+        }
 
-    for (const r of rooms) {
-      let roomTypeId = r.room_type_id;
-      if (roomTypeId === '' || roomTypeId === undefined) {
-        roomTypeId = null;
-      }
+        const roomCoordinates = r.coordinates || { x: 0, y: 0, width: 100, height: 100 };
+        const doorsCount = r.doors !== undefined ? r.doors : 1;
 
-      const roomCoordinates = r.coordinates || { x: 0, y: 0, width: 100, height: 100 };
-      const doorsCount = r.doors !== undefined ? r.doors : 1;
-
-      if (r.id) {
-        await client.query(
-          'UPDATE room SET name = $1, max_capacity = $2, room_type_id = $3, doors = $4, floor = $5, coordinates = $6 WHERE id = $7 AND floor = $8',
-          [r.name, r.max_capacity, roomTypeId, doorsCount, level, JSON.stringify(roomCoordinates), r.id, level]
-        );
-      } else {
-        await client.query(
-          'INSERT INTO room (name, max_capacity, room_type_id, doors, floor, coordinates) VALUES ($1, $2, $3, $4, $5, $6)',
-          [r.name, r.max_capacity, roomTypeId, doorsCount, level, JSON.stringify(roomCoordinates)]
-        );
-      }
-    }
-
-    if (Array.isArray(doors)) {
-      for (const d of doors) {
-        const doorCoordinates = d.coordinates || d;
-        const doorFloor = d.floor !== undefined ? d.floor : level;
-
-        if (d.id) {
-          await client.query(
-            'UPDATE door SET floor = $1, coordinates = $2 WHERE id = $3',
-            [doorFloor, JSON.stringify(doorCoordinates), d.id]
-          );
+        if (r.id) {
+          await tx.room.update({
+            where: { id: r.id },
+            data: {
+              name: r.name,
+              max_capacity: r.max_capacity !== undefined ? r.max_capacity : null,
+              room_type_id: roomTypeId,
+              doors: doorsCount,
+              floor: level,
+              coordinates: roomCoordinates
+            }
+          });
         } else {
-          await client.query(
-            'INSERT INTO door (floor, coordinates) VALUES ($1, $2)',
-            [doorFloor, JSON.stringify(doorCoordinates)]
-          );
+          await tx.room.create({
+            data: {
+              name: r.name,
+              max_capacity: r.max_capacity !== undefined ? r.max_capacity : null,
+              room_type_id: roomTypeId,
+              doors: doorsCount,
+              floor: level,
+              coordinates: roomCoordinates
+            }
+          });
         }
       }
-    }
 
-    await client.query('COMMIT');
+      if (Array.isArray(doors)) {
+        for (const d of doors) {
+          const doorCoordinates = d.coordinates || d;
+          const doorFloor = d.floor !== undefined ? d.floor : level;
+
+          if (d.id) {
+            await tx.door.update({
+              where: { id: d.id },
+              data: {
+                floor: doorFloor,
+                coordinates: doorCoordinates
+              }
+            });
+          } else {
+            await tx.door.create({
+              data: {
+                floor: doorFloor,
+                coordinates: doorCoordinates
+              }
+            });
+          }
+        }
+      }
+    });
+
     res.json({ success: true, message: `Étage ${level} mis à jour avec succès` });
   } catch (err) {
-    await client.query('ROLLBACK');
-    res.status(500).json({ error: err.message });
-  } finally {
-    client.release();
+    res.status(500).json({ success: false, message: err.message });
   }
 });
 
