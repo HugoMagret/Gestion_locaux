@@ -16,10 +16,10 @@ flowchart LR
     Map3dComponent[Map3dComponent]:::component
     FloorManagerComponent[FloorManagerComponent]:::component
     RoomTypeManagerComponent[RoomTypeManagerComponent]:::component
-    EquipmentManagerComponent[EquipmentManagerComponent]:::component
-    StaffManagerComponent[StaffManagerComponent]:::component
-    SocketManagerComponent[SocketManagerComponent]:::component
-    UserManagerComponent[UserManagerComponent]:::component
+    EquipmentListComponent[EquipmentListComponent]:::component
+    StaffListComponent[StaffListComponent]:::component
+    SocketListComponent[SocketListComponent]:::component
+    UserListComponent[UserListComponent]:::component
     AlertComponent[AlertComponent]:::component
   end
 
@@ -57,10 +57,10 @@ flowchart LR
   App --> Map3dComponent
   App --> FloorManagerComponent
   App --> RoomTypeManagerComponent
-  App --> EquipmentManagerComponent
-  App --> StaffManagerComponent
-  App --> SocketManagerComponent
-  App --> UserManagerComponent
+  App --> EquipmentListComponent
+  App --> StaffListComponent
+  App --> SocketListComponent
+  App --> UserListComponent
   App --> AlertComponent
   App --> AuthService
   App --> RoomService
@@ -77,10 +77,10 @@ flowchart LR
   Map3dComponent --> RoomService
   FloorManagerComponent --> FloorService
   RoomTypeManagerComponent --> ReferenceService
-  EquipmentManagerComponent --> EquipmentService
-  StaffManagerComponent --> StaffService
-  SocketManagerComponent --> SocketService
-  UserManagerComponent --> UserService
+  EquipmentListComponent --> EquipmentService
+  StaffListComponent --> StaffService
+  SocketListComponent --> SocketService
+  UserListComponent --> UserService
 
   AuthService --> User
   RoomService --> Room
