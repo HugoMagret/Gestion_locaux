@@ -67,5 +67,4 @@ Thumbs.db
 
 # --- Presentation Assets ---
 /rapport/*.png
-/rapport/script_soutenance.md
-/rapport/soutenance_bdd_backend.md
+/rapport/*.md
