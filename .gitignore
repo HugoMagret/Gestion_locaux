@@ -64,3 +64,8 @@ Thumbs.db
 *.out
 *.toc
 *.synctex.gz
+
+# --- Presentation Assets ---
+/rapport/*.png
+/rapport/script_soutenance.md
+/rapport/soutenance_bdd_backend.md
