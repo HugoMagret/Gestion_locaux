@@ -70,18 +70,16 @@
 ---
 
 ## 🎙️ DIAPO 4 : Sécurité & Authentification JWT
-**⏱️ Timing indicatif :** 1 minute  
+**⏱️ Timing indicatif :** 40 secondes  
 **🖼️ Visuel affiché :** *Diagramme du flux d'authentification JWT et des middlewares*  
 
 ### 🗣️ Le Script :
-> « Notre architecture de sécurité repose sur des jetons **JWT (JSON Web Token)** pour une authentification moderne et **stateless**.
+> « Notre architecture de sécurité repose sur des jetons **JWT** pour une authentification moderne et **stateless** (sans état). Les mots de passe sont hashés avec l'algorithme robuste **scrypt** pour résister aux attaques par force brute.
 > 
-> Lorsqu'un utilisateur se connecte, son mot de passe est comparé de manière cryptographique grâce à l'algorithme de dérivation de clé hautement sécurisé **scrypt**, qui résiste aux attaques par force brute grâce à son coût élevé en mémoire. Une fois authentifié, le serveur signe un jeton JWT contenant ses privilèges, valide pendant 24 heures.
+> Pour protéger nos routes API Express, nous appliquons deux middlewares d'autorisation successifs :
 > 
-> Pour sécuriser l'accès à nos routes API Express, nous avons développé deux middlewares dédiés :
-> 
-> * Le premier, `verifyToken`, vérifie simplement la validité de la signature cryptographique du jeton. Il est requis pour toutes les opérations standards, comme consulter les plans ou éditer son propre profil.
-> * Le second, `verifyAdmin`, applique de manière rigoureuse le **principe du moindre privilège**. Il inspecte le rôle dans le token et s'assure que seul un utilisateur ayant le drapeau `is_admin` à vrai peut accéder aux fonctionnalités d'écriture de l'infrastructure – comme la création de salles, l'affectation du personnel ou l'import d'étages. »
+> * Le premier, `verifyToken`, valide simplement la signature cryptographique du jeton. Il est requis pour toutes les opérations standards de consultation.
+> * Le second, `verifyAdmin`, applique le **principe du moindre privilège**. Il vérifie le rôle de l'utilisateur et s'assure que seules les requêtes d'administrateurs (`is_admin = true`) peuvent modifier l'infrastructure physique (création de salles, matériel ou imports d'étages). »
 
 **🔄 Transition :**  
 > « Enfin, pour parfaire cette sécurité, nous devons nous assurer que les données soumises au serveur respectent scrupuleusement la structure attendue. »
@@ -89,16 +87,16 @@
 ---
 
 ## 🎙️ DIAPO 5 : Validation Zod & Résilience
-**⏱️ Timing indicatif :** 1 minute  
+**⏱️ Timing indicatif :** 45 secondes  
 **🖼️ Visuel affiché :** *Diagramme du flux de validation Zod et intercepteur Angular*  
 
 ### 🗣️ Le Script :
-> « Le dernier rempart de notre backend est notre système de validation de schéma avec **Zod**. 
+> « Le dernier rempart de notre API est notre système de validation de schéma avec **Zod**. 
 > 
-> En ingénierie de sécurité, la règle d'or est de ne jamais faire confiance aux données envoyées par l'utilisateur. Zod agit comme un pare-feu applicatif : chaque requête entrante de modification est validée selon un schéma de données strict. Si un e-mail est mal formaté ou si des coordonnées géométriques sont invalides, la requête est immédiatement rejetée avec un code de retour HTTP `400 Bad Request`.
+> Zod agit comme un pare-feu applicatif : chaque requête entrante de modification est vérifiée selon un schéma strict (types, contraintes). Si des données sont incorrectes, la requête est rejetée immédiatement avec un code `400 Bad Request`.
 > 
-> De plus, nous avons harmonisé ce comportement avec le frontend Angular grâce à un **intercepteur HTTP global**. Si le token JWT de l'utilisateur expire, la requête suivante renvoie un code `401 Unauthorized` du serveur. L'intercepteur intercepte cette erreur en tâche de fond, nettoie proprement la session dans le cache du navigateur et redirige l'utilisateur vers l'écran de connexion avec une notification claire.
+> En harmonie avec ce comportement, notre frontend Angular intègre un **intercepteur HTTP global**. Si le token de l'utilisateur expire, le serveur renvoie un code `401 Unauthorized`. L'intercepteur capture cette erreur de manière centralisée, nettoie la session du navigateur et redirige l'utilisateur vers l'écran de connexion avec une alerte explicite.
 > 
-> Cette résilience globale assure à la fois une sécurité sans compromis côté backend, et une expérience utilisateur sans friction côté frontend. 
+> Cette synergie assure une résilience et une sécurité totale côté serveur tout en préservant une expérience utilisateur fluide côté client.
 > 
 > Je vous remercie pour votre attention, et nous sommes désormais ouverts à vos questions. »
